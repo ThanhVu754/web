@@ -1,0 +1,159 @@
+/* public/css/flight_services.css */
+/* Kế thừa các style chung từ common.css */
+
+.flight-services-section-vj {
+    padding: 30px 15px;
+    background-color: #f8f9fa; 
+}
+
+.section-header-vj {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-header-vj h1 {
+    color: #DA251D; 
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+.section-header-vj h1 i { 
+    margin-right: 10px;
+    color: #FFD600; 
+}
+
+.section-header-vj p {
+    font-size: 1rem;
+    color: #555;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
+.service-grid-vj {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Giảm minwidth một chút */
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+.service-card-vj {
+  background-color: #ffffff;
+  border-radius: 12px; 
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  display: flex; /* Để service-card-content-vj chiếm hết không gian */
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.service-card-vj:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+/* Đã xóa .service-card-image-vj và img của nó */
+
+.service-card-content-vj {
+  padding: 25px 20px; /* Tăng padding dọc */
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; 
+  text-align: center; /* Căn giữa nội dung trong card */
+}
+
+.service-icon-top-vj {
+    font-size: 2.5rem; /* Kích thước icon lớn */
+    color: #DA251D;   /* Màu đỏ Vietjet */
+    margin-bottom: 15px;
+}
+.service-icon-top-vj i { /* Nếu icon có màu riêng thì set ở đây */
+    color: #FFD600; /* Ví dụ icon màu vàng */
+}
+
+
+.service-card-content-vj h3 {
+  font-size: 1.25rem; /* Tên dịch vụ */
+  font-weight: 600;
+  color: #333; /* Màu chữ đậm hơn cho tiêu đề */
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.service-description-vj {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.6; /* Tăng line-height cho dễ đọc */
+  margin-bottom: 15px;
+  flex-grow: 1; 
+  min-height: 60px; /* Đảm bảo có không gian tối thiểu cho mô tả */
+}
+
+.service-price-vj {
+  font-size: 1rem;
+  color: #007bff; /* Màu xanh cho giá */
+  font-weight: bold;
+  margin-bottom: 20px; /* Tăng khoảng cách với nút */
+}
+
+.action-btn-vj.primary-btn-vj.select-service-btn { 
+  background-color: #DA251D; /* Nút màu đỏ Vietjet */
+  color: #ffffff; 
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 10px 25px; /* Padding cho nút */
+  border-radius: 25px;
+  align-self: center; 
+  width: auto; 
+  min-width: 160px; 
+  margin-top: auto; 
+}
+.action-btn-vj.primary-btn-vj.select-service-btn:hover {
+  background-color: #B71C1C; /* Đỏ đậm hơn khi hover */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+
+.service-note-vj {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 30px;
+  font-style: italic;
+  text-align: center;
+  background-color: #f0f8ff; 
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px dashed #add8e6; 
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .service-grid-vj {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .flight-services-section-vj {
+        padding: 20px 10px;
+    }
+    .section-header-vj h1 {
+        font-size: 1.8rem;
+    }
+    .service-grid-vj {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+    .service-card-content-vj h3 {
+        font-size: 1.15rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .service-grid-vj {
+        grid-template-columns: 1fr; 
+    }
+    .service-card-content-vj {
+        padding: 20px 15px;
+    }
+}

@@ -1,0 +1,255 @@
+/* public/css/admin/quan_ly_dat_cho.css */
+/* Kế thừa các style chung từ admin_layout.css */
+
+.page-content-area { /* Đã có trong flights_management.css, có thể gộp chung nếu giống hệt */
+    padding: 25px;
+    background-color: #fff;
+    margin: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between; /* Nút Thêm (nếu có) bên trái, search bên phải */
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+    flex-wrap: wrap; /* Cho phép xuống dòng nếu không đủ chỗ */
+    gap: 15px;
+}
+
+.search-filter-area {
+    display: flex;
+    gap: 10px; /* Khoảng cách giữa các input/select */
+    align-items: center;
+    flex-wrap: wrap; /* Cho phép filter xuống dòng */
+}
+
+.search-filter-area input[type="text"],
+.search-filter-area input[type="date"],
+.search-filter-area select {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+.search-filter-area input[type="text"] {
+    min-width: 220px;
+}
+.search-filter-area .btn-secondary-outline { /* Nút Lọc */
+    padding: 8px 15px;
+    font-size: 0.9em;
+    background-color: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.search-filter-area .btn-secondary-outline:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+
+.table-container {
+    overflow-x: auto;
+}
+
+#bookingsTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 0.85em;
+}
+
+#bookingsTable th, #bookingsTable td {
+    border: 1px solid #dee2e6;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap; /* Giữ nội dung trên một dòng, trừ khi cần thiết */
+}
+
+#bookingsTable thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+}
+#bookingsTable tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+#bookingsTable tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Trạng thái đặt chỗ */
+.status-booking {
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    font-weight: 500;
+    color: white;
+    text-align: center;
+    display: inline-block; /* Để padding có tác dụng đúng */
+}
+.status-confirmed       { background-color: #28a745; } /* Xanh lá */
+.status-pending_payment { background-color: #ffc107; color: #333; } /* Vàng */
+.status-payment_received{ background-color: #17a2b8; } /* Xanh dương nhạt */
+.status-cancelled_by_user { background-color: #dc3545; } /* Đỏ */
+.status-cancelled_by_admin{ background-color: #6c757d; } /* Xám */
+.status-completed       { background-color: #007bff; } /* Xanh dương */
+.status-no_show         { background-color: #343a40; } /* Đen/Xám đậm */
+
+
+#bookingsTable .btn-action-group .btn {
+    margin-right: 5px;
+    padding: 4px 8px;
+    font-size: 0.8em;
+}
+#bookingsTable .btn-action-group .btn:last-child {
+    margin-right: 0;
+}
+
+#bookingsTable .btn-view-detail { background-color: #17a2b8; color: white; border:none;}
+#bookingsTable .btn-view-detail:hover { background-color: #117a8b; }
+
+#bookingsTable .btn-edit-booking { background-color: #ffc107; color: #212529; border:none;}
+#bookingsTable .btn-edit-booking:hover { background-color: #e0a800; }
+
+#bookingsTable .btn-cancel-booking { background-color: #dc3545; color: white; border:none;}
+#bookingsTable .btn-cancel-booking:hover { background-color: #c82333; }
+
+
+.pagination-container { /* Đã có trong flights_management.css, có thể gộp chung */
+    text-align: center;
+    margin-top: 20px;
+}
+/* Style cho phân trang sẽ được thêm sau */
+
+
+/* Modal Styles (kế thừa từ admin_layout.css hoặc định nghĩa riêng) */
+/* .admin-modal, .modal-content, .modal-close-btn đã có style chung */
+.admin-modal .modal-content.large {
+    max-width: 900px; /* Modal chi tiết to hơn */
+}
+.admin-modal .modal-content.medium {
+    max-width: 550px;
+}
+
+#bookingDetailModalTitle,
+#editBookingStatusModal h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.4em;
+    color: #343a40;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+#bookingDetailModalTitle span, #editBookingStatusModal h3 span {
+    color: #007bff;
+    font-weight: normal;
+}
+
+#bookingDetailContent {
+    font-size: 0.95em;
+    line-height: 1.7;
+}
+#bookingDetailContent h4 {
+    font-size: 1.1em;
+    color: #007bff;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 5px;
+}
+#bookingDetailContent h4:first-child {
+    margin-top: 0;
+}
+#bookingDetailContent p {
+    margin-bottom: 8px;
+    color: #555;
+}
+#bookingDetailContent p strong {
+    color: #333;
+    min-width: 120px; /* Để các label thẳng hàng hơn (tùy chọn) */
+    display: inline-block;
+}
+#bookingDetailContent ul {
+    list-style: none;
+    padding-left: 15px;
+}
+#bookingDetailContent ul li {
+    margin-bottom: 5px;
+}
+
+/* Form trong modal */
+#editBookingStatusForm .form-group {
+    margin-bottom: 15px;
+}
+#editBookingStatusForm label {
+    display: block;
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 6px;
+    font-size: 0.9em;
+}
+#editBookingStatusForm select,
+#editBookingStatusForm textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.95em;
+    box-sizing: border-box;
+}
+#editBookingStatusForm textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+#bookingDetailModal .form-actions { /* Nút trong modal chi tiết */
+    margin-top: 25px;
+    text-align: right;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+}
+#bookingDetailModal .form-actions .btn {
+    padding: 8px 15px;
+    font-size: 0.9em;
+    margin-left: 10px;
+}
+#bookingDetailModal .form-actions .btn-edit-status {
+    background-color: #ffc107; color: #212529; border:none;
+}
+#bookingDetailModal .form-actions .btn-edit-status:hover { background-color: #e0a800; }
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .search-filter-area {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+    .search-filter-area input[type="text"],
+    .search-filter-area input[type="date"],
+    .search-filter-area select,
+    .search-filter-area button {
+        width: 100%;
+        min-width: unset;
+    }
+     .admin-modal .modal-content.large,
+     .admin-modal .modal-content.medium {
+        margin: 5% auto;
+        width: 95%;
+        padding: 15px;
+    }
+    #bookingDetailContent p strong {
+        display: block; /* Cho label và value xuống dòng trên mobile */
+        min-width: unset;
+        margin-bottom: 3px;
+    }
+}

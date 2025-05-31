@@ -1,0 +1,152 @@
+/* public/css/admin/quan_ly_thong_bao_trang_chu.css */
+.page-content-area {
+    padding: 25px;
+    background-color: #fff;
+    margin: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.form-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+}
+
+.form-section h3 {
+    font-size: 1.2em;
+    color: #007bff;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 6px;
+    font-size: 0.9em;
+}
+
+.form-group input[type="text"],
+.form-group input[type="url"],
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.95em;
+    box-sizing: border-box;
+}
+.form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.form-group input:focus, .form-group textarea:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.btn { /* Style nút chung nếu chưa có trong admin_layout.css */
+    padding: 8px 15px;
+    font-size: 0.9em;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+.btn-primary { background-color: #007bff; color: white; border-color: #007bff;}
+.btn-primary:hover { background-color: #0056b3; border-color: #0056b3;}
+.btn-success { background-color: #28a745; color: white; border-color: #28a745;}
+.btn-success:hover { background-color: #1e7e34; border-color: #1e7e34;}
+.btn-secondary-outline { background-color: transparent; color: #007bff; border: 1px solid #007bff;}
+.btn-secondary-outline:hover { background-color: #007bff; color: white;}
+
+
+.section-divider {
+    margin: 30px 0;
+    border: 0;
+    border-top: 1px solid #dee2e6;
+}
+
+#noticeItemsContainer .notice-item-admin {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column; /* Sửa thành column để nút ở dưới */
+    gap: 10px;
+}
+
+#noticeItemsContainer .notice-item-admin textarea {
+    flex-grow: 1;
+    min-height: 70px; /* Chiều cao tối thiểu cho textarea */
+    font-family: inherit;
+    font-size: inherit;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+}
+.notice-item-actions {
+    text-align: right; /* Căn các nút Sửa/Xóa sang phải */
+}
+
+.notice-item-actions .btn-sm {
+    padding: 5px 10px;
+    font-size: 0.8em;
+    margin-left: 5px;
+}
+.notice-item-actions .btn-edit-notice { background-color: #ffc107; color: #212529; border:none;}
+.notice-item-actions .btn-edit-notice:hover { background-color: #e0a800;}
+.notice-item-actions .btn-delete-notice { background-color: #dc3545; color: white; border:none;}
+.notice-item-actions .btn-delete-notice:hover { background-color: #c82333;}
+
+/* Submenu trong sidebar */
+.sidebar-nav li.has-submenu > a .submenu-arrow {
+    margin-left: auto;
+    transition: transform 0.2s ease;
+    font-size: 0.8em;
+}
+.sidebar-nav li.has-submenu.open > a .submenu-arrow {
+    transform: rotate(180deg);
+}
+.sidebar-nav .submenu {
+    list-style: none;
+    padding-left: 0; /* Hoặc 20px để thụt vào */
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background-color: #3a4b5c; /* Màu nền hơi khác cho submenu */
+}
+.sidebar-nav li.has-submenu.open .submenu {
+    max-height: 500px; /* Chiều cao đủ lớn để chứa các mục con */
+}
+.sidebar-nav .submenu li a {
+    padding-left: 40px; /* Thụt vào sâu hơn cho các mục con */
+    font-size: 0.85em;
+    color: #9badc1;
+}
+.sidebar-nav .submenu li a:hover,
+.sidebar-nav .submenu li.active a {
+    background-color: #495057;
+    color: #ffffff;
+    border-left-color: #FFD600; /* Giữ màu nhấn vàng */
+}
+.sidebar-nav .submenu li a i {
+    font-size: 0.9em; /* Icon nhỏ hơn cho submenu */
+}

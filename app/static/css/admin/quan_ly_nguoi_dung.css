@@ -1,0 +1,245 @@
+/* public/css/admin/quan_ly_nguoi_dung.css */
+/* Kế thừa các style chung từ admin_layout.css */
+
+.page-content-area {
+    padding: 25px;
+    background-color: #fff;
+    margin: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.page-header .btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.page-header .btn-primary:hover {
+    background-color: #0056b3;
+}
+.page-header .btn-primary i {
+    margin-right: 8px;
+}
+
+.search-filter-area {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-filter-area input[type="text"],
+.search-filter-area select {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+.search-filter-area input[type="text"] {
+    min-width: 220px;
+}
+.search-filter-area .btn-secondary-outline {
+    padding: 8px 15px;
+    font-size: 0.9em;
+    background-color: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.search-filter-area .btn-secondary-outline:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+#usersTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 0.85em;
+}
+
+#usersTable th, #usersTable td {
+    border: 1px solid #dee2e6;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+#usersTable thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+}
+#usersTable tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+#usersTable tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Trạng thái người dùng */
+.status-user {
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    font-weight: 500;
+    color: white;
+    text-align: center;
+    display: inline-block;
+}
+.status-active    { background-color: #28a745; } 
+.status-locked    { background-color: #dc3545; } 
+.status-pending   { background-color: #ffc107; color: #333; } 
+
+#usersTable .btn-action-group .btn {
+    margin-right: 5px;
+    padding: 4px 8px;
+    font-size: 0.8em;
+}
+#usersTable .btn-action-group .btn:last-child {
+    margin-right: 0;
+}
+
+#usersTable .btn-edit-user { background-color: #ffc107; color: #212529; border:none;}
+#usersTable .btn-edit-user:hover { background-color: #e0a800; }
+
+#usersTable .btn-lock-user { background-color: #6c757d; color: white; border:none;}
+#usersTable .btn-lock-user:hover { background-color: #545b62; }
+#usersTable .btn-lock-user.unlock { background-color: #28a745; } 
+#usersTable .btn-lock-user.unlock:hover { background-color: #1e7e34; }
+
+
+#usersTable .btn-delete-user { background-color: #dc3545; color: white; border:none;}
+#usersTable .btn-delete-user:hover { background-color: #c82333; }
+
+.pagination-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Modal Styles */
+.admin-modal .modal-content.medium {
+    max-width: 600px; 
+}
+
+#userFormModal #userModalTitle {
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 1.5em;
+    color: #343a40;
+    text-align: center;
+}
+
+#userForm .form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+#userForm .form-row .form-group {
+    flex: 1;
+}
+#userForm .form-group {
+    margin-bottom: 15px; 
+}
+#userForm .form-group:last-child { /* Để loại bỏ margin-bottom của group cuối cùng trong 1 row nếu không muốn */
+    /* margin-bottom: 0; */
+}
+
+
+#userForm label {
+    display: block;
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 6px;
+    font-size: 0.9em;
+}
+
+#userForm input[type="text"],
+#userForm input[type="email"],
+#userForm input[type="tel"],
+#userForm input[type="password"],
+#userForm select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.95em;
+    box-sizing: border-box;
+}
+#userForm input:focus, #userForm select:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+/* Style cho thông báo lỗi validate */
+.validation-error-message {
+    color: #dc3545; /* Màu đỏ cho lỗi */
+    font-size: 0.8em; /* Chữ nhỏ hơn */
+    margin-top: 4px; /* Khoảng cách với input */
+    display: block; /* Để chiếm một dòng riêng */
+}
+/* Tùy chọn: Thêm viền đỏ cho input bị lỗi (cần JS để thêm class .has-error)
+input.has-error, select.has-error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+*/
+
+
+#userForm .form-actions {
+    margin-top: 25px;
+    text-align: right;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+}
+#userForm .form-actions .btn {
+    padding: 10px 20px;
+    font-size: 0.95em;
+    font-weight: 500;
+    margin-left: 10px;
+}
+#userForm .form-actions .btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+#userForm .form-actions .btn-primary:hover { background-color: #0056b3; }
+
+#userForm .form-actions .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+}
+#userForm .form-actions .btn-secondary:hover { background-color: #545b62; }
+
+@media (max-width: 768px) {
+    #userForm .form-row {
+        flex-direction: column;
+        gap: 0; 
+    }
+    /* Các style responsive khác cho bảng, modal nếu cần */
+}

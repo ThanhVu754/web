@@ -1,0 +1,110 @@
+/* public/css/admin/dashboard.css */
+
+.dashboard-content-area {
+    padding: 20px; 
+}
+
+.dashboard-overview h3,
+.dashboard-quick-links h3 { /* Tiêu đề chung cho các section */
+    font-size: 1.2em;
+    color: #495057;
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 500;
+}
+
+.overview-cards-simple {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Điều chỉnh minmax */
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card-simple {
+    background-color: #ffffff;
+    padding: 20px; /* Tăng padding */
+    border-radius: 5px;
+    border: 1px solid #e0e0e0; /* Viền rõ hơn */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    text-align: left; /* Căn trái nội dung card */
+}
+
+.card-title-simple {
+    font-size: 0.9em;
+    color: #6c757d; 
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.card-value-simple {
+    font-size: 2em; /* Giá trị to hơn */
+    font-weight: 700; /* Đậm hơn */
+    color: #007bff; 
+    margin: 0;
+    line-height: 1;
+}
+
+.dashboard-quick-links .quick-links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Điều chỉnh minmax */
+    gap: 15px;
+}
+
+.quick-link-item {
+    background-color: #ffffff;
+    padding: 20px; /* Tăng padding */
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+    text-align: center;
+    text-decoration: none;
+    color: #495057;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.quick-link-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transform: translateY(-3px);
+    color: #0056b3; /* Đậm hơn khi hover */
+}
+.quick-link-item i {
+    display: block;
+    font-size: 2em; /* Icon to hơn */
+    margin-bottom: 12px; /* Khoảng cách lớn hơn */
+    color: #007bff;
+}
+.quick-link-item span {
+    font-size: 0.95em; /* Chữ to hơn */
+    font-weight: 500;
+}
+
+/* Responsive cho Dashboard */
+@media (max-width: 768px) {
+    .dashboard-content-area {
+        padding: 15px;
+    }
+    .overview-cards-simple,
+    .dashboard-quick-links .quick-links-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+        gap: 15px;
+    }
+     .card-value-simple {
+        font-size: 1.6em;
+    }
+    .quick-link-item i {
+        font-size: 1.8em;
+    }
+}
+
+@media (max-width: 480px) {
+    .overview-cards-simple,
+    .dashboard-quick-links .quick-links-grid {
+        grid-template-columns: 1fr; 
+    }
+}

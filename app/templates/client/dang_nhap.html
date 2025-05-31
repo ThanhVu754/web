@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Đăng Nhập - SangAir</title>
+  <link rel="stylesheet" href="/app/static/css/common.css" />
+  <link rel="stylesheet" href="/app/static/css/auth_forms.css" />
+  </head>
+<body class="auth-page-vj">
+  <div class="auth-form-container-vj"> <div class="auth-logo-vj">
+      <a href="home.html" title="Về trang chủ SangAir">
+        <h2>SangAir</h2>
+      </a>
+    </div>
+    <h1 class="auth-title-vj">Đăng Nhập</h1>
+    <p class="auth-subtitle-vj">Chào mừng bạn trở lại!</p>
+    
+    <form id="loginForm">
+      <div class="input-field-vj">
+        <label for="login-email">Địa chỉ Email</label>
+        <input type="email" id="login-email" placeholder="your@example.com" required />
+        <span class="error-text-vj" id="login-email-error"></span>
+      </div>
+      <div class="input-field-vj">
+        <label for="login-password">Mật khẩu</label>
+        <input type="password" id="login-password" placeholder="Nhập mật khẩu của bạn" required />
+        <span class="error-text-vj" id="login-password-error"></span>
+      </div>
+      <div class="form-options-vj">
+        <label class="remember-me-vj" for="rememberLogin">
+          <input type="checkbox" id="rememberLogin" name="rememberLogin" />
+          Ghi nhớ đăng nhập
+        </label>
+        <a href="#" class="forgot-password-link-vj">Quên mật khẩu?</a>
+      </div>
+      <button type="submit" class="auth-btn-vj primary-btn-vj">Đăng Nhập</button>
+      <div id="login-general-error" class="error-message-vj global-error-vj" style="display:none;"></div>
+    </form>
+    
+    <div class="auth-switch-link-vj">
+      <p>Chưa có tài khoản? <a href="dang_ki.html">Đăng ký tại đây</a></p>
+    </div>
+  </div>
+
+  <script src="/app/static/js/script_dang_nhap.js"></script>
+</body>
+</html>

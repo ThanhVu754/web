@@ -1,0 +1,247 @@
+/* public/css/admin/quan_ly_e_menu.css */
+/* Kế thừa các style chung từ admin_layout.css */
+
+.page-content-area {
+    padding: 25px;
+    background-color: #fff;
+    margin: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.page-header .btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.page-header .btn-primary:hover {
+    background-color: #0056b3;
+}
+.page-header .btn-primary i {
+    margin-right: 8px;
+}
+
+.search-filter-area {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-filter-area input[type="text"],
+.search-filter-area select {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+.search-filter-area input[type="text"] {
+    min-width: 220px;
+}
+.search-filter-area .btn-secondary-outline {
+    padding: 8px 15px;
+    font-size: 0.9em;
+    background-color: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.search-filter-area .btn-secondary-outline:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+#eMenuTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 0.85em;
+}
+
+#eMenuTable th, #eMenuTable td {
+    border: 1px solid #dee2e6;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+#eMenuTable thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+    white-space: nowrap;
+}
+#eMenuTable tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+#eMenuTable tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+#eMenuTable td .item-image-thumbnail {
+    max-width: 60px;
+    max-height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #eee;
+    vertical-align: middle;
+}
+#eMenuTable td .item-description-short {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px; 
+    white-space: normal; 
+}
+
+
+#eMenuTable .btn-action-group .btn { 
+    margin-right: 5px;
+    padding: 4px 8px;
+    font-size: 0.8em;
+}
+#eMenuTable .btn-action-group .btn:last-child {
+    margin-right: 0;
+}
+
+#eMenuTable .btn-edit-item { background-color: #ffc107; color: #212529; border:none;}
+#eMenuTable .btn-edit-item:hover { background-color: #e0a800; }
+
+#eMenuTable .btn-delete-item { background-color: #dc3545; color: white; border:none;}
+#eMenuTable .btn-delete-item:hover { background-color: #c82333; }
+
+.pagination-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Modal Content Specific Styles (E-Menu) */
+.admin-modal .modal-content.large { 
+    max-width: 800px; 
+}
+
+#menuItemFormModal #menuItemModalTitle { 
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 1.5em;
+    color: #343a40;
+    text-align: center; /* Đảm bảo tiêu đề này được căn giữa */
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+#menuItemForm .form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+#menuItemForm .form-row .form-group {
+    flex: 1;
+}
+#menuItemForm .form-group {
+    margin-bottom: 15px; 
+}
+#menuItemForm .form-group:last-child {
+    margin-bottom: 0;
+}
+
+
+#menuItemForm label {
+    display: block;
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 6px;
+    font-size: 0.9em;
+}
+
+#menuItemForm input[type="text"],
+#menuItemForm input[type="url"],
+#menuItemForm input[type="number"],
+#menuItemForm select,
+#menuItemForm textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.95em;
+    box-sizing: border-box;
+}
+#menuItemForm input:focus, #menuItemForm select:focus, #menuItemForm textarea:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+#menuItemForm textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.validation-error-message { 
+    color: #dc3545; 
+    font-size: 0.8em; 
+    margin-top: 4px; 
+    display: block; 
+}
+
+
+#menuItemForm .form-actions {
+    margin-top: 25px;
+    text-align: right;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+}
+#menuItemForm .form-actions .btn {
+    padding: 10px 20px;
+    font-size: 0.95em;
+    font-weight: 500;
+    margin-left: 10px;
+}
+#menuItemForm .form-actions .btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+#menuItemForm .form-actions .btn-primary:hover { background-color: #0056b3; }
+
+#menuItemForm .form-actions .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+}
+#menuItemForm .form-actions .btn-secondary:hover { background-color: #545b62; }
+
+
+@media (max-width: 768px) {
+    #menuItemForm .form-row {
+        flex-direction: column;
+        gap: 0; 
+    }
+     .admin-modal .modal-content.large { 
+        width: 95%;
+        padding: 20px;
+    }
+}

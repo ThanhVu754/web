@@ -1,0 +1,181 @@
+/* public/css/admin/bao_cao_thong_ke.css */
+/* Kế thừa các style chung từ admin_layout.css */
+
+.page-content-area {
+    padding: 25px;
+    background-color: #fff;
+    margin: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.report-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+    background-color: #fdfdff; /* Nền rất nhạt cho từng section */
+}
+
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+    flex-wrap: wrap; /* Cho phép xuống dòng */
+    gap: 10px;
+}
+
+.report-header h2 {
+    margin: 0;
+    font-size: 1.3em;
+    color: #007bff; /* Màu nhấn */
+    font-weight: 600;
+}
+
+.date-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.date-filter-group label {
+    font-size: 0.9em;
+    color: #495057;
+    font-weight: 500;
+}
+.date-filter-group select {
+    padding: 6px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+.date-filter-group .btn-sm { /* Nút Xem nhỏ hơn */
+    padding: 6px 12px;
+    font-size: 0.85em;
+}
+
+
+.overview-stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    position: relative; /* Để định vị icon */
+    overflow: hidden; /* Để icon không tràn ra ngoài nếu quá to */
+}
+.stat-card h4 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+    color: #6c757d; /* Xám nhạt */
+    text-transform: uppercase;
+    font-weight: 500;
+}
+.stat-card p {
+    margin: 0;
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #343a40; /* Màu chữ chính */
+    line-height: 1.2;
+}
+.stat-card .stat-card-icon {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 2.5em;
+    color: rgba(0, 123, 255, 0.15); /* Màu icon mờ */
+    z-index: 0;
+}
+
+
+.chart-wrapper {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    position: relative; /* Quan trọng cho Chart.js responsive */
+    /* min-height: 350px; /* Chiều cao tối thiểu cho biểu đồ */
+}
+.chart-pie-wrapper { /* Cho biểu đồ tròn có thể cần kích thước khác */
+    max-width: 450px; /* Giới hạn chiều rộng cho biểu đồ tròn */
+    margin: 0 auto; /* Căn giữa */
+    min-height: 300px;
+}
+
+/* Cần set height cụ thể hoặc aspect-ratio cho canvas để Chart.js hiển thị đúng */
+#revenueChart, #bookingStatusChart {
+    max-height: 350px; /* Giới hạn chiều cao tối đa */
+}
+
+
+.table-container-report { /* Style riêng cho bảng trong report nếu cần */
+    overflow-x: auto;
+    margin-top: 15px;
+}
+
+#topRoutesTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+#topRoutesTable th, #topRoutesTable td {
+    border: 1px solid #dee2e6;
+    padding: 8px 10px;
+    text-align: left;
+}
+#topRoutesTable thead th {
+    background-color: #f0f2f5;
+    font-weight: 600;
+}
+#topRoutesTable tbody tr:nth-child(even) {
+    background-color: #f8f9fc;
+}
+
+/* Nút bấm chung (btn, btn-primary, btn-secondary-outline) đã có trong admin_layout.css hoặc file CSS chung khác */
+/* Nếu chưa, bạn cần định nghĩa chúng */
+.btn {
+    padding: 8px 15px;
+    font-size: 0.9em;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+.btn-primary { background-color: #007bff; color: white; border-color: #007bff;}
+.btn-primary:hover { background-color: #0056b3; border-color: #0056b3;}
+
+
+@media (max-width: 768px) {
+    .report-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .date-filter-group {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch; /* Các input/select full width */
+    }
+    .date-filter-group select, .date-filter-group button {
+        width: 100%;
+    }
+    .overview-stats-cards {
+        grid-template-columns: 1fr; /* 1 card mỗi hàng */
+    }
+    .stat-card p {
+        font-size: 1.6em;
+    }
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Đăng Ký Tài Khoản - SangAir</title>
+  <link rel="stylesheet" href="/app/static/css/common.css" /> 
+  <link rel="stylesheet" href="/app/static/css/auth_forms.css" /> 
+</head>
+<body class="auth-page-vj">
+  <div class="auth-form-container-vj"> 
+    <div class="auth-logo-vj">
+      <a href="home.html" title="Về trang chủ SangAir">
+        <h2>SangAir</h2>
+      </a>
+    </div>
+    <h1 class="auth-title-vj">Tạo Tài Khoản Mới</h1>
+    <p class="auth-subtitle-vj">Tham gia SangAir để nhận nhiều ưu đãi hấp dẫn!</p>
+    
+    <form id="registerForm" novalidate>
+      <div class="input-field-vj">
+        <label for="register-fullname">Họ và Tên</label>
+        <input type="text" id="register-fullname" placeholder="Ví dụ: Nguyễn Văn A" required />
+        <span class="error-text-vj" id="register-fullname-error"></span>
+      </div>
+
+      <div class="input-field-vj">
+        <label for="register-email">Địa chỉ Email</label>
+        <input type="email" id="register-email" placeholder="your@example.com" required />
+        <span class="error-text-vj" id="register-email-error"></span>
+      </div>
+
+      <div class="input-field-vj">
+        <label for="register-phone">Số điện thoại</label>
+        <input type="tel" id="register-phone" placeholder="Nhập số điện thoại của bạn" />
+        <span class="error-text-vj" id="register-phone-error"></span>
+      </div>
+
+      <div class="input-field-vj">
+        <label for="register-password">Mật khẩu</label>
+        <input type="password" id="register-password" placeholder="Ít nhất 6 ký tự" required />
+        <span class="error-text-vj" id="register-password-error"></span>
+      </div>
+
+      <div class="input-field-vj">
+        <label for="register-confirm-password">Xác nhận mật khẩu</label>
+        <input type="password" id="register-confirm-password" placeholder="Nhập lại mật khẩu" required />
+        <span class="error-text-vj" id="register-confirm-password-error"></span>
+      </div>
+      
+      <div class="form-options-vj checkbox-option-vj">
+          <label class="remember-me-vj" for="agreeTerms">
+              <input type="checkbox" id="agreeTerms" name="agreeTerms"> 
+              Tôi đồng ý với <a href="#terms" class="inline-link-vj">Điều khoản</a> & <a href="#privacy" class="inline-link-vj">Chính sách bảo mật</a>.
+          </label>
+          <span class="error-text-vj" id="agreeTerms-error"></span>
+      </div>
+
+      <button type="submit" class="auth-btn-vj primary-btn-vj">Tạo tài khoản</button>
+      <div id="register-general-error" class="error-message-vj global-error-vj" style="display:none;"></div>
+    </form>
+    
+    <div class="auth-switch-link-vj">
+      <p>Đã có tài khoản? <a href="dang_nhap.html">Đăng nhập</a></p>
+    </div>
+  </div>
+
+  <script src="/app/static/js/script_dang_ki.js"></script>
+</body>
+</html>

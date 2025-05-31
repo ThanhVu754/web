@@ -1,0 +1,212 @@
+/* public/css/auth_forms.css */
+body.auth-page-vj {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; /* Font hệ thống hiện đại */
+    background-color: rgb(165, 130, 66);; /* Màu nền xám rất nhạt, sạch sẽ */
+    display: flex;
+    justify-content: center;
+    align-items: center;   
+    min-height: 100vh;    
+    padding: 20px;        
+    box-sizing: border-box;
+}
+
+.auth-form-container-vj { /* Đây sẽ là card chính chứa form */
+    width: 100%;
+    max-width: 450px; /* Độ rộng form gọn gàng */
+    padding: 35px 40px; 
+    background-color: #ffffff;
+    border-radius: 12px; /* Bo góc mềm mại */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); /* Bóng đổ nhẹ nhàng */
+    text-align: center; /* Căn giữa logo và tiêu đề nếu cần */
+}
+
+/* Bỏ style cho .auth-image-column-vj nếu không dùng layout 2 cột nữa */
+
+.auth-logo-vj {
+    margin-bottom:20px;
+}
+.auth-logo-vj a {
+    text-decoration: none;
+}
+.auth-logo-vj h2 {
+    font-size: 2rem; 
+    color: #DA251D; /* Vietjet Red */
+    margin: 0;
+    font-weight: 700; 
+}
+
+.auth-title-vj {
+    font-size: 1.6rem; 
+    color: #1d2d35; /* Màu chữ tối, gần đen */
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.auth-subtitle-vj {
+    font-size: 0.95rem; /* Giữ kích thước này */
+    color: #5a6570; /* Màu xám cho subtitle */
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.input-field-vj {
+    margin-bottom: 5px;
+    text-align: left; /* Label và input căn trái */
+}
+.input-field-vj label {
+    display: block;
+    font-size: 0.875rem; /* 14px */
+    color: #3c4858; /* Xám đậm hơn cho label */
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+/* Đã bỏ icon khỏi label trong HTML, nên không cần style cho i nữa */
+
+.input-field-vj input[type="text"],
+.input-field-vj input[type="email"],
+.input-field-vj input[type="password"],
+.input-field-vj input[type="tel"] {
+    width: 100%;
+    padding: 10px 14px; 
+    border: 1px solid #d2dce6; /* Viền nhạt, hiện đại */
+    border-radius: 8px; /* Bo góc mềm hơn */
+    font-size: 0.95rem; 
+    color: #333;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.input-field-vj input[type="text"]:focus,
+.input-field-vj input[type="email"]:focus,
+.input-field-vj input[type="password"]:focus,
+.input-field-vj input[type="tel"]:focus {
+    border-color: #DA251D; 
+    box-shadow: 0 0 0 2.5px rgba(218, 37, 29, 0.2); 
+    outline: none;
+}
+
+.error-text-vj {
+    display: block;
+    font-size: 0.8rem; 
+    color: #e74c3c; 
+    margin-top: 4px;
+    min-height: 1em; 
+    text-align: left; /* Lỗi căn trái */
+}
+.global-error-vj {
+    background-color: #ffebee;
+    border: 1px solid #e74c3c;
+    color: #c62828; /* Màu chữ lỗi đậm hơn */
+    padding: 10px;
+    border-radius: 6px; 
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.875rem; 
+}
+
+
+.form-options-vj {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    font-size: 0.875rem; /* 14px */
+}
+.checkbox-option-vj { 
+    margin-bottom: 20px;
+    font-size: 0.875rem;
+    text-align: left;
+}
+.checkbox-option-vj .remember-me-vj {
+    line-height: 1.4; 
+}
+
+
+.remember-me-vj {
+    display: flex;
+    align-items: center;
+    color: #5a6570; /* Xám cho text */
+    cursor: pointer;
+}
+.remember-me-vj input[type="checkbox"] {
+    margin-right: 6px;
+    accent-color: #DA251D;
+    transform: scale(0.9); 
+}
+.forgot-password-link-vj, .inline-link-vj {
+    color: #DA251D; /* Màu đỏ Vietjet cho các link quan trọng */
+    text-decoration: none;
+    font-weight: 500;
+}
+.forgot-password-link-vj:hover, .inline-link-vj:hover {
+    text-decoration: underline;
+}
+
+.auth-btn-vj {
+    width: 100%;
+    padding: 11px 15px; /* Điều chỉnh padding cho cân đối */
+    background-color: #DA251D; 
+    color: white;
+    border: none;
+    border-radius: 8px; 
+    font-size: 1rem; 
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px; /* Thêm chút khoảng cách chữ */
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.auth-btn-vj:hover {
+    background-color: #B71C1C; 
+}
+.auth-btn-vj:active {
+    transform: scale(0.98);
+}
+
+
+.auth-switch-link-vj {
+    text-align: center;
+    margin-top: 25px; 
+    font-size: 0.9rem; 
+    color: #5a6570;
+}
+.auth-switch-link-vj a {
+    color: #DA251D; 
+    font-weight: 600;
+    text-decoration: none;
+}
+.auth-switch-link-vj a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .auth-form-container-vj {
+        padding: 25px 20px; 
+        margin: 15px; /* Đảm bảo có khoảng cách với mép màn hình */
+        max-width: none; /* Cho phép chiếm gần full width trừ padding của body */
+    }
+    .auth-logo-vj h2 {
+        font-size: 1.8rem;
+    }
+    .auth-title-vj {
+        font-size: 1.4rem;
+    }
+     .input-field-vj input[type="text"],
+    .input-field-vj input[type="email"],
+    .input-field-vj input[type="password"],
+    .input-field-vj input[type="tel"] {
+        font-size: 0.9rem;
+    }
+    .auth-btn-vj {
+        font-size: 0.95rem;
+    }
+    .form-options-vj {
+        font-size: 0.8rem;
+        /* Nếu muốn stack trên mobile nhỏ:
+        flex-direction: column; 
+        align-items: flex-start;
+        gap: 10px;
+        */
+    }
+}

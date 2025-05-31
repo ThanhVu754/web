@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý chuyến bay - SangAir Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/app/static/css/admin/admin_layout.css">
+    <link rel="stylesheet" href="/app/static/css/admin/flights_management.css"> </head>
+<body class="admin-body">
+    <div class="admin-container">
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html"><h2>SangAir Admin</h2></a>
+            </div>
+            <nav class="sidebar-nav">
+                 <ul>
+                    <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> <span class="nav-text">Tổng quan</span></a></li>
+                    <li><a href="flights.html"><i class="fas fa-plane-departure"></i> <span class="nav-text">Quản lý chuyến bay</span></a></li>
+                    <li><a href="quan_ly_dat_cho.html"><i class="fas fa-file-invoice-dollar"></i> <span class="nav-text">Quản lý đặt chỗ</span></a></li>
+                    <li><a href="quan_ly_nguoi_dung.html"><i class="fas fa-users"></i> <span class="nav-text">Quản lý người dùng</span></a></li>
+                    <li class="has-submenu">
+                        <a href="#"><i class="fas fa-edit"></i> <span class="nav-text">Quản lý nội dung</span> <i class="fas fa-chevron-down submenu-arrow"></i></a>
+                        <ul class="submenu">
+                            <li><a href="quan_ly_thong_bao_trang_chu.html"><i class="fas fa-bullhorn"></i> <span class="nav-text">TB Trang chủ</span></a></li>
+                            <li><a href="quan_ly_e_menu.html"><i class="fas fa-utensils"></i> <span class="nav-text">E-Menu</span></a></li>
+                        </ul>
+                    </li>
+                    <li class="active"><a href="bao_cao_thong_ke.html"><i class="fas fa-chart-bar"></i> <span class="nav-text">Báo cáo & Thống kê</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="admin-main-content">
+            <header class="admin-header">
+                <div class="header-left-controls">
+                    <button id="mobile-menu-toggle-btn" class="menu-toggle-btn"><i class="fas fa-bars"></i></button>
+                    <div class="header-title">
+                        <h1>Quản lý chuyến bay</h1>
+                    </div>
+                </div>
+                <div class="admin-user-info">
+                    <span>Chào, Admin!</span>
+                    <a href="#logout" class="logout-btn">Đăng xuất</a>
+                </div>
+            </header>
+
+            <div class="page-content-area">
+                <div class="page-header">
+                    <button id="addFlightBtn" class="btn btn-primary"><i class="fas fa-plus"></i> Thêm chuyến bay mới</button>
+                    <div class="search-filter-area">
+                        <input type="text" id="flightSearchInput" placeholder="Tìm kiếm chuyến bay (VD: SA100, Hà Nội...)">
+                        </div>
+                </div>
+
+                <div class="table-container">
+                    <table id="flightsTable">
+                        <thead>
+                            <tr>
+                                <th>Số hiệu</th>
+                                <th>Điểm đi</th>
+                                <th>Điểm đến</th>
+                                <th>Ngày đi</th>
+                                <th>Giờ đi</th>
+                                <th>Ngày đến</th>
+                                <th>Giờ đến</th>
+                                <th>Giá vé (VNĐ)</th>
+                                <th>Số ghế</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="flightsTableBody">
+                            </tbody>
+                    </table>
+                </div>
+                <div class="pagination-container" id="paginationContainer">
+                    </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="flightFormModal" class="admin-modal">
+        <div class="modal-content">
+            <span class="modal-close-btn" id="closeFlightModalBtn">&times;</span>
+            <h3 id="flightModalTitle">Thêm chuyến bay mới</h3>
+            <form id="flightForm">
+                <input type="hidden" id="flightId" name="flightId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="flightNumber">Số hiệu chuyến bay *</label>
+                        <input type="text" id="flightNumber" name="flightNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="aircraftType">Loại máy bay</label>
+                        <input type="text" id="aircraftType" name="aircraftType">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="departureAirport">Sân bay đi *</label>
+                        <select id="departureAirport" name="departureAirport" required>
+                            <option value="">Chọn sân bay</option>
+                            <option value="HAN">Hà Nội (HAN)</option>
+                            <option value="SGN">TP. Hồ Chí Minh (SGN)</option>
+                            <option value="DAD">Đà Nẵng (DAD)</option>
+                            </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="arrivalAirport">Sân bay đến *</label>
+                        <select id="arrivalAirport" name="arrivalAirport" required>
+                            <option value="">Chọn sân bay</option>
+                            <option value="HAN">Hà Nội (HAN)</option>
+                            <option value="SGN">TP. Hồ Chí Minh (SGN)</option>
+                            <option value="DAD">Đà Nẵng (DAD)</option>
+                            </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="departureDate">Ngày đi *</label>
+                        <input type="date" id="departureDate" name="departureDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="departureTime">Giờ đi *</label>
+                        <input type="time" id="departureTime" name="departureTime" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="arrivalDate">Ngày đến *</label>
+                        <input type="date" id="arrivalDate" name="arrivalDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="arrivalTime">Giờ đến *</label>
+                        <input type="time" id="arrivalTime" name="arrivalTime" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="basePrice">Giá vé cơ bản (VNĐ) *</label>
+                        <input type="number" id="basePrice" name="basePrice" min="0" step="1000" required>
+                    </div>
+                     <div class="form-group">
+                        <label for="totalSeats">Tổng số ghế *</label>
+                        <input type="number" id="totalSeats" name="totalSeats" min="1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="flightStatus">Trạng thái chuyến bay</label>
+                    <select id="flightStatus" name="flightStatus">
+                        <option value="scheduled">Lên lịch</option>
+                        <option value="on-time">Đúng giờ</option>
+                        <option value="delayed">Trễ chuyến</option>
+                        <option value="cancelled">Đã hủy</option>
+                        <option value="departed">Đã cất cánh</option>
+                        <option value="arrived">Đã đến</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="saveFlightBtn">Lưu chuyến bay</button>
+                    <button type="button" class="btn btn-secondary" id="cancelFlightFormBtn">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/app/static/js/admin/script_admin_layout.js"></script>
+    <script src="/app/static/js/admin/script_flights.js"></script> </body>
+</html>

@@ -1,0 +1,688 @@
+/* home.css */
+
+.main-container { /* Container chính của trang chủ */
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  margin: 30px auto;
+}
+
+/* Notice Section */
+.notice-section {
+  flex: 0 0 340px; 
+  background: #f5e6d3;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(255, 153, 0, 0.3);
+  position: relative;
+  align-self: flex-start; 
+  max-height: 550px; 
+  overflow-y: auto; 
+}
+
+.notice-section h1 {
+  color: #b30000;
+  margin-bottom: 12px;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.notice-section p {
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #4a4a4a;
+}
+
+.plane-image {
+  position: absolute;
+  top: -25px; 
+  right: 10px;
+  width: 50px; 
+  opacity: 0.85;
+}
+
+/* Booking Section on Home page */
+.booking-section { 
+  flex: 1 1 60%; 
+  max-width: 600px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.tabs .tab {
+  flex-grow: 1;
+  background: #f7a30a;
+  color: #5a2e00;
+  padding: 8px 4px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-radius: 4px 4px 0 0;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  text-align: center;
+}
+
+.tabs .tab:hover {
+  background: #ffbc38;
+}
+
+.tabs .tab.active {
+  background: #ffbc38;
+  color: #3d2000;
+  cursor: default;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.trip-type {
+  margin-bottom: 12px;
+  text-align: center; 
+}
+
+.trip-type label {
+  margin-right: 15px; 
+  margin-left: 5px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #fff;
+}
+.trip-type label:last-child {
+  margin-right: 0;
+}
+
+.input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.input-row .input-group {
+  flex: 1;
+}
+
+.booking-section .flight-results {
+  margin-top: 20px;
+}
+
+.booking-section .flight-results h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.flight-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.flight-option {
+  background: #fff;
+  color: #333;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; 
+}
+
+.flight-details {
+  flex-grow: 1;
+}
+
+.flight-details h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #b30000; 
+}
+
+.flight-details p {
+  font-size: 0.9rem;
+  margin-bottom: 3px;
+  color: #4a4a4a; 
+}
+
+.status-confirmed {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.book-btn { 
+  padding: 8px 15px;
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  flex-shrink: 0; 
+  margin-left: 10px; 
+}
+
+.book-btn:hover {
+  background: #218838;
+}
+
+/* PHẦN CSS CHO FLIGHT PROMOTIONS ĐÃ BỊ XÓA */
+
+/* Banner Container */
+.banner-container {
+  text-align: center;
+  padding: 40px 15px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 30px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #d21616;
+  font-style: italic;
+}
+
+.small-text {
+  font-size: 2rem;
+  margin-right: 8px;
+  color: #932929;
+}
+
+.sangair {
+  color: #e5e920;
+  font-size: 2.5rem;
+  font-style: italic;
+  font-weight: 900;
+  font-family: 'Arial Black', sans-serif;
+}
+
+.subtitle {
+  margin-top: 8px;
+  font-size: 1.5rem;
+  color: #932929;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+}
+
+.flight-path {
+  width: 250px;
+  height: 80px;
+  border-bottom: 2px dashed rgb(172, 16, 16);
+  border-radius: 0 0 120px 120px;
+  margin: 15px auto 0;
+}
+
+/* === CSS CHO TAB HÀNH LÝ & CHỖ NGỒI === */
+.tab-content#luggage fieldset {
+  border: 1px solid rgba(255,255,255,0.3); 
+  border-radius: 8px; 
+  padding: 20px;
+  margin-bottom: 25px;
+  background-color: rgba(0,0,0,0.1); 
+}
+
+.tab-content#luggage legend {
+  font-weight: bold; 
+  padding: 0 10px;
+  color: #ffeb3b; 
+  font-size: 1.2rem; 
+  margin-bottom: 15px;
+}
+
+.tab-content#luggage .input-group {
+    margin-bottom: 15px; 
+}
+
+.tab-content#luggage .input-group label,
+.tab-content#luggage .input-group input[type="checkbox"] + label {
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem; 
+}
+.tab-content#luggage .input-group input[type="checkbox"] {
+    width: auto;
+    height: auto; 
+    accent-color: #ffeb3b; 
+}
+
+.tab-content#luggage .input-group select {
+    background-color: #fff; 
+    color: #333; 
+    border: 1px solid #ccc;
+    padding: 8px; 
+}
+.tab-content#luggage .input-group select option {
+    color: #333;
+}
+
+.tab-content#luggage p {
+  font-size: 1rem; 
+  color: #fff;
+  margin-top: 10px;
+  font-weight: 500;
+}
+.tab-content#luggage p span {
+  font-weight: bold;
+  color: #ffeb3b;
+  margin-left: 5px; 
+}
+
+.total-ancillary-fee {
+  margin-top: 25px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: rgba(0,0,0,0.25);
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+.total-ancillary-fee h3 {
+  color: #fff;
+  font-size: 1.3rem; 
+  font-weight: bold; 
+}
+.total-ancillary-fee h3 span {
+  color: #ffeb3b;
+  margin-left: 8px;
+}
+
+#confirm-ancillary-btn {
+    margin-top: 10px; 
+}
+
+/* Responsive cho home.html */
+@media (max-width: 992px) { 
+    .main-container {
+        flex-direction: column; 
+        align-items: center; 
+    }
+    .notice-section {
+        flex-basis: auto; 
+        width: 100%;
+        max-width: 550px; 
+        margin-bottom: 20px;
+    }
+    .booking-section { 
+        flex-basis: auto; 
+        width: 100%;
+        max-width: 550px; 
+    }
+}
+
+@media (max-width: 768px) { 
+  .main-container {
+    margin: 20px auto;
+  }
+  .banner-container {
+    padding: 20px 10px;
+  }
+  .title,
+  .small-text {
+    font-size: 1.5rem;
+  }
+  .sangair {
+    font-size: 2rem;
+  }
+  .subtitle {
+    font-size: 1.2rem;
+  }
+
+  .flight-option {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  .book-btn {
+    width: auto; 
+    padding: 10px 20px; 
+    margin-left: 0; 
+    margin-top: 10px; 
+  }
+}
+
+@media (max-width: 480px) { 
+    /* Không còn .promotion để style ở đây */
+}
+/* === ƯU ĐÃI ĐẶC BIỆT === */
+.promo-section {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+.section-title {
+  text-align: center;
+  color: #b30000;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.promo-list {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.promo-card {
+  background: #fff8eb;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(255, 204, 0, 0.2);
+  padding: 15px;
+  text-align: center;
+  max-width: 300px;
+}
+.promo-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+.promo-card h3 {
+  color: #d21616;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+.promo-card p {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* === TIN TỨC === */
+.news-section {
+  background-size: cover;
+  background-position: center;
+  padding: 50px 0;
+}
+
+.news-vertical-carousel {
+  max-width: 100%;
+  height: 420px; /* Đảm bảo chứa trọn 3 tin */
+  overflow: hidden; /* ❌ Ẩn thanh cuộn */
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.news-track {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.6s ease-in-out;
+}
+
+.news-vertical-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  width: 50vw; /* Chiếm 50% màn hình */
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  min-height: 130px;
+}
+
+.news-vertical-item img {
+  width: 160px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.news-vertical-item .text h4 {
+  font-size: 1.1rem;
+  color: #d21616;
+  margin-bottom: 6px;
+}
+
+.news-vertical-item .text p {
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .news-vertical-carousel {
+    height: 470px; /* tăng chút nếu cần */
+    padding: 0 10px;
+  }
+
+  .news-vertical-item {
+    flex-direction: column;
+    width: 90vw; /* gần full mobile */
+    padding: 15px;
+    gap: 12px;
+    min-height: auto;
+  }
+
+  .news-vertical-item img {
+    width: 100%;
+    height: auto;
+  }
+
+  .news-vertical-item .text h4 {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .news-vertical-item .text p {
+    font-size: 0.9rem;
+    text-align: justify;
+  }
+
+  .news-section .section-title {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+}
+
+.footer {
+  background: #ffffff;
+  color: #333;
+  padding: 40px 20px 20px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  border-top: 2px solid #d21616;
+}
+
+.footer-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.footer-column {
+  flex: 1 1 220px;
+}
+
+.footer-column h4 {
+  color: #d21616;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column ul li a {
+  text-decoration: none;
+  color: hsla(0, 100%, 57%, 0.581);
+  transition: color 0.2s;
+}
+
+.footer-column ul li a:hover {
+  color: #d21616;
+}
+
+.footer-column p {
+  margin: 6px 0;
+}
+
+.social-icons img {
+  width: 28px;
+  margin-right: 10px;
+  filter: grayscale(100%);
+  transition: filter 0.3s ease;
+}
+.social-icons img:hover {
+  filter: none;
+}
+
+.app-icons img {
+  width: 180px;
+  margin-top: 10px;
+  margin-right: 10px;
+  height: 100px;
+}
+
+.footer-bottom {
+  color: #666;
+  border-top: 1px solid #ccc;
+  margin-top: 30px;
+  padding-top: 15px;
+  text-align: center;
+}
+
+/* Flight Option Images */
+.flight-option {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.flight-option .flight-image {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.flight-option .flight-image:hover {
+  transform: scale(1.05);
+}
+
+/* News Item Images */
+.news-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  overflow: hidden;
+}
+
+.news-item img {
+  transition: transform 0.2s ease;
+}
+
+.news-item img:hover {
+  transform: scale(1.05);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .flight-option {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .flight-option .flight-image {
+    width: 80px;
+  }
+
+  .news-item img {
+    width: 60px;
+  }
+}
+
+.hot-destinations {
+  margin: 60px auto;
+  padding: 0 15px;
+}
+
+.destination-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 ảnh 1 hàng */
+  gap: 30px 25px; /* hàng x cột */
+  justify-content: center;
+}
+
+.destination {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  height: 400px; /* 📌 Ảnh cao hơn đáng kể */
+  width: 340px;
+}
+
+.destination:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
+}
+
+.destination img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+.destination span {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 15px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 0 0 12px 12px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  z-index: 2;
+}
+
+
+
+.destination-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.destination-grid::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+@media (max-width: 1024px) {
+  .destination-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 ảnh / hàng */
+  }
+}
+@media (max-width: 576px) {
+  .destination-grid {
+    grid-template-columns: 1fr;
+  }
+}

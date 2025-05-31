@@ -1,0 +1,392 @@
+/* common.css */
+
+/* Reset cơ bản */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2070&auto=format&fit=crop');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 15px;
+}
+
+/* Header */
+header {
+  background: rgba(255, 255, 255, 0.8);
+  
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  gap: 12px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  color: #b30000;
+  border-radius: 8px;
+}
+
+.logo h2 {
+  color: #b30000;
+  font-size: 1.5rem;
+  font-weight: 700;
+  white-space: nowrap;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Add shadow for contrast */
+}
+
+.logo a {
+  text-decoration: none;
+}
+
+.menu {
+  list-style: none;
+  display: flex;
+  gap: 14px;
+  flex-grow: 1;
+  font-weight: 500;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.menu li a {
+  text-decoration: none;
+  color: #b30000;
+  padding: 6px 10px;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 4px;
+  display: block;
+}
+
+.menu li a:hover {
+  background: #b30000;
+  color: #fff;
+}
+
+.menu li a.active {
+  background: #b30000;
+  color: #fff;
+}
+
+.auth-links {
+  white-space: nowrap;
+  font-weight: 500;
+  flex-shrink: 0;
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.auth-links a {
+  color: #b30000;
+  text-decoration: none;
+  padding: 6px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Add shadow for contrast */
+}
+
+.auth-links a.active {
+  font-weight: bold;
+}
+
+.auth-links a + a::before {
+  color: #b30000;
+  margin: 0 5px;
+  content: '| ';
+}
+
+.language-select select {
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid #b30000;
+  font-weight: 500;
+  background: #ffbc38; /* Align with VietJet Air’s yellow */
+  color: #5a2e00;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+/* Common Input Group Styling */
+.input-group {
+  margin-bottom: 12px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #fff; /* Default to white, overridden in specific sections if needed */
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 5px;
+  border: none; /* Remove default border for consistency with home.css */
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #333;
+  background: #fff;
+}
+
+/* Common Button Styling */
+.search-btn {
+  width: 100%;
+  padding: 10px 0;
+  background: #ffbc38;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #5a2e00;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  display: block;
+  text-align: center;
+}
+
+.search-btn:hover {
+  background: #ffaa00;
+}
+
+.select-btn {
+  width: 100%;
+  padding: 8px 0;
+  background: #28a745;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  display: block;
+  text-align: center;
+}
+
+.select-btn:hover {
+  background: #218838;
+}
+
+/* Common Modal Styling */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff url('https://images.unsplash.com/photo-1515170493386-3d7dd9f7c2c4?q=80&w=2070&auto=format&fit=crop') no-repeat center / cover;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #b30000;
+  margin-bottom: 15px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Add shadow for contrast */
+}
+
+.modal-content .input-group label {
+  color: #333;
+}
+
+.modal-content .input-group input,
+.modal-content .input-group select {
+  border: 1px solid #ddd;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.5rem;
+  color: #b30000;
+  cursor: pointer;
+}
+
+/* Social Connect (Footer-like section) */
+.social-connect {
+  text-align: center;
+  margin-top: 40px;
+  padding: 20px 15px;
+  background: rgba(48, 0, 0, 0.9) url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2070&auto=format&fit=crop') no-repeat center / cover;
+  border-radius: 10px;
+  color: #fbecec;
+}
+
+.social-connect h3 {
+  font-size: 1rem;
+  color: #ffbc38; /* Align with VietJet Air’s yellow */
+  margin-bottom: 12px;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.social-icons a img {
+  width: 32px;
+  height: 32px;
+  transition: transform 0.2s ease;
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.social-icons a:hover img {
+  transform: scale(1.1);
+}
+
+.flight-info {
+  font-size: 0.9rem;
+  color: #fbecec;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Common styling for sections like booking, login, register forms */
+.booking-section {
+  background: #c82323 url('https://images.unsplash.com/photo-1530521954074-e64f7598e5f2?q=80&w=2070&auto=format&fit=crop') no-repeat center / cover;
+  color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(255, 102, 102, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.booking-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(200, 35, 35, 0.8); /* Semi-transparent overlay for readability */
+  z-index: 1;
+}
+
+.booking-section h1,
+.booking-section > p,
+.booking-section .input-group,
+.booking-section .tabs,
+.booking-section .tab-content,
+.booking-section .flight-results,
+.booking-section .trip-type {
+  position: relative;
+  z-index: 2; /* Ensure content is above the overlay */
+}
+
+.booking-section h1 {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.booking-section > p {
+  font-size: 0.9rem;
+  color: #fff;
+  margin-bottom: 20px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.booking-section .input-group label {
+  color: #fff;
+}
+
+.booking-section .input-group input,
+.booking-section .input-group select {
+  border: none;
+  color: #333;
+  background: #fff;
+}
+
+/* Responsive Adjustments for Common Elements */
+@media (max-width: 768px) {
+  .header-container {
+    flex-wrap: wrap;
+    gap: 8px;
+    background-image: url('https://images.unsplash.com/photo-1568396957347-5e8e351ad711?q=80&w=1000&auto=format&fit=crop'); /* Smaller image for mobile */
+  }
+
+  .menu {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    gap: 5px;
+    font-size: 0.75rem;
+  }
+
+  .menu li a {
+    padding: 5px;
+  }
+
+  .auth-links {
+    margin-left: auto;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 15px;
+    background-image: url('https://images.unsplash.com/photo-1515170493386-3d7dd9f7c2c4?q=80&w=1000&auto=format&fit=crop');
+  }
+
+  .booking-section {
+    background-image: url('https://images.unsplash.com/photo-1530521954074-e64f7598e5f2?q=80&w=1000&auto=format&fit=crop');
+  }
+}
+
+@media (max-width: 480px) {
+  .logo h2 {
+    font-size: 1.2rem;
+  }
+
+  .social-connect {
+    background-image: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=1000&auto=format&fit=crop');
+  }
+}

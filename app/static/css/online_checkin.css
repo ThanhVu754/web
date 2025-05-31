@@ -1,0 +1,251 @@
+/* public/css/online_checkin.css */
+/* Kế thừa common.css và có thể một số style từ my_flights.css nếu dùng chung class nút */
+
+.online-checkin-page-section-vj {
+    padding: 20px 15px; /* Giảm padding dọc một chút */
+    background-color: #f4f6f8;
+    min-height: calc(100vh - 70px); 
+}
+
+.online-checkin-main-container-vj {
+    background-color: #ffffff;
+    padding: 25px; /* Giảm padding một chút */
+    border-radius: 18px; /* Bo góc mềm mại hơn */
+    box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+    max-width: 800px; /* Giữ nguyên max-width hoặc điều chỉnh nếu cần */
+    margin: 0 auto;
+}
+
+.checkin-header-vj h1 {
+    color: #DA251D; 
+    text-align: center;
+    margin-bottom: 20px; /* Giảm margin */
+    font-size: 1.8rem; /* Giữ nguyên hoặc giảm nhẹ */
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Thanh tiến trình */
+.checkin-progress-bar-vj {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; 
+    margin-bottom: 30px; /* Giảm margin */
+    padding: 0 5px; 
+}
+.progress-step-vj {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #adb5bd; 
+    font-size: 0.75rem; /* Chữ nhỏ hơn một chút */
+    flex: 1; 
+    position: relative; 
+}
+.progress-step-vj .step-number-vj {
+    width: 28px; /* Nhỏ hơn một chút */
+    height: 28px;
+    border-radius: 50%;
+    background-color: #e9ecef; 
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border: 2px solid #e9ecef;
+    margin-bottom: 6px; /* Giảm margin */
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+.progress-step-vj .step-label-vj {
+    line-height: 1.2; /* Sát hơn */
+    font-weight: 500;
+}
+
+.progress-step-vj.active .step-number-vj {
+    background-color: #DA251D; 
+    border-color: #DA251D;
+    color: white;
+}
+.progress-step-vj.active .step-label-vj {
+    color: #DA251D; 
+    font-weight: 600;
+}
+.progress-step-vj.completed .step-number-vj { 
+    background-color: #FFD600; 
+    border-color: #FFD600;
+    color: #D50000; 
+}
+.progress-step-vj.completed .step-label-vj {
+    color: #333; 
+}
+
+.progress-connector-vj {
+    flex-grow: 1;
+    height: 2px;
+    background-color: #e9ecef;
+    margin: 13px 0; /* Căn giữa với step-number mới */
+    max-width: 80px; /* Giảm chiều dài connector nếu muốn các step gần nhau hơn */
+}
+.progress-step-vj.active ~ .progress-connector-vj,
+.progress-step-vj.completed ~ .progress-connector-vj,
+.progress-step-vj.completed + .progress-connector-vj {
+    background-color: #FFD600; 
+}
+
+
+/* Style cho từng bước */
+.checkin-step-vj { display: none; }
+.checkin-step-vj.active { display: block; }
+
+.step-content-vj {
+    padding: 15px; /* Giảm padding */
+    border: 1px solid #f0f0f0;
+    border-radius: 12px; /* Bo góc mềm mại */
+    background-color: #fff; 
+}
+.step-content-vj h2 { 
+    font-size: 1.4rem; /* Giảm kích thước tiêu đề step */
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 15px; /* Giảm margin */
+    font-weight: 600;
+}
+.step-content-vj p {
+    color: #555;
+    font-size: 0.9rem; /* Giảm nhẹ font size */
+    line-height: 1.5;
+    margin-bottom: 12px; /* Giảm margin */
+}
+
+.styled-form-vj .input-group-vj { margin-bottom: 15px; } /* Giảm margin */
+.styled-form-vj .input-group-vj label { font-size: 0.85rem; margin-bottom: 5px; }
+.styled-form-vj .input-group-vj input[type="text"],
+.styled-form-vj .input-group-vj input[type="checkbox"] {
+    /* ... */
+}
+.styled-form-vj .input-group-vj.checkbox-group-vj label {
+    font-weight: normal;
+    font-size: 0.9rem; /* Giảm nhẹ */
+}
+.styled-form-vj .input-group-vj input[type="checkbox"] {
+    accent-color: #DA251D;
+}
+
+
+.action-btn-vj { 
+  padding: 10px 20px; /* Giảm nhẹ padding ngang */
+  border: none;
+  border-radius: 28px; /* Bo tròn mềm mại hơn */
+  font-weight: 600;
+  font-size: 0.95rem; /* Giảm nhẹ font size */
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s, transform 0.1s ease;
+  text-decoration: none;
+  text-align: center;
+  line-height: 1.5; 
+  margin: 5px;
+  display: inline-block;
+  min-width: 160px; /* Giảm min-width */
+}
+/* Nút chính to hơn trong form */
+.action-btn-vj.large-btn-vj { 
+    width: 100%;
+    padding: 10px 20px; /* Giảm padding dọc một chút */
+    font-size: 1rem;
+}
+
+.primary-btn-vj { background-color: #DA251D; color: white; }
+.primary-btn-vj:hover { background-color: #B71C1C; }
+.secondary-btn-vj { background-color: #f0f0f0; color: #555; border: 1px solid #ccc;}
+.secondary-btn-vj:hover { background-color: #e0e0e0; }
+
+
+.error-message-vj {
+    padding: 8px; /* Giảm padding */
+    margin-top: 12px; /* Giảm margin */
+    font-size: 0.85rem; /* Giảm font size */
+}
+
+.checkin-static-info-vj {
+    margin-top: 20px; /* Giảm margin */
+    padding: 15px;    /* Giảm padding */
+    background-color: #fff9e6;
+    border-left: 4px solid #FFD600; 
+    border-radius: 0 8px 8px 0; /* Bo góc mềm mại */
+    font-size: 0.85rem; /* Giảm font size */
+}
+.checkin-static-info-vj h3 {
+    font-size: 1rem; /* Giảm font size */
+    margin-bottom: 8px; /* Giảm margin */
+}
+
+/* Step 2: Flight & Passenger List */
+.content-box-vj {
+    background-color: #fdfdff; /* Nền hơi khác biệt */
+    border: 1px solid #eef2f7;
+    padding: 15px; /* Giảm padding */
+    border-radius: 10px; /* Bo góc mềm mại */
+    margin-bottom: 15px; /* Giảm margin */
+}
+#flights-for-checkin-list .flight-checkin-item-vj {
+    padding-bottom: 10px; /* Giảm padding */
+    margin-bottom: 10px; /* Giảm margin */
+}
+.flight-checkin-item-vj h3 { font-size: 1.1rem; margin-bottom: 6px; }
+.flight-checkin-item-vj p { font-size: 0.85rem; margin-bottom: 3px; }
+.status-tag-vj { padding: 3px 8px; border-radius: 12px; font-size: 0.75em; }
+.status-ok-vj { background-color: #e8f5e9; color: #2e7d32; }
+.status-not-ok-vj { background-color: #ffebee; color: #c62828; }
+
+
+.passenger-list-vj .passenger-checkin-item-vj { padding: 8px 0; }
+.passenger-list-vj .passenger-checkin-item-vj label { font-size: 0.95rem; }
+.passenger-list-vj .passenger-checkin-item-vj .pax-name { font-weight: 500; }
+.passenger-list-vj .passenger-checkin-item-vj .pax-type { font-size: 0.8em; color: #777; margin-left: 5px; }
+.passenger-list-vj .passenger-checkin-item-vj .pax-status { font-size: 0.8em; color: #007bff; margin-left: 8px; }
+
+
+/* Step 3: Dangerous Goods */
+.dangerous-goods-content-vj {
+    max-height: 250px; /* Giảm chiều cao tối đa */
+    font-size: 0.85rem; 
+    padding: 12px; /* Giảm padding */
+}
+
+/* Step 4: Seat Selection */
+#seat-selection-info-vj { padding: 15px; font-size: 0.9rem; }
+#passenger-seat-display-list li { padding: 6px 0; font-size: 0.9rem; }
+
+/* Step 5: Confirmation */
+.confirmation-icon-vj { font-size: 3.5rem; margin-bottom: 10px; }
+.confirmation-message-vj { margin-bottom: 20px; font-size: 1rem; }
+#boarding-pass-summary-list .boarding-pass-summary-item { padding: 12px; margin-bottom: 10px; }
+.boarding-pass-summary-item h4 { font-size: 1.05rem; margin-bottom: 6px; }
+.boarding-pass-summary-item p { font-size: 0.85rem; margin-bottom: 3px; }
+.boarding-pass-actions-vj { margin-top: 20px; }
+.boarding-pass-actions-vj .action-btn-vj { margin: 0 5px; font-size: 0.9rem; padding: 8px 18px;}
+
+.step-navigation-vj {
+    margin-top: 25px; /* Giảm margin */
+    padding-top: 15px; /* Giảm padding */
+}
+.step-navigation-vj .action-btn-vj i { font-size: 0.8em; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .online-checkin-main-container-vj { padding: 15px; }
+    .checkin-header-vj h1 { font-size: 1.5rem; margin-bottom: 15px; }
+    .checkin-progress-bar-vj { margin-bottom: 25px; }
+    .progress-step-vj .step-label-vj { font-size: 0.7rem; }
+
+    .step-content-vj h2 { font-size: 1.2rem; margin-bottom: 12px;}
+    .step-navigation-vj { flex-direction: column-reverse; gap: 10px; }
+    .step-navigation-vj .action-btn-vj { width: 100%; font-size: 0.95rem; padding: 10px;}
+    
+    .boarding-pass-actions-vj .action-btn-vj {
+        display: block;
+        width: calc(100% - 10px); /* Trừ margin */
+        margin: 8px auto;
+    }
+}

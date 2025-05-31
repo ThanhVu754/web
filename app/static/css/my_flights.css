@@ -1,0 +1,563 @@
+/* public/css/my_flights.css */
+/* Kế thừa các style chung từ common.css */
+
+.my-flights-page-section-vj {
+    padding: 20px 0;
+    background-color: #f4f7fa; 
+}
+
+.my-flights-lookup-container-vj {
+    max-width: 650px;
+    margin: 0 auto 30px auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.my-flights-form-vj h1 {
+    color: #DA251D; 
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.my-flights-form-vj p {
+    text-align: center;
+    color: #555;
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.input-group-vj { 
+  margin-bottom: 18px;
+}
+
+.input-group-vj label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 7px;
+  font-size: 0.9rem;
+}
+
+.input-group-vj input[type="text"],
+.input-group-vj input[type="date"],
+.input-group-vj input[type="time"],
+.input-group-vj select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ced4da; 
+  border-radius: 5px;
+  font-size: 0.95rem;
+  color: #495057;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.input-group-vj input[type="text"]:focus,
+.input-group-vj input[type="date"]:focus {
+    border-color: #DA251D; 
+    box-shadow: 0 0 0 0.2rem rgba(218, 37, 29, 0.25);
+    outline: none;
+}
+
+.action-btn-vj {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s, transform 0.1s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1.2;
+  text-transform: uppercase; 
+}
+.action-btn-vj:active {
+    transform: scale(0.98); 
+}
+
+.action-btn-vj .fas, .action-btn-vj .far, .action-btn-vj .fa { 
+    font-size: 0.9em; 
+}
+
+.primary-btn-vj {
+  background-color: #DA251D; 
+  color: white;
+}
+.primary-btn-vj:hover {
+  background-color: #B71C1C; 
+}
+
+.lookup-submit-btn-vj { 
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1.05rem;
+}
+
+.secondary-btn-vj {
+  background-color: #6c757d; 
+  color: white;
+}
+.secondary-btn-vj:hover {
+  background-color: #5a6268;
+}
+.error-message-vj {
+    color: #D32F2F;
+    background-color: #FFCDD2;
+    border: 1px solid #D32F2F;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 15px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.flight-details-section-vj {
+    max-width: 900px; 
+    margin: 30px auto;
+}
+.flight-card-vj {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+  overflow: hidden; 
+}
+
+.card-header-vj {
+  background-color: #DA251D; 
+  color: white;
+  padding: 18px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.card-header-vj h2 {
+  font-size: 1.4rem;
+  margin: 0;
+  font-weight: 600;
+}
+.card-header-vj h2 span { 
+  font-weight: bold;
+  background-color: rgba(255,255,255,0.2);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.status-vj {
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.status-confirmed-vj { background-color: #4CAF50; color: white; }
+.status-cancelled-vj { background-color: #f44336; color: white; }
+
+.flight-segment-vj {
+  padding: 20px 25px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.flight-segment-vj:last-of-type { border-bottom: none; }
+
+.segment-header-vj {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.segment-header-vj h4 {
+    font-size: 1.15rem;
+    color: #333;
+    margin: 0;
+    font-weight: 600;
+}
+.flight-number-vj {
+    font-size: 0.9rem;
+    color: #555;
+}
+.flight-number-vj span { font-weight: bold; }
+
+.flight-route-vj {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.city-point-vj {
+  text-align: center;
+  flex: 1;
+}
+.city-point-vj .city-name-vj {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+.city-point-vj .city-code-vj {
+  display: block;
+  font-size: 0.9rem;
+  color: #777;
+  text-transform: uppercase;
+}
+
+.flight-icon-container-vj {
+  text-align: center;
+  flex-basis: 120px; 
+}
+.flight-icon-vj {
+  font-size: 1.8rem; 
+  color: #DA251D;
+  display: block;
+}
+.flight-duration-vj {
+    font-size: 0.85rem;
+    color: #666;
+    display: block;
+    margin-top: 2px;
+}
+
+.flight-timings-vj p {
+  font-size: 0.95rem;
+  color: #555;
+  margin: 5px 0;
+  line-height: 1.5;
+}
+.flight-timings-vj strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.flight-segment-vj > p { 
+    font-size: 0.95rem;
+    color: #555;
+    margin-top: 10px;
+}
+.flight-segment-vj > p span {
+    font-weight: 600;
+    color: #333;
+}
+
+.passengers-info-vj, .services-info-vj, .fare-details-vj {
+  padding: 18px 25px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.passengers-info-vj:last-child, .services-info-vj:last-child, .fare-details-vj:last-child {
+    border-bottom: none;
+}
+
+.passengers-info-vj h4, .services-info-vj h4, .fare-details-vj h4 {
+  font-size: 1.1rem;
+  color: #DA251D; 
+  margin-top:0;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+.passengers-info-vj ul, .services-info-vj ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+.passengers-info-vj li, .services-info-vj li {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 6px;
+  padding-left: 15px;
+  position: relative;
+}
+.passengers-info-vj li::before, .services-info-vj li::before {
+    content: "•";
+    color: #DA251D;
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+.fare-details-vj .fare-row-vj {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 7px;
+}
+.fare-details-vj .fare-value-vj {
+    font-weight: 600;
+    color: #333;
+}
+.fare-details-vj .fare-divider-vj {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 12px 0;
+}
+.fare-details-vj .total-fare-vj strong {
+    font-size: 1.2rem;
+    color: #DA251D; 
+}
+.payment-status-info-vj {
+    font-size: 0.95rem;
+    margin-top: 10px;
+    color: #555;
+}
+.payment-status-info-vj .status-paid-vj {
+    color: #4CAF50; 
+    font-weight: bold;
+}
+
+.flight-actions-vj {
+  padding: 20px 25px;
+  background-color: #f9fafb; 
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 12px;
+  justify-content: flex-start; 
+}
+.flight-actions-vj .action-btn-vj {
+    flex-grow: 1; 
+    min-width: 160px; 
+    font-size: 0.9rem; 
+}
+
+.form-container-vj { 
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  margin: 30px auto;
+  max-width: 700px;
+}
+.form-container-vj h3 {
+  color: #DA251D; 
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 600;
+}
+.form-container-vj .input-group-vj label { color: #333; }
+.fee-notice-vj {
+    font-size: 0.9rem;
+    color: #D32F2F; 
+    margin: 15px 0;
+    font-style: italic;
+    text-align: center;
+}
+.form-actions-vj {
+    margin-top: 25px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.modal-vj { 
+  display: none; 
+  position: fixed; 
+  z-index: 1000; 
+  left: 0; top: 0; 
+  width: 100%; height: 100%; 
+  overflow: auto; 
+  background-color: rgba(0,0,0,0.6);
+  align-items: center;
+  justify-content: center;
+}
+.modal-content-vj {
+  background-color: #fff;
+  margin: auto; 
+  padding: 25px 30px;
+  border: none;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 650px; 
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-content-vj .close-vj {
+  color: #aaa;
+  position: absolute;
+  top: 10px; right: 20px;
+  font-size: 28px; font-weight: bold;
+  cursor: pointer;
+}
+.modal-content-vj .close-vj:hover,
+.modal-content-vj .close-vj:focus { color: #DA251D; }
+
+.modal-content-vj h2 {
+  color: #DA251D; 
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+.modal-pnr-info-vj {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 15px;
+}
+.modal-pnr-info-vj strong { color: #333; }
+
+.modal-content-vj fieldset {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+}
+.modal-content-vj legend {
+  font-weight: 600;
+  color: #333;
+  padding: 0 10px;
+  font-size: 1.1rem;
+}
+.modal-content-vj .input-group-vj label {
+  font-size: 0.9rem; 
+  color: #555;
+}
+.modal-content-vj .input-group-vj strong { 
+    color: #007bff; 
+    font-weight: 500;
+}
+.modal-content-vj .input-group-vj p.service-fee-display-vj {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 8px;
+    text-align: right;
+}
+.modal-content-vj .input-group-vj p.service-fee-display-vj span {
+    font-weight: bold;
+    color: #DA251D;
+}
+
+.total-modal-service-fee-vj {
+  text-align: right;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+.total-modal-service-fee-vj h3 {
+  font-size: 1.25rem;
+  color: #333;
+  font-weight: 600;
+}
+.total-modal-service-fee-vj h3 span {
+  font-weight: bold;
+  color: #DA251D; 
+  font-size: 1.35rem;
+}
+.modal-submit-btn-vj { 
+    width: 100%; 
+    padding: 12px;
+    font-size: 1rem;
+}
+
+/* === FLIGHT TIPS SECTION === */
+.flight-tips-vj {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 25px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+}
+.section-title-vj {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #DA251D; /* Vietjet Red */
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+.tips-grid-vj {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+.tip-card-vj {
+    background-color: #fdf6f6; /* Nền đỏ rất nhạt */
+    border: 1px solid #ffe0e0;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start; /* Căn icon và text theo chiều dọc */
+    gap: 15px;
+}
+.tip-icon-vj {
+    font-size: 1.8rem;
+    color: #DA251D; /* Vietjet Red */
+    flex-shrink: 0;
+    width: 40px; /* Cho icon có không gian cố định */
+    text-align: center;
+}
+.tip-content-vj h4 {
+    font-size: 1.1rem;
+    color: #c0392b; /* Đỏ đậm hơn */
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.tip-content-vj p {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+
+/* Responsive specific to My Flights */
+@media (max-width: 768px) {
+    .my-flights-lookup-container-vj, .form-container-vj {
+        padding: 20px;
+    }
+    .card-header-vj {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .card-header-vj h2 { font-size: 1.2rem; }
+    
+    .flight-route-vj {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch; 
+    }
+    .flight-icon-container-vj {
+        transform: rotate(90deg);
+        margin: 10px 0;
+        flex-basis: auto;
+    }
+    .city-point-vj .city-name-vj { font-size: 1.1rem; }
+
+    .flight-actions-vj {
+        flex-direction: column;
+    }
+    .flight-actions-vj .action-btn-vj {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+    .modal-content-vj {
+        margin: 5% auto;
+        width: 95%;
+        padding: 20px;
+    }
+    .flight-tips-vj { /* Cập nhật cho phần tips */
+        padding: 20px;
+        margin: 30px auto;
+    }
+    .tips-grid-vj {
+        grid-template-columns: 1fr; /* 1 cột trên mobile */
+    }
+    .tip-card-vj {
+        padding: 15px;
+    }
+    .tip-icon-vj {
+        font-size: 1.5rem;
+    }
+    .tip-content-vj h4 {font-size: 1rem;}
+    .tip-content-vj p {font-size: 0.85rem;}
+}

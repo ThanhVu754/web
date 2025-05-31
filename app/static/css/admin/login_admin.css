@@ -1,0 +1,143 @@
+/* public/css/admin/login_admin.css */
+body.admin-login-body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5; /* Màu nền xám nhạt cho trang login */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.6;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px; /* Giới hạn độ rộng của form */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.login-box {
+    background-color: #ffffff;
+    padding: 30px 35px; /* Tăng padding */
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-logo {
+    text-align: center;
+    margin-bottom: 25px;
+}
+.login-logo h2 {
+    margin: 0;
+    font-size: 1.8em;
+    color: #007bff; /* Màu xanh dương cho logo (hoặc màu của SangAir) */
+    /* Nếu bạn dùng ảnh logo:
+    img {
+        max-width: 180px;
+        height: auto;
+    }
+    */
+}
+
+.input-group-login {
+    margin-bottom: 20px;
+}
+.input-group-login label {
+    display: block;
+    font-weight: 500; /* Giảm độ đậm một chút */
+    color: #495057;
+    margin-bottom: 6px;
+    font-size: 0.9em;
+}
+.input-group-login input[type="text"],
+.input-group-login input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ced4da; /* Viền nhạt hơn */
+    border-radius: 4px;
+    font-size: 1em;
+    color: #495057;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.input-group-login input[type="text"]:focus,
+.input-group-login input[type="password"]:focus {
+    border-color: #80bdff; /* Màu viền khi focus */
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    font-size: 0.85em;
+}
+.remember-me-label {
+    display: flex;
+    align-items: center;
+    color: #495057;
+    cursor: pointer;
+}
+.remember-me-label input[type="checkbox"] {
+    margin-right: 6px;
+    accent-color: #007bff; /* Màu checkbox khi được chọn */
+}
+.forgot-password-link {
+    color: #007bff;
+    text-decoration: none;
+}
+.forgot-password-link:hover {
+    text-decoration: underline;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff; /* Màu nút đăng nhập chính */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.btn-login:hover {
+    background-color: #0056b3; /* Màu đậm hơn khi hover */
+}
+
+.login-error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 20px;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.8em;
+    color: #6c757d;
+}
+
+/* Responsive cho trang login */
+@media (max-width: 480px) {
+    .login-box {
+        padding: 25px 20px;
+    }
+    .login-logo h2 {
+        font-size: 1.6em;
+    }
+    .btn-login {
+        padding: 10px;
+        font-size: 0.95em;
+    }
+}

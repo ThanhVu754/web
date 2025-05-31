@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý E-Menu - SangAir Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/app/static/css/admin/admin_layout.css">
+    <link rel="stylesheet" href="/app/static/css/admin/quan_ly_e_menu.css">
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html"><h2>SangAir Admin</h2></a>
+            </div>
+            <nav class="sidebar-nav">
+               <ul>
+                    <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> <span class="nav-text">Tổng quan</span></a></li>
+                    <li><a href="flights.html"><i class="fas fa-plane-departure"></i> <span class="nav-text">Quản lý chuyến bay</span></a></li>
+                    <li><a href="quan_ly_dat_cho.html"><i class="fas fa-file-invoice-dollar"></i> <span class="nav-text">Quản lý đặt chỗ</span></a></li>
+                    <li><a href="quan_ly_nguoi_dung.html"><i class="fas fa-users"></i> <span class="nav-text">Quản lý người dùng</span></a></li>
+                    <li class="has-submenu">
+                        <a href="#"><i class="fas fa-edit"></i> <span class="nav-text">Quản lý nội dung</span> <i class="fas fa-chevron-down submenu-arrow"></i></a>
+                        <ul class="submenu">
+                            <li><a href="quan_ly_thong_bao_trang_chu.html"><i class="fas fa-bullhorn"></i> <span class="nav-text">TB Trang chủ</span></a></li>
+                            <li><a href="quan_ly_e_menu.html"><i class="fas fa-utensils"></i> <span class="nav-text">E-Menu</span></a></li>
+                        </ul>
+                    </li>
+                    <li class="active"><a href="bao_cao_thong_ke.html"><i class="fas fa-chart-bar"></i> <span class="nav-text">Báo cáo & Thống kê</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="admin-main-content">
+            <header class="admin-header">
+                <div class="header-left-controls">
+                    <button id="mobile-menu-toggle-btn" class="menu-toggle-btn"><i class="fas fa-bars"></i></button>
+                    <div class="header-title">
+                        <h1>Quản lý E-Menu</h1>
+                    </div>
+                </div>
+                <div class="admin-user-info">
+                    <span>Chào, Admin!</span>
+                    <a href="#logout" class="logout-btn">Đăng xuất</a>
+                </div>
+            </header>
+
+            <div class="page-content-area">
+                <div class="page-header">
+                    <button id="addMenuItemBtn" class="btn btn-primary"><i class="fas fa-plus"></i> Thêm món mới</button>
+                    <div class="search-filter-area">
+                        <input type="text" id="menuItemSearchInput" placeholder="Tìm theo tên món...">
+                        <select id="menuCategoryFilter">
+                            <option value="">Tất cả danh mục</option>
+                            <option value="combo">Combo</option>
+                            <option value="do_an_nong">Đồ ăn nóng</option>
+                            <option value="do_uong">Đồ uống</option>
+                            <option value="mon_an_vat">Món ăn vặt</option>
+                        </select>
+                        <button id="applyMenuItemFilterBtn" class="btn btn-secondary-outline">Lọc</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table id="eMenuTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Hình ảnh</th>
+                                <th>Tên món</th>
+                                <th>Danh mục</th>
+                                <th>Giá VND</th>
+                                <th>Giá USD</th>
+                                <th>Mô tả ngắn</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="eMenuTableBody">
+                            </tbody>
+                    </table>
+                </div>
+                <div class="pagination-container" id="paginationContainerEMenu">
+                    </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="menuItemFormModal" class="admin-modal">
+        <div class="modal-content large">
+            <span class="modal-close-btn" id="closeMenuItemModalBtn">&times;</span>
+            <h3 id="menuItemModalTitle">Thêm món mới vào E-Menu</h3>
+            <form id="menuItemForm" novalidate>
+                <input type="hidden" id="menuItemId" name="menuItemId">
+                
+                <div class="form-group">
+                    <label for="menuItemName">Tên món ăn/đồ uống *</label>
+                    <input type="text" id="menuItemName" name="menuItemName" required>
+                    <div class="validation-error-message" id="menuItemName-error"></div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="menuItemCategory">Danh mục *</label>
+                        <select id="menuItemCategory" name="menuItemCategory" required>
+                            <option value="">-- Chọn danh mục --</option>
+                            <option value="combo">Combo</option>
+                            <option value="do_an_nong">Đồ ăn nóng</option>
+                            <option value="do_uong">Đồ uống</option>
+                            <option value="mon_an_vat">Món ăn vặt</option> 
+                        </select>
+                        <div class="validation-error-message" id="menuItemCategory-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="menuItemImageURL">URL Hình ảnh</label>
+                        <input type="url" id="menuItemImageURL" name="menuItemImageURL" placeholder="https://example.com/image.jpg">
+                        <div class="validation-error-message" id="menuItemImageURL-error"></div>
+                        <img id="imagePreview" src="#" alt="Xem trước ảnh" style="max-width: 100px; max-height: 100px; margin-top: 10px; display: none;"/>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="menuItemPriceVND">Giá VND *</label>
+                        <input type="number" id="menuItemPriceVND" name="menuItemPriceVND" min="0" step="1000" required>
+                        <div class="validation-error-message" id="menuItemPriceVND-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="menuItemPriceUSD">Giá USD</label>
+                        <input type="number" id="menuItemPriceUSD" name="menuItemPriceUSD" min="0" step="0.01">
+                        <div class="validation-error-message" id="menuItemPriceUSD-error"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="menuItemDescription">Mô tả chi tiết</label>
+                    <textarea id="menuItemDescription" name="menuItemDescription" rows="4"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="saveMenuItemBtn">Lưu món</button>
+                    <button type="button" class="btn btn-secondary" id="cancelMenuItemFormBtn">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/app/static/js/admin/script_admin_layout.js"></script>
+    <script src="/app/static/js/admin/script_quan_ly_e_menu.js"></script>
+</body>
+</html>

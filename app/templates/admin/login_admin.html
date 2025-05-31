@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập Admin - SangAir</title>
+    <link rel="stylesheet" href="/app/static/css/admin/login_admin.css"> 
+</head>
+<body class="admin-login-body">
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-logo">
+                <h2>SangAir Admin</h2> 
+            </div>
+            <form id="adminLoginForm">
+                <div class="input-group-login">
+                    <label for="username">Tên đăng nhập</label>
+                    <input type="text" id="username" name="username" required placeholder="Nhập tên đăng nhập hoặc email">
+                </div>
+                <div class="input-group-login">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" name="password" required placeholder="Nhập mật khẩu">
+                </div>
+                <div class="login-options">
+                    <label class="remember-me-label" for="rememberMe">
+                        <input type="checkbox" id="rememberMe" name="rememberMe"> Ghi nhớ tôi
+                    </label>
+                    <a href="#" class="forgot-password-link">Quên mật khẩu?</a>
+                </div>
+                <button type="submit" class="btn-login">Đăng nhập</button>
+                <div id="loginErrorMessage" class="login-error-message" style="display: none;"></div>
+            </form>
+        </div>
+        <footer class="login-footer">
+            <p>&copy; 2025 SangAir. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="/app/static/js/admin/script_login_admin.js"></script>
+</body>
+</html>

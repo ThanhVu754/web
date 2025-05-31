@@ -1,0 +1,262 @@
+/* public/css/admin/flights_management.css */
+.page-content-area {
+    padding: 25px;
+    background-color: #fff; /* Nền trắng cho khu vực nội dung chính của trang */
+    margin: 20px; /* Khoảng cách với header và các cạnh */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.page-header .btn-primary { /* Style riêng cho nút Thêm mới nếu cần */
+    background-color: #007bff; /* Màu xanh dương */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.page-header .btn-primary:hover {
+    background-color: #0056b3;
+}
+.page-header .btn-primary i {
+    margin-right: 8px;
+}
+
+.search-filter-area input[type="text"] {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9em;
+    min-width: 250px;
+}
+
+.table-container {
+    overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá rộng */
+}
+
+#flightsTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 0.85em; /* Chữ trong bảng nhỏ hơn một chút */
+}
+
+#flightsTable th, #flightsTable td {
+    border: 1px solid #dee2e6;
+    padding: 10px 12px; /* Tăng padding một chút */
+    text-align: left;
+    vertical-align: middle;
+}
+
+#flightsTable thead th {
+    background-color: #f8f9fa; /* Nền xám nhạt cho header bảng */
+    font-weight: 600; /* Chữ đậm */
+    color: #495057;
+    white-space: nowrap; /* Ngăn tiêu đề xuống dòng */
+}
+
+#flightsTable tbody tr:nth-child(even) {
+    background-color: #f8f9fa; /* Màu xen kẽ cho các dòng */
+}
+#flightsTable tbody tr:hover {
+    background-color: #e9ecef; /* Màu khi di chuột qua */
+}
+
+.status {
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 0.9em;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.status-scheduled    { background-color: #17a2b8; color: white; } /* Info Blue */
+.status-on-time      { background-color: #28a745; color: white; } /* Success Green */
+.status-delayed      { background-color: #ffc107; color: #333; } /* Warning Yellow */
+.status-cancelled    { background-color: #dc3545; color: white; } /* Danger Red */
+.status-departed     { background-color: #6f42c1; color: white; } /* Indigo/Purple */
+.status-arrived      { background-color: #20c997; color: white; } /* Teal */
+
+
+#flightsTable .btn {
+    padding: 5px 8px;
+    font-size: 0.85em;
+    margin-right: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+#flightsTable .btn i {
+    margin-right: 4px;
+}
+#flightsTable .btn-edit {
+    background-color: #ffc107; /* Vàng */
+    color: #212529;
+    border-color: #ffc107;
+}
+#flightsTable .btn-edit:hover { background-color: #e0a800; }
+
+#flightsTable .btn-delete {
+    background-color: #dc3545; /* Đỏ */
+    color: white;
+    border-color: #dc3545;
+}
+#flightsTable .btn-delete:hover { background-color: #c82333; }
+
+
+.pagination-container {
+    text-align: center;
+    margin-top: 20px;
+}
+/* Style cho phân trang sẽ được thêm sau nếu cần */
+
+
+/* Modal Styles */
+.admin-modal {
+    display: none; /* Ẩn mặc định */
+    position: fixed;
+    z-index: 1050; /* Cao hơn sidebar */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5); /* Nền mờ */
+}
+
+.admin-modal .modal-content {
+    background-color: #fff;
+    margin: 5% auto; /* Căn giữa và cách top */
+    padding: 25px 30px;
+    border: none;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 700px; /* Độ rộng modal */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.admin-modal .modal-close-btn {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.admin-modal .modal-close-btn:hover,
+.admin-modal .modal-close-btn:focus {
+    color: #333;
+}
+
+.admin-modal #flightModalTitle {
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 1.5em;
+    color: #343a40;
+    text-align: center;
+}
+
+#flightForm .form-row {
+    display: flex;
+    gap: 20px; /* Khoảng cách giữa các cột trong một hàng */
+    margin-bottom: 15px;
+}
+#flightForm .form-row .form-group {
+    flex: 1; /* Các group chiếm không gian đều nhau */
+}
+#flightForm .form-group {
+    margin-bottom: 15px; /* Nếu không dùng form-row */
+}
+#flightForm .form-group:last-child {
+    margin-bottom: 0;
+}
+
+
+#flightForm label {
+    display: block;
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 6px;
+    font-size: 0.9em;
+}
+
+#flightForm input[type="text"],
+#flightForm input[type="date"],
+#flightForm input[type="time"],
+#flightForm input[type="number"],
+#flightForm select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.95em;
+    box-sizing: border-box;
+}
+#flightForm input:focus, #flightForm select:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+
+#flightForm .form-actions {
+    margin-top: 25px;
+    text-align: right; /* Căn phải các nút */
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+}
+#flightForm .form-actions .btn {
+    padding: 10px 20px;
+    font-size: 0.95em;
+    font-weight: 500;
+    margin-left: 10px;
+}
+#flightForm .form-actions .btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+#flightForm .form-actions .btn-primary:hover { background-color: #0056b3; }
+
+#flightForm .form-actions .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+}
+#flightForm .form-actions .btn-secondary:hover { background-color: #545b62; }
+
+
+/* Responsive cho bảng và modal */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    .search-filter-area input[type="text"] {
+        width: 100%;
+        min-width: unset;
+    }
+    #flightForm .form-row {
+        flex-direction: column;
+        gap: 0; /* Reset gap, form-group sẽ tự có margin-bottom */
+    }
+    .admin-modal .modal-content {
+        margin: 5% auto;
+        width: 95%;
+        padding: 20px;
+    }
+}

@@ -1,0 +1,234 @@
+/* public/css/admin/admin_layout.css */
+body.admin-body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; 
+    color: #343a40; 
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Sidebar --- */
+.admin-sidebar {
+    width: 230px; 
+    background-color: #343a40; 
+    color: #f8f9fa; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 1000;
+    transition: left 0.3s ease-in-out; 
+    overflow-y: auto; 
+}
+
+.sidebar-header {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #495057;
+    height: 60px; 
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sidebar-header h2 {
+    margin: 0;
+    font-size: 1.5em;
+    color: #ffffff; 
+}
+.sidebar-header a {
+    text-decoration: none;
+}
+
+.sidebar-nav {
+    margin-top: 15px;
+}
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.sidebar-nav li a {
+    display: flex; 
+    align-items: center;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #adb5bd; 
+    font-size: 0.9em;
+    border-left: 3px solid transparent; 
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.sidebar-nav li a i { 
+    margin-right: 10px;
+    font-size: 1em;
+    width: 18px; 
+    text-align: center;
+    flex-shrink: 0;
+}
+.sidebar-nav li a .nav-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-nav li a:hover {
+    background-color: #495057; 
+    color: #ffffff; 
+}
+.sidebar-nav li.active a {
+    background-color: #007bff; 
+    color: #ffffff; 
+    border-left: 3px solid #ffffff; 
+    font-weight: 500;
+}
+
+/* --- Main Content Area --- */
+.admin-main-content {
+    flex: 1;
+    margin-left: 230px; 
+    padding-bottom: 20px; 
+    transition: margin-left 0.3s ease-in-out; 
+}
+
+.admin-header {
+    background-color: #ffffff; 
+    padding: 0 25px; 
+    height: 60px; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #dee2e6; 
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    position: sticky; 
+    top: 0;
+    z-index: 990; 
+}
+.header-left-controls {
+    display: flex;
+    align-items: center;
+}
+
+.menu-toggle-btn { 
+    display: none; 
+    background: none;
+    border: none;
+    color: #343a40;
+    font-size: 1.3em;
+    cursor: pointer;
+    margin-right: 15px; 
+}
+
+.header-title h1 {
+    margin: 0;
+    font-size: 1.3em; 
+    color: #343a40; 
+    font-weight: 500; 
+}
+
+.admin-user-info {
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+}
+.admin-user-info span {
+    margin-right: 15px;
+    color: #495057;
+}
+.logout-btn { 
+    color: #dc3545; 
+    text-decoration: none;
+    font-weight: 500;
+    padding: 5px 10px;
+    border: 1px solid #dc3545;
+    border-radius: 4px;
+}
+.logout-btn:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* --- General Modal Styles --- */
+.admin-modal {
+    display: none; /* JS sẽ đổi thành 'flex' để hiện */
+    position: fixed; 
+    z-index: 1050; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Ngăn cuộn body khi modal mở */
+    background-color: rgba(0,0,0,0.6); 
+    /* Sử dụng flexbox để căn giữa .modal-content */
+    align-items: center; 
+    justify-content: center; 
+}
+
+.admin-modal .modal-content {
+    background-color: #fff;
+    padding: 25px 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+    position: relative;
+    width: 90%; /* Mặc định cho mobile, sẽ được ghi đè bởi class .large, .medium nếu cần */
+    max-height: 90vh; 
+    overflow-y: auto; 
+    box-sizing: border-box;
+    /* Không cần margin: X% auto; nữa vì đã dùng flex trên .admin-modal */
+}
+
+.admin-modal .modal-close-btn {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 15px; /* Điều chỉnh vị trí nút close */
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+}
+.admin-modal .modal-close-btn:hover,
+.admin-modal .modal-close-btn:focus {
+    color: #333;
+}
+
+/* --- Responsive cho Layout Admin --- */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        left: -230px; 
+    }
+    .admin-sidebar.open { 
+        left: 0;
+        box-shadow: 3px 0 10px rgba(0,0,0,0.1); 
+    }
+    .admin-main-content {
+        margin-left: 0; 
+    }
+    .admin-main-content.sidebar-open-overlay::before { 
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0; 
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.4);
+        z-index: 995; 
+    }
+    .menu-toggle-btn { 
+        display: inline-block;
+    }
+    .admin-header {
+        padding: 0 15px;
+    }
+    /* Style cho modal trên mobile nếu cần thu nhỏ hơn nữa */
+    .admin-modal .modal-content {
+        width: 95%;
+        padding: 20px;
+        max-height: 95vh;
+    }
+}
