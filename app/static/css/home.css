@@ -459,6 +459,7 @@
   font-size: 0.95rem;
   color: #444;
   line-height: 1.5;
+  text-overflow: hidden;
 }
 
 @media (max-width: 768px) {

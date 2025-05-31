@@ -289,45 +289,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateScroll();
 });
-
 document.getElementById('booking-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    const data = {
-        departure: document.getElementById('departure').value.trim(),
-        destination: document.getElementById('destination').value.trim(),
-        departure_date: document.getElementById('departure-date').value
-    };
+  const departure = document.getElementById('departure').value;
+  const destination = document.getElementById('destination').value;
+  const date = document.getElementById('departure-date').value;
+  const seatClass = document.getElementById('seat-class').value;
 
-    fetch('/api/search-flights', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    })
-    .then(res => res.json())
-    .then(flights => {
-        const resultDiv = document.getElementById('flight-results');
-        const optionsDiv = resultDiv.querySelector('.flight-options');
-        optionsDiv.innerHTML = '';
-        if (flights.length === 0) {
-            resultDiv.style.display = 'block';
-            optionsDiv.innerHTML = '<p>Không tìm thấy chuyến bay phù hợp.</p>';
-            return;
-        }
-        flights.forEach(f => {
-            optionsDiv.innerHTML += `
-                <div class="flight-option">
-                    <div class="flight-details">
-                        <h3>Chuyến bay: ${f.flight_number}</h3>
-                        <p><strong>Hành trình:</strong> ${f.departure_airport} → ${f.arrival_airport}</p>
-                        <p><strong>Thời gian:</strong> ${f.departure_date} - ${f.departure_time} → ${f.arrival_time}</p>
-                        <p><strong>Hạng:</strong> Phổ thông - ${f.base_price.toLocaleString()} VND</p>
-                        <p><strong>Trạng thái:</strong> <span class="status-confirmed">Còn chỗ</span></p>
-                    </div>
-                    <button class="book-btn" data-flight="${f.id}">Đặt vé</button>
-                </div>
-            `;
+  if (!departure || !destination || !date) {
+    alert("Vui lòng nhập đầy đủ thông tin.");
+    return;
+  }
+
+  fetch(`/flights?departure=${encodeURIComponent(departure)}&destination=${encodeURIComponent(destination)}`)
+    .then(response => response.json())
+    .then(data => {
+      const resultsContainer = document.getElementById("flight-results");
+      const optionsContainer = document.getElementById("flight-options-container");
+      optionsContainer.innerHTML = "";
+
+      if (data.length === 0) {
+        optionsContainer.innerHTML = "<p>Không tìm thấy chuyến bay phù hợp.</p>";
+      } else {
+        data.forEach(flight => {
+          let price = "N/A";
+          if (seatClass === "Phổ thông") price = flight.economy_price;
+          else if (seatClass === "Thương gia") price = flight.business_price;
+          else if (seatClass === "Hạng nhất") price = flight.first_class_price;
+
+          optionsContainer.innerHTML += `
+            <div class="flight-option">
+              <div class="flight-details">
+                <h3>Chuyến bay: ${flight.flight_code}</h3>
+                <p><strong>Hành trình:</strong> ${flight.departure} → ${flight.destination}</p>
+                <p><strong>Thời gian:</strong> ${flight.departure_time} → ${flight.arrival_time}</p>
+                <p><strong>Hạng:</strong> ${seatClass} - ${price} VND</p>
+                <p><strong>Trạng thái:</strong> <span class="status-confirmed">Còn chỗ</span></p>
+              </div>
+              <button class="book-btn" data-flight="${flight.id}">Đặt vé</button>
+            </div>
+          `;
         });
-        resultDiv.style.display = 'block';
+      }
+
+      resultsContainer.style.display = "block";
+    })
+    .catch(error => {
+      alert("Lỗi khi tải chuyến bay.");
+      console.error(error);
     });
 });

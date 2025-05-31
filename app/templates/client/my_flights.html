@@ -4,26 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Chuyến Bay Của Tôi - SangAir</title>
-  <link rel="stylesheet" href="/app/static/css/common.css" />
-  <link rel="stylesheet" href="/app/static/css/my_flights.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/my_flights.css') }}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
   <header>
     <div class="container header-container">
       <div class="logo">
-        <a href="home.html"><h2>SangAir</h2></a>
+        <a href="{{ url_for('client_bp.home') }}"><h2>SangAir</h2></a>
       </div>
       <nav>
         <ul class="menu">
-          <li><a href="my_flights.html" class="active">CHUYẾN BAY CỦA TÔI</a></li>
-          <li><a href="online_checkin.html">ONLINE CHECK-IN</a></li>
-          <li><a href="e_menu.html">E-MENU</a></li>
-          <li><a href="flight_services.html">DỊCH VỤ CHUYẾN BAY</a></li>
+          <li><a href="{{ url_for('client_bp.my_flights') }}" class="active">CHUYẾN BAY CỦA TÔI</a></li>
+          <li><a href="{{ url_for('client_bp.online_checkin') }}">ONLINE CHECK-IN</a></li>
+          <li><a href="{{ url_for('client_bp.e_menu') }}">E-MENU</a></li>
+          <li><a href="{{ url_for('client_bp.flight_services') }}">DỊCH VỤ CHUYẾN BAY</a></li>
         </ul>
       </nav>
       <div class="auth-links">
-        <a href="dang_ki.html">Đăng ký</a><a href="dang_nhap.html">Đăng nhập</a>
+        <a href="{{ url_for('client_bp.dang_ki') }}">Đăng ký</a><a href="{{ url_for('client_bp.dang_nhap') }}">Đăng nhập</a>
       </div>
       <div class="language-select">
         <select>
@@ -39,39 +39,48 @@
       <div class="my-flights-form-vj">
         <h1>CHUYẾN BAY CỦA TÔI</h1>
         <p>Tra cứu thông tin chuyến bay, thay đổi lịch trình hoặc thêm dịch vụ (hành lý, chỗ ngồi, suất ăn, v.v.).</p>
-        <form id="my-flights-lookup-form">
+        <form id="my-flights-lookup-form" action="{{ url_for('client_bp.my_flights') }}" method="POST">
           <div class="input-group-vj">
             <label for="lookup-booking-code">Mã đặt chỗ *</label>
-            <input type="text" id="lookup-booking-code" placeholder="VD: ABC123" required />
+            <input type="text" id="lookup-booking-code" name="booking_code" placeholder="VD: ABC123" required />
           </div>
           <div class="input-group-vj">
             <label for="lookup-last-name">Họ (Như trên vé) *</label>
-            <input type="text" id="lookup-last-name" placeholder="VD: Nguyễn" required />
+            <input type="text" id="lookup-last-name" name="last_name" placeholder="VD: Nguyễn" required />
           </div>
           <div class="input-group-vj">
             <label for="lookup-first-name">Tên và tên đệm *</label>
-            <input type="text" id="lookup-first-name" placeholder="VD: Văn A" required />
+            <input type="text" id="lookup-first-name" name="first_name" placeholder="VD: Văn A" required />
           </div>
           <button type="submit" class="action-btn-vj primary-btn-vj lookup-submit-btn-vj">Tìm kiếm chuyến bay</button>
-          <div id="lookup-error-msg-vj" class="error-message-vj" style="display:none;"></div>
+          <div id="lookup-error-msg-vj" class="error-message-vj">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <p>{{ message }}</p>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+          </div>
         </form>
       </div>
     </div>
 
     <div id="flight-details-section-vj" class="flight-details-section-vj" style="display: none;">
-      </div>
+    </div>
 
     <div id="change-flight-form-container-vj" class="form-container-vj" style="display: none;">
         <h3>Thay đổi chuyến bay</h3>
-        <form id="change-flight-submit-form-vj">
+        <form id="change-flight-submit-form-vj" action="{{ url_for('client_bp.change_flight') }}" method="POST">
             <p><strong>Chuyến bay hiện tại:</strong> <span id="current-flight-info-for-change-vj">SGN → HAN, 08:00 28/07/2025</span></p>
+            <input type="hidden" name="booking_id" id="change-flight-booking-id" value="">
             <div class="input-group-vj">
                 <label for="new-departure-date-vj">Ngày khởi hành mới *</label>
-                <input type="date" id="new-departure-date-vj" required />
+                <input type="date" id="new-departure-date-vj" name="new_departure_date" required />
             </div>
             <div class="input-group-vj">
                 <label for="new-flight-options-vj">Chọn chuyến bay mới (nếu có):</label>
-                <select id="new-flight-options-vj">
+                <select id="new-flight-options-vj" name="new_flight_id">
                     <option value="">-- Vui lòng tìm chuyến bay theo ngày mới --</option>
                 </select>
             </div>
@@ -85,15 +94,16 @@
     
     <div id="service-modal-vj" class="modal-vj" style="display: none;">
       <div class="modal-content-vj">
-          <span id="close-service-modal-btn-vj" class="close-vj">&times;</span>
+          <span id="close-service-modal-btn-vj" class="close-vj">×</span>
           <h2>Thêm Dịch Vụ Cho Chuyến Bay</h2>
           <p class="modal-pnr-info-vj">Mã đặt chỗ: <strong id="modal-service-pnr-display-vj">SANG123</strong></p>
-          <form id="add-service-form-vj">
+          <form id="add-service-form-vj" action="{{ url_for('client_bp.add_service') }}" method="POST">
+              <input type="hidden" name="booking_id" id="service-booking-id" value="">
               <fieldset>
                   <legend>Hành lý ký gửi</legend>
                   <div class="input-group-vj">
                       <label for="modal-baggage-option">Gói hành lý hiện tại: <strong id="current-baggage-display-vj">20kg</strong></label>
-                      <select id="modal-baggage-option-vj" name="modal-baggage-option">
+                      <select id="modal-baggage-option-vj" name="baggage_option">
                           <option value="current" data-price="0" data-current="true">Giữ nguyên gói hiện tại</option>
                           <option value="none_bag" data-price="0" data-is-removal="true">Không hành lý ký gửi</option>
                           <option value="15kg" data-price="150000">15kg (Tổng cộng)</option>
@@ -106,8 +116,8 @@
               <fieldset>
                   <legend>Chọn chỗ ngồi</legend>
                   <div class="input-group-vj">
-                       <label for="modal-seat-preference">Chỗ ngồi hiện tại: <strong id="current-seat-display-vj">12A (Cửa sổ)</strong></label>
-                      <select id="modal-seat-preference-vj" name="modal-seat-preference">
+                      <label for="modal-seat-preference">Chỗ ngồi hiện tại: <strong id="current-seat-display-vj">12A (Cửa sổ)</strong></label>
+                      <select id="modal-seat-preference-vj" name="seat_preference">
                           <option value="current" data-price="0" data-current="true">Giữ nguyên chỗ ngồi</option>
                           <option value="any_standard" data-price="0">Tiêu chuẩn (Ngẫu nhiên - Miễn phí)</option>
                           <option value="window" data-price="70000">Chỗ gần cửa sổ (+70,000 VND)</option>
@@ -119,9 +129,9 @@
               </fieldset>
               <fieldset>
                   <legend>Suất ăn trên máy bay</legend>
-                   <div class="input-group-vj">
+                  <div class="input-group-vj">
                       <label for="modal-meal-option">Suất ăn hiện tại: <strong id="current-meal-display-vj">Cơm gà</strong></label>
-                      <select id="modal-meal-option-vj" name="modal-meal-option">
+                      <select id="modal-meal-option-vj" name="meal_option">
                           <option value="current" data-price="0" data-current="true">Giữ nguyên suất ăn</option>
                           <option value="none_meal" data-price="0" data-is-removal="true">Không chọn suất ăn</option>
                           <option value="meal_veg" data-price="100000">Suất ăn chay (+100,000 VND)</option>
@@ -171,8 +181,8 @@
             </div>
         </div>
     </section>
-    </main>
+  </main>
 
-  <script src="/app/static/js/my_flights_script.js"></script>
+  <script src="{{ url_for('static', filename='js/my_flights_script.js') }}"></script>
 </body>
 </html>
