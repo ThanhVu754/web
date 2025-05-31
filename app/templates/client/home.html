@@ -68,28 +68,27 @@
             <label for="departure">Điểm khởi hành *</label>
             <select id="departure" name="origin" required>
               <option value="">-- Chọn nơi đi --</option>
-              <option value="TP. HCM">TP. HCM (SGN)</option>
-              <option value="Hà Nội">Hà Nội (HAN)</option>
-              <option value="Đà Nẵng">Đà Nẵng (DAD)</option>
-              <option value="Nha Trang">Nha Trang (CXR)</option>
-              <option value="Phú Quốc">Phú Quốc (PQC)</option>
-              <option value="Huế">Huế (HUI)</option>
-              <option value="Vinh">Vinh (VII)</option>
-            </select>
-          </div>
+              {% if airports %}  {% for airport in airports %}
+                  <option value="{{ airport.iata_code }}">{{ airport.city }} ({{ airport.iata_code }}) - {{ airport.name }}</option>
+                {% endfor %}
+              {% else %}
+                <option value="" disabled>Không tải được danh sách sân bay</option>
+              {% endif %}
+              </select>
+            </div>
 
           <div class="input-group">
-            <label for="destination">Điểm đến *</label>
-            <select id="destination" name="destination" required>
-              <option value="">-- Chọn nơi đến --</option>
-              <option value="Hà Nội">Hà Nội (HAN)</option>
-              <option value="TP. HCM">TP. HCM (SGN)</option>
-              <option value="Đà Nẵng">Đà Nẵng (DAD)</option>
-              <option value="Nha Trang">Nha Trang (CXR)</option>
-              <option value="Phú Quốc">Phú Quốc (PQC)</option>
-              <option value="Huế">Huế (HUI)</option>
-              <option value="Vinh">Vinh (VII)</option>
-            </select>
+              <label for="destination">Điểm đến *</label>
+              <select id="destination" name="destination" required>
+                <option value="">-- Chọn nơi đến --</option>
+                {% if airports %}
+                  {% for airport in airports %}
+                    <option value="{{ airport.iata_code }}">{{ airport.city }} ({{ airport.iata_code }}) - {{ airport.name }}</option>
+                  {% endfor %}
+                {% else %}
+                  <option value="" disabled>Không tải được danh sách sân bay</option>
+                {% endif %}
+              </select>
           </div>
 
           <div class="input-row">
