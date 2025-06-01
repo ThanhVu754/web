@@ -5,28 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - SangAir</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/app/static/css/admin/admin_layout.css">
-    <link rel="stylesheet" href="/app/static/css/admin/dashboard.css">   </head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin_layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/dashboard.css') }}">   
+</head>
 <body class="admin-body">
     <div class="admin-container">
         <aside class="admin-sidebar" id="adminSidebar">
             <div class="sidebar-header">
-                <a href="dashboard.html"><h2>SangAir Admin</h2></a>
+                <a href="{{ url_for('admin_bp.dashboard') }}"><h2>SangAir Admin</h2></a>
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> <span class="nav-text">Tổng quan</span></a></li>
-                    <li><a href="flights.html"><i class="fas fa-plane-departure"></i> <span class="nav-text">Quản lý chuyến bay</span></a></li>
-                    <li><a href="quan_ly_dat_cho.html"><i class="fas fa-file-invoice-dollar"></i> <span class="nav-text">Quản lý đặt chỗ</span></a></li>
-                    <li><a href="quan_ly_nguoi_dung.html"><i class="fas fa-users"></i> <span class="nav-text">Quản lý người dùng</span></a></li>
+                    <li><a href="{{ url_for('admin_bp.dashboard') }}"><i class="fas fa-tachometer-alt"></i> <span class="nav-text">Tổng quan</span></a></li>
+                    <li><a href="{{ url_for('admin_bp.flights') }}"><i class="fas fa-plane-departure"></i> <span class="nav-text">Quản lý chuyến bay</span></a></li>
+                    <li><a href="{{ url_for('admin_bp.quan_ly_dat_cho') }}"><i class="fas fa-file-invoice-dollar"></i> <span class="nav-text">Quản lý đặt chỗ</span></a></li>
+                    <li><a href="{{ url_for('admin_bp.quan_ly_nguoi_dung') }}"><i class="fas fa-users"></i> <span class="nav-text">Quản lý người dùng</span></a></li>
                     <li class="has-submenu">
                         <a href="#"><i class="fas fa-edit"></i> <span class="nav-text">Quản lý nội dung</span> <i class="fas fa-chevron-down submenu-arrow"></i></a>
                         <ul class="submenu">
-                            <li><a href="quan_ly_thong_bao_trang_chu.html"><i class="fas fa-bullhorn"></i> <span class="nav-text">TB Trang chủ</span></a></li>
-                            <li><a href="quan_ly_e_menu.html"><i class="fas fa-utensils"></i> <span class="nav-text">E-Menu</span></a></li>
+                            <li><a href="{{ url_for('admin_bp.quan_ly_thong_bao_trang_chu') }}"><i class="fas fa-bullhorn"></i> <span class="nav-text">TB Trang chủ</span></a></li>
+                            <li><a href="{{ url_for('admin_bp.quan_ly_e_menu') }}"><i class="fas fa-utensils"></i> <span class="nav-text">E-Menu</span></a></li>
                         </ul>
                     </li>
-                    <li class="active"><a href="bao_cao_thong_ke.html"><i class="fas fa-chart-bar"></i> <span class="nav-text">Báo cáo & Thống kê</span></a></li>
+                    <li class="active"><a href="{{ url_for('admin_bp.bao_cao_thong_ke') }}"><i class="fas fa-chart-bar"></i> <span class="nav-text">Báo cáo & Thống kê</span></a></li>
                 </ul>
             </nav>
         </aside>
@@ -41,7 +42,7 @@
                 </div>
                 <div class="admin-user-info">
                     <span>Chào, Admin!</span>
-                    <a href="#logout" class="logout-btn">Đăng xuất</a>
+                    <a href="{{ url_for('client_bp.logout_user') }}" class="logout-btn">Đăng xuất</a>
                 </div>
             </header>
 
@@ -71,15 +72,15 @@
                 <section class="dashboard-quick-links">
                     <h3>Truy cập nhanh</h3>
                     <div class="quick-links-grid">
-                        <a href="quan_ly_thong_bao_trang_chu.html" class="quick-link-item">
+                        <a href="{{ url_for('admin_bp.flights') }}" class="quick-link-item">
                             <i class="fas fa-plane-departure fa-2x"></i>
                             <span>QL Chuyến bay</span>
                         </a>
-                        <a href="quan_ly_dat_cho.html" class="quick-link-item">
+                        <a href="{{ url_for('admin_bp.quan_ly_dat_cho') }}" class="quick-link-item">
                             <i class="fas fa-file-invoice-dollar fa-2x"></i>
                             <span>QL Đặt chỗ</span>
                         </a>
-                        <a href="quan_ly_nguoi_dung.html" class="quick-link-item">
+                        <a href="{{ url_for('admin_bp.quan_ly_nguoi_dung') }}" class="quick-link-item">
                             <i class="fas fa-users fa-2x"></i>
                             <span>QL Người dùng</span>
                         </a>
@@ -88,7 +89,7 @@
             </div>
         </main>
     </div>
-    <script src="/app/static/js/admin/script_admin_layout.js"></script>
-    <script src="/app/static/js/admin/script_dashboard.js"></script>
+    <script src="{{ url_for('static', filename='js/admin/script_admin_layout.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin/script_dashboard.js') }}"></script>
 </body>
 </html>

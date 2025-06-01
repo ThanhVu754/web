@@ -12,18 +12,18 @@
   <header>
     <div class="container header-container">
       <div class="logo">
-        <a href="{{ url_for('client_bp.home') }}"><h2>SangAir</h2></a>
+        <a href="{{ url_for('client_bp.home_page') }}"><h2>SangAir</h2></a>
       </div>
       <nav>
         <ul class="menu">
-          <li><a href="{{ url_for('client_bp.my_flights') }}">CHUYẾN BAY CỦA TÔI</a></li>
-          <li><a href="{{ url_for('client_bp.online_checkin') }}" class="active">ONLINE CHECK-IN</a></li>
-          <li><a href="{{ url_for('client_bp.e_menu') }}">E-MENU</a></li>
-          <li><a href="{{ url_for('client_bp.flight_services') }}">DỊCH VỤ CHUYẾN BAY</a></li>
+          <li><a href="{{ url_for('client_bp.my_flights_page') }}">CHUYẾN BAY CỦA TÔI</a></li>
+          <li><a href="{{ url_for('client_bp.online_checkin_page') }}" class="active">ONLINE CHECK-IN</a></li>
+          <li><a href="{{ url_for('client_bp.e_menu_page') }}">E-MENU</a></li>
+          <li><a href="{{ url_for('client_bp.flight_services_page') }}">DỊCH VỤ CHUYẾN BAY</a></li>
         </ul>
       </nav>
       <div class="auth-links">
-        <a href="{{ url_for('client_bp.dang_ki') }}">Đăng ký</a><a href="{{ url_for('client_bp.dang_nhap') }}">Đăng nhập</a>
+        <a href="{{ url_for('client_bp.register_page') }}">Đăng ký</a><a href="{{ url_for('client_bp.login_page') }}">Đăng nhập</a>
       </div>
       <div class="language-select">
         <select>
@@ -71,7 +71,7 @@
         <div class="step-content-vj">
           <h2>Bước 1: Nhập thông tin đặt chỗ</h2>
           <p>Vui lòng nhập Mã đặt chỗ và Họ của một trong các hành khách để bắt đầu.</p>
-          <form id="checkin-lookup-form" action="{{ url_for('client_bp.online_checkin') }}" method="POST" class="styled-form-vj">
+          <form id="checkin-lookup-form" action="{{ url_for('client_bp.online_checkin_page') }}" method="POST" class="styled-form-vj">
             <div class="input-group-vj">
               <label for="checkin-booking-code">Mã đặt chỗ (PNR) *</label>
               <input type="text" id="checkin-booking-code" name="booking_code" placeholder="VD: PNR123" required />
@@ -171,7 +171,7 @@
           <div class="boarding-pass-actions-vj">
             <button type="button" class="action-btn-vj primary-btn-vj"><i class="fas fa-download"></i> Tải Thẻ lên máy bay (PDF)</button>
             <button type="button" class="action-btn-vj"><i class="fas fa-envelope"></i> Gửi qua Email</button>
-            <a href="{{ url_for('client_bp.home') }}" class="action-btn-vj secondary-btn-vj">Về trang chủ</a>
+            <a href="{{ url_for('client_bp.home_page') }}" class="action-btn-vj secondary-btn-vj">Về trang chủ</a>
           </div>
         </div>
       </div>

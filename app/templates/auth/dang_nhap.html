@@ -10,14 +10,14 @@
 <body class="auth-page-vj">
   <div class="auth-form-container-vj">
     <div class="auth-logo-vj">
-      <a href="{{ url_for('client_bp.home') }}" title="Về trang chủ SangAir">
+      <a href="{{ url_for('client_bp.home_page') }}" title="Về trang chủ SangAir">
         <h2>SangAir</h2>
       </a>
     </div>
     <h1 class="auth-title-vj">Đăng Nhập</h1>
     <p class="auth-subtitle-vj">Chào mừng bạn trở lại!</p>
     
-    <form id="loginForm" action="{{ url_for('client_bp.dang_nhap') }}" method="POST">
+    <form id="loginForm" action="{{ url_for('client_bp.login_page') }}" method="POST">
       <div class="input-field-vj">
         <label for="login-email">Địa chỉ Email</label>
         <input type="email" id="login-email" name="username" placeholder="your@example.com" required />
@@ -48,7 +48,7 @@
     </form>
     
     <div class="auth-switch-link-vj">
-      <p>Chưa có tài khoản? <a href="{{ url_for('client_bp.dang_ki') }}">Đăng ký tại đây</a></p>
+      <p>Chưa có tài khoản? <a href="{{ url_for('client_bp.register_page') }}">Đăng ký tại đây</a></p>
     </div>
   </div>
 

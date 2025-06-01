@@ -1,16 +1,22 @@
 # app/__init__.py
 import os
-import sqlite3 # Cần import sqlite3 ở đây
-from flask import Flask, session, current_app # current_app có thể không cần nếu không log trong phần init DB
+import sqlite3
+from flask import Flask, session, request # Đã thêm request ở một bước trước, giữ lại nếu decorator admin_required dùng
 
 def create_app(test_config=None):
-    app = Flask(__name__, instance_relative_config=True)
-    app.config.from_object('config.Config') # Tải từ config.py gốc
+    # Tạo và cấu hình ứng dụng Flask
+    # instance_relative_config=True cho phép load config từ thư mục instance
+    app = Flask(__name__, instance_relative_config=True) 
+
+    # Load config mặc định từ object Config trong file config.py ở thư mục gốc
+    app.config.from_object('config.Config') 
 
     if test_config is None:
-        # Tải từ instance/config.py (nếu có và nếu bạn muốn override)
-        app.config.from_pyfile('config.py', silent=True)
+        # Load config từ instance/config.py (nếu tồn tại) khi không test
+        # File này có thể override các giá trị từ config.Config
+        app.config.from_pyfile('config.py', silent=True) 
     else:
+        # Load test config nếu được truyền vào
         app.config.from_mapping(test_config)
 
     # Đảm bảo thư mục instance tồn tại
@@ -19,26 +25,24 @@ def create_app(test_config=None):
     except OSError:
         pass # Bỏ qua nếu không tạo được
 
-    # Cấu hình đường dẫn database vào trong thư mục instance (nếu chưa được override)
+    # Cấu hình đường dẫn database vào trong thư mục instance
+    # (nếu chưa được override bởi instance/config.py)
     if 'DATABASE_PATH' not in app.config:
         app.config['DATABASE_PATH'] = os.path.join(app.instance_path, 'sangair.sqlite')
-
-    # --- TỰ ĐỘNG KHỞI TẠO DATABASE NẾU CHƯA CÓ ---
-    # Logic này sẽ chạy một lần khi app được tạo, nếu file DB chưa tồn tại
-    # Nó cần được đặt trong app_context để sử dụng current_app nếu các hàm bên trong cần
-    # Hoặc truyền app object trực tiếp
     
-    # Để đơn giản và tránh phụ thuộc current_app sớm, ta có thể dùng app.config trực tiếp
+    # Tự động khởi tạo database nếu file chưa tồn tại
     db_path = app.config['DATABASE_PATH']
-    schema_path = os.path.join(app.root_path, '../schema.sql') # app.root_path là thư mục 'app', đi ra 1 cấp để lấy schema.sql
+    # app.root_path là đường dẫn đến thư mục package 'app' (tức là your_project_root/app/)
+    # schema.sql nằm ở thư mục gốc (your_project_root/schema.sql)
+    schema_path = os.path.join(app.root_path, '../schema.sql') 
 
     if not os.path.exists(db_path):
         print(f"Database file not found at {db_path}. Initializing new database...")
         conn = None
         try:
-            # Đảm bảo thư mục chứa db_path tồn tại (quan trọng nếu db_path nằm trong instance folder)
+            # Đảm bảo thư mục cha của db_path tồn tại (quan trọng nếu db_path nằm trong instance folder)
             db_dir = os.path.dirname(db_path)
-            if db_dir: # Nếu db_path có thư mục cha (không phải file ở root)
+            if db_dir: 
                  os.makedirs(db_dir, exist_ok=True)
 
             conn = sqlite3.connect(db_path)
@@ -46,26 +50,30 @@ def create_app(test_config=None):
                 conn.executescript(f.read())
             conn.commit()
             print(f"Database initialized successfully at {db_path} from {schema_path}")
-        except sqlite3.Error as e:
+        except sqlite3.Error as e: # Bắt lỗi cụ thể của SQLite
             print(f"SQLite error during auto database initialization: {e}")
         except FileNotFoundError:
             print(f"Schema file not found at {schema_path}. Cannot auto-initialize database.")
-        except Exception as e:
+        except Exception as e: # Bắt các lỗi khác
             print(f"An unexpected error occurred during auto database initialization: {e}")
         finally:
             if conn:
                 conn.close()
-    # ---------------------------------------------
-
-    from app.controllers import client_routes
+    
+    # Đăng ký Blueprints
+    from .controllers import client_routes # Import client_routes từ package controllers cùng cấp
     app.register_blueprint(client_routes.client_bp)
 
+    from .controllers import admin_routes # Import admin_routes từ package controllers cùng cấp
+    app.register_blueprint(admin_routes.admin_bp) # Đăng ký admin_bp (đã có url_prefix='/admin' trong định nghĩa)
+
+    # (Tùy chọn) Route kiểm tra đơn giản
     @app.route('/hello')
     def hello():
         user_id = session.get('user_id')
         user_role = session.get('user_role')
         if user_id:
-            return f'Chào mừng đến với SangAir Backend Demo! User ID: {user_id}, Role: {user_role}'
-        return 'Chào mừng đến với SangAir Backend Demo! Bạn chưa đăng nhập.'
+            return f'Hello from SangAir! User ID: {user_id}, Role: {user_role}'
+        return 'Hello from SangAir! Bạn chưa đăng nhập.'
 
     return app

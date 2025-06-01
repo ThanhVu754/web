@@ -13,6 +13,8 @@ DROP TABLE IF EXISTS sessions;
 DROP TABLE IF EXISTS users;
 
 -- Bảng Users (Giữ nguyên)
+-- Trong schema.sql
+DROP TABLE IF EXISTS users; -- Xóa bảng cũ nếu có trước khi tạo lại
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     full_name TEXT NOT NULL,
@@ -20,6 +22,7 @@ CREATE TABLE users (
     phone_number TEXT UNIQUE,
     password_hash TEXT NOT NULL,
     role TEXT NOT NULL DEFAULT 'client' CHECK(role IN ('client', 'admin')),
+    status TEXT DEFAULT 'active' CHECK(status IN ('active', 'pending', 'locked')), -- Trạng thái tài khoản
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -42,9 +45,15 @@ CREATE TABLE airports (
 );
 
 -- Bảng Flights (Giữ nguyên như lần cập nhật trước)
+-- Trong schema.sql
+
+-- ... (các lệnh DROP TABLE và CREATE TABLE khác giữ nguyên) ...
+
+DROP TABLE IF EXISTS flights; -- Đảm bảo xóa bảng cũ trước khi tạo lại với schema mới
 CREATE TABLE flights (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    flight_number TEXT NOT NULL, -- Ví dụ: SA456, SA101
+    flight_number TEXT NOT NULL,
+    aircraft_type TEXT, -- <<< THÊM CỘT NÀY
     departure_airport_id INTEGER NOT NULL,
     arrival_airport_id INTEGER NOT NULL,
     departure_time DATETIME NOT NULL,
@@ -103,7 +112,7 @@ CREATE TABLE bookings (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL,
-    FOREIGN KEY (flight_id) REFERENCES flights (id) ON DELETE RESTRICT,
+    FOREIGN KEY (flight_id) REFERENCES flights (id) ON DELETE CASCADE,
     FOREIGN KEY (promotion_id) REFERENCES promotions (id) ON DELETE SET NULL
 );
 
@@ -212,3 +221,18 @@ CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions (user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions (expires_at);
 
 PRAGMA foreign_keys = ON;
+
+INSERT INTO users (full_name, email, password_hash, role, status, phone_number) VALUES 
+('Admin Master', 'admin@gmail.com', 'scrypt:32768:8:1$DL1seCgmwTgBtSDU$7c021d76e34edf6145efb1eaf98550a96863cad6d7a8bbb965664097a240d21f5b0715c290d1cc905aaccffde51225182dcccb892388a4eeae1ef17024127b23', 'admin', 'active', NULL);
+
+INSERT INTO airports (name, city, country, iata_code) VALUES
+('Sân bay Quốc tế Tân Sơn Nhất', 'TP. Hồ Chí Minh', 'Việt Nam', 'SGN'),
+('Sân bay Quốc tế Nội Bài', 'Hà Nội', 'Việt Nam', 'HAN'),
+('Sân bay Quốc tế Đà Nẵng', 'Đà Nẵng', 'Việt Nam', 'DAD'),
+('Sân bay Quốc tế Phú Quốc', 'Phú Quốc', 'Việt Nam', 'PQC'),
+('Sân bay Quốc tế Cam Ranh', 'Nha Trang', 'Việt Nam', 'CXR'),
+('Sân bay Quốc tế Cát Bi', 'Hải Phòng', 'Việt Nam', 'HPH'),
+('Sân bay Liên Khương', 'Đà Lạt', 'Việt Nam', 'DLI'),
+('Sân bay Phú Bài', 'Huế', 'Việt Nam', 'HUI'),
+('Sân bay Vinh', 'Vinh', 'Việt Nam', 'VII');
+

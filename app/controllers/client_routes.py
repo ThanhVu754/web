@@ -1,49 +1,69 @@
 # app/controllers/client_routes.py
-from flask import Blueprint, request, jsonify, session, current_app, render_template
+from flask import Blueprint, request, jsonify, session, current_app, render_template, redirect, url_for
 # Cập nhật import để bao gồm airport_model và flight_model
 from app.models import client_model, airport_model, flight_model # <<< THÊM airport_model, flight_model
 from werkzeug.security import check_password_hash
 import re
-from datetime import datetime # <<< THÊM datetime cho validation ngày
+import sqlite3
+from datetime import datetime
+from app.models import booking_model
 
 client_bp = Blueprint('client_bp', __name__,
-                      template_folder='../templates/client',
+                      template_folder='../templates/',
                       url_prefix='/') # Giữ nguyên url_prefix này cho các trang HTML
-
-
-# --- CÁC ROUTE PHỤC VỤ TRANG HTML CHO CLIENT (Giữ nguyên) ---
-@client_bp.route('/')
-@client_bp.route('/home')
-# Sửa lại hàm home_page trong app/controllers/client_routes.py
-
-# Đảm bảo đã import airport_model ở đầu file:
-# from app.models import client_model, airport_model, flight_model
 
 @client_bp.route('/')
 @client_bp.route('/home')
 def home_page():
+    departure_airports_list = []
+    arrival_airports_list = []
+    current_user_name = None # Khởi tạo là None
+
+    if 'user_id' in session: # Kiểm tra nếu người dùng đã đăng nhập
+        user = client_model.get_user_by_id(session['user_id'])
+        if user:
+            current_user_name = user['full_name']
+
     try:
-        all_airports = airport_model.get_all_airports() # Lấy danh sách sân bay
+        departure_airports_list = airport_model.get_distinct_departure_airports()
+        arrival_airports_list = airport_model.get_distinct_arrival_airports()
     except Exception as e:
-        current_app.logger.error(f"Lỗi khi lấy danh sách sân bay: {e}")
-        all_airports = [] # Trả về danh sách rỗng nếu có lỗi
+        current_app.logger.error(f"Lỗi khi lấy danh sách sân bay cho trang chủ: {e}")
 
     return render_template(
         "client/home.html",
         flight_id=0,
         seat_class="Phổ thông",
         total_passengers=1,
-        airports=all_airports # <<< Truyền danh sách sân bay vào template
+        departure_airports=departure_airports_list,
+        arrival_airports=arrival_airports_list,
+        current_user_name=current_user_name # <<< Truyền tên người dùng vào template
     )
 
 # ... (các route render_template khác như login_page, register_page, my_flights_page, e_menu_page, flight_services_page, online_checkin_page giữ nguyên) ...
-@client_bp.route('/dang-nhap')
+@client_bp.route('/dang-nhap') # URL này sẽ được cả client và admin dùng để đến trang đăng nhập
 def login_page():
-    return render_template("client/dang_nhap.html")
+    # Nếu người dùng đã đăng nhập, kiểm tra role và redirect
+    if 'user_id' in session:
+        user_role = session.get('user_role')
+        if user_role == 'admin':
+            return redirect(url_for('admin_bp.dashboard_page')) # Chuyển admin về dashboard của họ
+        else: # 'client' hoặc role khác
+            return redirect(url_for('client_bp.home_page')) # Chuyển client về trang chủ
+    return render_template("auth/dang_nhap.html") # <<< THAY ĐỔI ĐƯỜNG DẪN
 
-@client_bp.route('/dang-ky')
+@client_bp.route('/dang-ky') # URL này chỉ client sử dụng
 def register_page():
-    return render_template("client/dang_ki.html")
+    # Nếu người dùng đã đăng nhập, chuyển về trang chủ
+    if 'user_id' in session:
+        return redirect(url_for('client_bp.home_page'))
+    return render_template("auth/dang_ki.html") # <<< THAY ĐỔI ĐƯỜNG DẪN
+
+# Route đăng xuất dùng chung cho cả client và admin (nếu admin dùng link này)
+@client_bp.route('/logout')
+def logout_user():
+    session.clear()
+    return redirect(url_for('client_bp.home_page'))
 
 @client_bp.route('/chuyen-bay-cua-toi')
 def my_flights_page():
@@ -68,8 +88,8 @@ EMAIL_REGEX = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
 
 @client_bp.route('/api/auth/register', methods=['POST'])
 def register_api():
-    # ... (code giữ nguyên) ...
     data = request.get_json()
+    # ... (validation input như cũ: full_name, email, password, phone_number) ...
     if not data:
         return jsonify({"success": False, "message": "Dữ liệu không hợp lệ hoặc thiếu."}), 400
 
@@ -80,17 +100,18 @@ def register_api():
 
     if not full_name or not email or not password:
         return jsonify({"success": False, "message": "Họ tên, email và mật khẩu không được để trống."}), 400
-    
-    if not re.match(EMAIL_REGEX, email):
+
+    # ... (các validation khác cho email, password length) ...
+    if not re.match(EMAIL_REGEX, email): # Đảm bảo EMAIL_REGEX đã được định nghĩa
         return jsonify({"success": False, "message": "Địa chỉ email không hợp lệ."}), 400
-        
     if len(password) < 6:
         return jsonify({"success": False, "message": "Mật khẩu phải có ít nhất 6 ký tự."}), 400
 
-    if client_model.get_user_by_email(email):
+    if client_model.get_user_by_email(email): # Đảm bảo client_model đã được import
         return jsonify({"success": False, "message": "Địa chỉ email này đã được đăng ký."}), 409
 
-    user_id = client_model.create_user(full_name, email, password, phone_number)
+    # Gọi hàm create_user đã được cập nhật
+    user_id = client_model.create_user(full_name, email, password, phone_number) 
 
     if user_id:
         return jsonify({"success": True, "message": "Đăng ký thành công!", "user_id": user_id}), 201
@@ -99,44 +120,68 @@ def register_api():
 
 
 @client_bp.route('/api/auth/login', methods=['POST'])
+# app/controllers/client_routes.py
+# ... (các import khác) ...
+
+
+# ... (Blueprint client_bp) ...
+
+@client_bp.route('/api/auth/login', methods=['POST'])
 def login_api():
-    # ... (code giữ nguyên) ...
     data = request.get_json()
     if not data:
         return jsonify({"success": False, "message": "Dữ liệu không hợp lệ hoặc thiếu."}), 400
 
     email = data.get('email')
     password = data.get('password')
+    current_app.logger.info(f"Login attempt for email: {email}") 
 
     if not email or not password:
         return jsonify({"success": False, "message": "Email và mật khẩu không được để trống."}), 400
 
-    user = client_model.get_user_by_email(email)
+    user = client_model.get_user_by_email(email) # Đảm bảo client_model đã được import
 
-    if user and check_password_hash(user['password_hash'], password):
-        session.clear()
-        session['user_id'] = user['id']
-        session['user_role'] = user['role']
-        return jsonify({
-            "success": True, 
-            "message": "Đăng nhập thành công!",
-            "user": {
-                "id": user['id'],
-                "full_name": user['full_name'],
-                "email": user['email'],
-                "role": user['role']
-            }
-        }), 200
+    if user:
+        current_app.logger.info(f"User found: {user['email']}. Stored hash: {user['password_hash']}")
+        # print(f"DEBUG: User found: {user['email']}, Stored hash: {user['password_hash']}") # Dùng print nếu logger chưa cấu hình rõ
+        # print(f"DEBUG: Password provided: {password}")
+        
+        password_matches = check_password_hash(user['password_hash'], password)
+        current_app.logger.info(f"Password match result for {email}: {password_matches}")
+        # print(f"DEBUG: Password match result: {password_matches}")
+
+        if password_matches:
+            session.clear()
+            session['user_id'] = user['id']
+            session['user_role'] = user['role']
+            current_app.logger.info(f"User {user['email']} (ID: {user['id']}, Role: {user['role']}) logged in successfully.")
+            return jsonify({
+                "success": True, 
+                "message": "Đăng nhập thành công!",
+                "user": {
+                    "id": user['id'],
+                    "full_name": user['full_name'],
+                    "email": user['email'],
+                    "role": user['role']
+                }
+            }), 200
+        else:
+            current_app.logger.warning(f"Password mismatch for email: {email}")
+            return jsonify({"success": False, "message": "Email hoặc mật khẩu không chính xác."}), 401
     else:
+        current_app.logger.warning(f"Login failed: User not found for email: {email}")
         return jsonify({"success": False, "message": "Email hoặc mật khẩu không chính xác."}), 401
 
+# ... (các route khác) ...
 
 @client_bp.route('/api/auth/logout', methods=['POST'])
 def logout_api():
-    # ... (code giữ nguyên) ...
     session.clear()
     return jsonify({"success": True, "message": "Đăng xuất thành công."}), 200
 
+
+# Trong app/controllers/client_routes.py
+from flask import redirect, url_for
 
 @client_bp.route('/api/auth/status', methods=['GET'])
 def status_api():
@@ -224,8 +269,6 @@ def search_flights_api():
         return jsonify({"success": False, "message": f"Không tìm thấy sân bay với mã {destination_iata}."}), 400
     if origin_airport_id == destination_airport_id:
         return jsonify({"success": False, "message": "Điểm đi và điểm đến không được trùng nhau."}), 400
-
-
     # Gọi hàm tìm kiếm từ flight_model
     try:
         flights = flight_model.search_flights(
@@ -245,15 +288,98 @@ def search_flights_api():
         current_app.logger.error(f"Lỗi khi tìm kiếm chuyến bay: {e}")
         return jsonify({"success": False, "message": "Đã có lỗi xảy ra phía server khi tìm kiếm chuyến bay."}), 500
 
+@client_bp.route('/api/bookings', methods=['POST'])
+def create_booking_api():
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "message": "Dữ liệu không hợp lệ."}), 400
 
-# --- CÁC API KHÁC CỦA CLIENT SẼ ĐƯỢC ĐỊNH NGHĨA Ở ĐÂY SAU ---
-# Ví dụ:
-# @client_bp.route('/api/airports', methods=['GET'])
-# def get_airports_api():
-#     airports = airport_model.get_all_airports()
-#     return jsonify({"success": True, "airports": airports})
+    # --- KIỂM TRA ĐĂNG NHẬP ---
+    user_id = session.get('user_id')
+    if not user_id: # Nếu không có user_id trong session, nghĩa là chưa đăng nhập
+        return jsonify({"success": False, "message": "Vui lòng đăng nhập để đặt vé."}), 401 # 401 Unauthorized
+    # --------------------------
 
-# @client_bp.route('/api/bookings', methods=['POST'])
-# def create_booking_api():
-#     # Logic tạo đặt chỗ thực sự, trả về JSON
-#     pass
+    flight_id = data.get('flight_id')
+    passengers_data = data.get('passengers')
+    seat_class_booked = data.get('seat_class')
+    num_adults = int(data.get('num_adults', 0))
+    num_children = int(data.get('num_children', 0))
+    num_infants = int(data.get('num_infants', 0))
+    payment_method = data.get('payment_method')
+
+    # ... (phần còn lại của validation và gọi booking_model.create_booking giữ nguyên) ...
+    if not flight_id or not passengers_data or not seat_class_booked or not payment_method:
+        return jsonify({"success": False, "message": "Thiếu thông tin cần thiết để đặt vé."}), 400
+
+    if not isinstance(passengers_data, list) or not passengers_data:
+        return jsonify({"success": False, "message": "Thông tin hành khách không hợp lệ."}), 400
+
+    if num_adults <= 0 and num_children <= 0 :
+         return jsonify({"success": False, "message": "Cần ít nhất một người lớn hoặc trẻ em để đặt vé."}), 400
+
+    promotion_id = None
+    discount_applied = 0
+
+    try:
+        booking_result = booking_model.create_booking( # Đảm bảo booking_model đã được import
+            user_id=user_id, 
+            flight_id=flight_id,
+            passengers_data=passengers_data,
+            seat_class_booked=seat_class_booked,
+            num_adults=num_adults,
+            num_children=num_children,
+            num_infants=num_infants,
+            payment_method=payment_method,
+            promotion_id=promotion_id,
+            discount_applied=discount_applied
+        )
+        if booking_result:
+            return jsonify({"success": True, "message": "Đặt vé thành công!", "booking": booking_result}), 201
+        else:
+            return jsonify({"success": False, "message": "Không thể tạo đặt chỗ. Vui lòng thử lại."}), 500
+
+    except ValueError as ve:
+        return jsonify({"success": False, "message": str(ve)}), 400
+    except sqlite3.Error as db_err: # Đảm bảo sqlite3 đã được import nếu bạn bắt lỗi này
+        current_app.logger.error(f"Lỗi CSDL khi tạo booking: {db_err}")
+        return jsonify({"success": False, "message": "Lỗi máy chủ khi xử lý đặt vé."}), 500
+    except Exception as e:
+        current_app.logger.error(f"Lỗi không xác định khi tạo booking: {e}")
+        return jsonify({"success": False, "message": "Có lỗi không mong muốn xảy ra."}), 500
+
+# --- API LẤY DANH SÁCH CHUYẾN BAY CỦA TÔI ---
+@client_bp.route('/api/my-bookings', methods=['GET'])
+def get_my_bookings_api():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"success": False, "message": "Vui lòng đăng nhập để xem các chuyến bay đã đặt."}), 401
+
+    try:
+        bookings = booking_model.get_bookings_by_user_id(user_id)
+        return jsonify({"success": True, "bookings": bookings}), 200
+    except Exception as e:
+        current_app.logger.error(f"Lỗi khi lấy danh sách đặt chỗ của người dùng {user_id}: {e}")
+        return jsonify({"success": False, "message": "Không thể lấy danh sách đặt chỗ. Vui lòng thử lại."}), 500
+    
+# Thêm vào cuối file app/controllers/client_routes.py
+
+# Đảm bảo airport_model đã được import ở đầu file:
+# from app.models import client_model, airport_model, flight_model, booking_model (nếu bạn đã tạo booking_model)
+
+@client_bp.route('/api/airports', methods=['GET'])
+def get_airports_api():
+    """
+    API trả về danh sách tất cả các sân bay.
+    """
+    try:
+        airports = airport_model.get_all_airports()
+        if airports is not None:
+            return jsonify({"success": True, "airports": airports}), 200
+        else:
+            return jsonify({"success": False, "message": "Không thể tải danh sách sân bay."}), 500
+    except Exception as e:
+        current_app.logger.error(f"Lỗi khi lấy danh sách sân bay: {e}")
+        return jsonify({"success": False, "message": "Lỗi máy chủ khi lấy danh sách sân bay."}), 500
+
+

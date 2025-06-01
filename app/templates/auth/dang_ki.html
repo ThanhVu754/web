@@ -10,14 +10,14 @@
 <body class="auth-page-vj">
   <div class="auth-form-container-vj"> 
     <div class="auth-logo-vj">
-      <a href="{{ url_for('client_bp.home') }}" title="Về trang chủ SangAir">
+      <a href="{{ url_for('client_bp.home_page') }}" title="Về trang chủ SangAir">
         <h2>SangAir</h2>
       </a>
     </div>
     <h1 class="auth-title-vj">Tạo Tài Khoản Mới</h1>
     <p class="auth-subtitle-vj">Tham gia SangAir để nhận nhiều ưu đãi hấp dẫn!</p>
     
-    <form id="registerForm" action="{{ url_for('client_bp.dang_ki') }}" method="POST" novalidate>
+    <form id="registerForm" action="{{ url_for('client_bp.register_page') }}" method="POST" novalidate>
       <div class="input-field-vj">
         <label for="register-fullname">Họ và Tên</label>
         <input type="text" id="register-fullname" name="fullname" placeholder="Ví dụ: Nguyễn Văn A" required />
@@ -61,7 +61,7 @@
     </form>
     
     <div class="auth-switch-link-vj">
-      <p>Đã có tài khoản? <a href="{{ url_for('client_bp.dang_nhap') }}">Đăng nhập</a></p>
+      <p>Đã có tài khoản? <a href="{{ url_for('client_bp.login_page') }}">Đăng nhập</a></p>
     </div>
   </div>
 
