@@ -382,4 +382,3 @@ def get_airports_api():
         current_app.logger.error(f"Lỗi khi lấy danh sách sân bay: {e}")
         return jsonify({"success": False, "message": "Lỗi máy chủ khi lấy danh sách sân bay."}), 500
 
-

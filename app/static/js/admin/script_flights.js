@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- RENDER TABLE ---
+
     function renderFlightsTable(flightsToRender) {
         if (!flightsTableBody) return;
         flightsTableBody.innerHTML = ''; 
@@ -92,7 +92,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const row = flightsTableBody.insertRow();
             const economyPrice = (flight.economy_price !== null && flight.economy_price !== undefined) ? flight.economy_price.toLocaleString('vi-VN') : 'N/A';
             
-            // Backend trả về các trường _form cho ngày giờ đã định dạng và iata_code cho sân bay
             row.innerHTML = `
                 <td>${flight.flight_number || 'N/A'}</td>
                 <td>${flight.departure_airport_city || flight.departure_airport_iata} (${flight.departure_airport_iata || 'N/A'})</td>
@@ -106,7 +105,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td><span class="status ${statusClasses[flight.status] || ''}">${statusNames[flight.status] || flight.status}</span></td>
                 <td>
                     <button class="btn btn-sm btn-edit" data-flight-id="${flight.id}"><i class="fas fa-edit"></i> Sửa</button>
-                    <button class="btn btn-sm btn-delete" data-flight-id="${flight.id}"><i class="fas fa-trash"></i> Xóa</button>
+                    <button class="btn btn-sm btn-delete" 
+                            data-flight-id="${flight.id}" 
+                            data-flight-number="${flight.flight_number || 'N/A'}"><i class="fas fa-trash"></i> Xóa
+                    </button>
                 </td>
             `;
         });
@@ -115,27 +117,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- MODAL HANDLING ---
     async function openFlightModal(title = "Thêm chuyến bay mới", flightIdToEdit = null) {
-        if (!flightFormModal || !flightModalTitle || !flightForm) return;
+        if (!flightFormModal || !flightModalTitle || !flightForm) {
+            console.error("Modal elements not found!");
+            return;
+        }
         
         flightModalTitle.textContent = title;
-        flightForm.reset();
-        editingFlightId = flightIdToEdit;
-        document.getElementById('flightId').value = ''; 
+        flightForm.reset(); // Xóa dữ liệu form cũ
+        editingFlightId = flightIdToEdit; // Gán ID đang sửa (sẽ là null nếu thêm mới)
+        
+        // Lấy thẻ div chứa trường select trạng thái chuyến bay
+        const flightStatusGroup = document.getElementById('flightStatusGroup'); // Đảm bảo div này có ID là 'flightStatusGroup' trong HTML
 
         // Luôn tải/cập nhật danh sách sân bay khi mở modal
-        await fetchAndPopulateAirports(); // Quan trọng: await để đảm bảo dropdown được điền trước khi gán giá trị
+        // Hàm fetchAndPopulateAirports() cần được định nghĩa và hoạt động đúng
+        await fetchAndPopulateAirports(); 
 
-        if (flightIdToEdit) {
-            document.getElementById('flightId').value = flightIdToEdit;
+        if (flightIdToEdit) { 
+            // --- CHẾ ĐỘ SỬA ---
+            if (flightStatusGroup) {
+                flightStatusGroup.style.display = 'block'; // Hoặc 'flex' tùy theo CSS display của .form-group
+            }
+            document.getElementById('flightId').value = flightIdToEdit; // Gán ID vào hidden field
+
             try {
                 const response = await fetch(`/admin/api/flights/${flightIdToEdit}`);
                 const data = await response.json();
+
                 if (data.success && data.flight) {
                     const flightData = data.flight;
-                    document.getElementById('flightNumber').value = flightData.flight_number;
-                    document.getElementById('aircraftType').value = flightData.aircraft_type || '';
-                    
-                    // Gán giá trị cho select SAU KHI chúng đã được điền bởi fetchAndPopulateAirports
+                    // Gán giá trị cho select sân bay SAU KHI chúng đã được điền bởi fetchAndPopulateAirports
+                    // Đảm bảo flightData.departure_airport_iata và flightData.arrival_airport_iata là IATA code
                     if (departureAirportSelect) departureAirportSelect.value = flightData.departure_airport_iata; 
                     if (arrivalAirportSelect) arrivalAirportSelect.value = flightData.arrival_airport_iata;
                     
@@ -143,20 +155,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('departureTime').value = flightData.departureTime; // Backend trả về HH:MM
                     document.getElementById('arrivalDate').value = flightData.arrivalDate;
                     document.getElementById('arrivalTime').value = flightData.arrivalTime;
-                    document.getElementById('basePrice').value = flightData.economy_price;
+                    document.getElementById('basePrice').value = flightData.economy_price; // Giả sử basePrice là economy_price
                     document.getElementById('totalSeats').value = flightData.total_seats;
-                    document.getElementById('flightStatus').value = flightData.status;
+                    
+                    // Điền và hiển thị trạng thái chuyến bay
+                    document.getElementById('flightStatus').value = flightData.status; 
                 } else {
                     alert("Lỗi tải chi tiết chuyến bay: " + (data.message || "Không rõ lỗi"));
-                    return;
+                    closeFlightModal(); // Đóng modal nếu không tải được dữ liệu
+                    return; 
                 }
             } catch (error) {
                 console.error("Lỗi khi lấy chi tiết chuyến bay:", error);
                 alert("Lỗi kết nối khi lấy chi tiết chuyến bay.");
+                closeFlightModal();
                 return;
             }
+        } else { 
+            // --- CHẾ ĐỘ THÊM MỚI ---
+            if (flightStatusGroup) {
+                flightStatusGroup.style.display = 'none'; // Ẩn trường trạng thái khi thêm mới
+            }
+            // Reset hidden flightId field (dù flightForm.reset() có thể đã làm)
+            document.getElementById('flightId').value = ''; 
         }
-        flightFormModal.style.display = 'block';
+        flightFormModal.style.display = 'block'; // Hiển thị modal
     }
 
     function closeFlightModal() {
@@ -176,8 +199,6 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault();
             const formData = new FormData(flightForm);
             const flightApiData = {
-                flightNumber: formData.get('flightNumber'),
-                aircraftType: formData.get('aircraftType'),
                 departureAirport: formData.get('departureAirport'), // IATA code
                 arrivalAirport: formData.get('arrivalAirport'),   // IATA code
                 departureDate: formData.get('departureDate'),
@@ -186,13 +207,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 arrivalTime: formData.get('arrivalTime'),
                 basePrice: parseInt(formData.get('basePrice')),
                 totalSeats: parseInt(formData.get('totalSeats')),
-                flightStatus: formData.get('flightStatus')
             };
-            
-            // Nếu là sửa, có thể gửi thêm availableSeats nếu form có trường này và muốn admin sửa trực tiếp
-            // Ví dụ: if (editingFlightId && formData.get('availableSeats')) {
-            //     flightApiData.availableSeats = parseInt(formData.get('availableSeats'));
-            // }
+            if (editingFlightId) { // Nếu là sửa, thì mới lấy flightStatus từ form
+                flightApiData.flightStatus = formData.get('flightStatus');
+                // Nếu có trường availableSeats trong form sửa, cũng lấy ở đây
+                if (formData.has('availableSeats')) { 
+                    flightApiData.availableSeats = parseInt(formData.get('availableSeats'));
+                }
+            }
 
             let url = '/admin/api/flights';
             let method = 'POST';
@@ -225,8 +247,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- ATTACH ACTION LISTENERS TO TABLE (EDIT/DELETE) ---
+    // Trong app/static/js/admin/script_flights.js
+
     function attachActionListenersToTable() {
         if (!flightsTableBody) return;
+        
+        // Phần xử lý nút Sửa giữ nguyên
         flightsTableBody.querySelectorAll('.btn-edit').forEach(btn => {
             btn.addEventListener('click', function() {
                 const flightId = parseInt(this.dataset.flightId);
@@ -234,22 +260,36 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
+        // Cập nhật phần xử lý nút Xóa
         flightsTableBody.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.addEventListener('click', async function() {
+            btn.addEventListener('click', async function() { 
                 const flightId = parseInt(this.dataset.flightId);
-                if (confirm(`Bạn có chắc chắn muốn xóa chuyến bay có ID ${flightId} không?`)) {
+                const flightNumber = this.dataset.flightNumber; // <<< LẤY SỐ HIỆU CHUYẾN BAY
+
+                // Sử dụng flightNumber trong thông báo confirm
+                if (confirm(`Bạn có chắc chắn muốn xóa chuyến bay có số hiệu ${flightNumber} không? Các đặt chỗ liên quan (nếu có) cũng sẽ bị xóa.`)) {
                     try {
                         const response = await fetch(`/admin/api/flights/${flightId}`, { method: 'DELETE' });
-                        const result = await response.json();
-                        if (result.success) {
-                            alert(result.message || `Đã xóa chuyến bay ID ${flightId}.`);
-                            fetchFlights(); 
+                        // Luôn cố gắng parse JSON, nhưng kiểm tra response.ok trước
+                        if (response.ok) {
+                            const result = await response.json(); 
+                            if (result.success) {
+                                alert(result.message || `Đã xóa chuyến bay số hiệu ${flightNumber}.`);
+                                fetchFlights(); // Tải lại bảng
+                            } else {
+                                alert("Lỗi khi xóa: " + (result.message || "Thao tác không thành công từ server."));
+                            }
                         } else {
-                            alert("Lỗi khi xóa: " + (result.message || "Không thể xóa chuyến bay."));
+                            let errorMsg = `Lỗi ${response.status}: ${response.statusText}.`;
+                            try { 
+                                const errorResult = await response.json();
+                                errorMsg = errorResult.message || errorMsg;
+                            } catch (e) { /* Bỏ qua nếu không parse được JSON lỗi */ }
+                            alert("Lỗi khi xóa chuyến bay: " + errorMsg);
                         }
-                    } catch (error) {
-                        console.error("Lỗi khi xóa chuyến bay:", error);
-                        alert("Lỗi kết nối máy chủ khi xóa chuyến bay.");
+                    } catch (error) { 
+                        console.error("Lỗi JavaScript khi xóa chuyến bay:", error);
+                        alert("Lỗi kết nối hoặc lỗi xử lý phía client khi xóa chuyến bay.");
                     }
                 }
             });

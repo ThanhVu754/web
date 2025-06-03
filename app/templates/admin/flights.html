@@ -88,17 +88,6 @@
                 <input type="hidden" id="flightId" name="flightId">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="flightNumber">Số hiệu chuyến bay *</label>
-                        <input type="text" id="flightNumber" name="flightNumber" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="aircraftType">Loại máy bay</label>
-                        <input type="text" id="aircraftType" name="aircraftType">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
                         <label for="departureAirport">Sân bay đi *</label>
                         <select id="departureAirport" name="departureAirport" required>
                             <option value="">Chọn sân bay</option>
@@ -151,7 +140,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" id="flightStatusGroup">
                     <label for="flightStatus">Trạng thái chuyến bay</label>
                     <select id="flightStatus" name="flightStatus">
                         <option value="scheduled">Lên lịch</option>
@@ -159,7 +148,7 @@
                         <option value="delayed">Trễ chuyến</option>
                         <option value="cancelled">Đã hủy</option>
                         <option value="departed">Đã cất cánh</option>
-                        <option value="arrived">Đã đến</option>
+                        <option value="landed">Đã đến</option>
                     </select>
                 </div>
 

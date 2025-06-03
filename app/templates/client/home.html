@@ -232,118 +232,120 @@
     </section>
   </main>
 
-  <div class="banner-container">
-    <div class="title">
-      <span class="small-text">Cùng</span>
-      <span class="sangair">SangAir</span>
+  <div class="main-background">
+    <div class="banner-container">
+      <div class="title">
+        <span class="small-text">Cùng</span>
+        <span class="sangair">SangAir</span>
+      </div>
+      <div class="subtitle">BAY VÀO TƯƠNG LAI</div>
+      <div class="flight-path"></div>
     </div>
-    <div class="subtitle">BAY VÀO TƯƠNG LAI</div>
-    <div class="flight-path"></div>
+
+    <section class="promo-section container">
+      <h2 class="section-title">ƯU ĐÃI ĐẶC BIỆT</h2>
+      <div class="promo-list">
+        <div class="promo-card">
+          <img src="{{ url_for('static', filename='images/friend.jpg') }}" alt="Bay cùng bạn – Giảm 30%" style="width: 100%; height: auto; border-radius: 8px; margin-bottom: 12px;">
+          <h3>Bay cùng bạn – Giảm 30%</h3>
+          <p>Áp dụng cho nhóm từ 2 người, mọi hành trình nội địa trong tháng 6.</p>
+        </div>
+        <div class="promo-card">
+          <img src="{{ url_for('static', filename='images/discount.jpg') }}" alt="Giá rẻ mỗi thứ Hai" style="width: 100%; height: auto; border-radius: 8px; margin-bottom: 12px;">
+          <h3>Giá rẻ mỗi thứ Hai</h3>
+          <p>Vé chỉ từ 99.000đ mỗi thứ Hai hằng tuần, số lượng có hạn.</p>
+        </div>
+        <div class="promo-card">
+          <img src="{{ url_for('static', filename='images/membership.jpg') }}" alt="Thẻ thành viên Gold" style="width: 100%; height: auto; border-radius: 8px; margin-bottom: 12px;">
+          <h3>Thẻ thành viên Gold</h3>
+          <p>Tặng 1 vé miễn phí khi nâng cấp hạng thẻ trước 30/6/2025.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="news-section container">
+      <h2 class="section-title">TIN TỨC MỚI NHẤT</h2>
+
+      <div class="news-vertical-carousel">
+        <div class="news-track">
+          <div class="news-vertical-item">
+            <img src="{{ url_for('static', filename='images/bay_mua_he.jpg') }}" alt="Tin 1" />
+            <div class="text">
+              <h4>Lịch bay mùa hè đã cập nhật</h4>
+              <p>Chào hè rộn rã! SangAir tăng tần suất bay toàn quốc từ 15/5 đến 30/8 để phục vụ mùa cao điểm hè 2025.</p>
+            </div>
+          </div>
+          <div class="news-vertical-item">
+            <img src="{{ url_for('static', filename='images/anh_1.jpg') }}" alt="Tin 2" />
+            <div class="text">
+              <h4>Khai trương tuyến Hà Nội – Côn Đảo</h4>
+              <p>Bay thẳng từ Hà Nội đến Côn Đảo chỉ từ 799.000đ, khởi hành hàng ngày với thời gian linh hoạt.</p>
+            </div>
+          </div>
+          <div class="news-vertical-item">
+            <img src="{{ url_for('static', filename='images/momo.jpg') }}" alt="Tin 3" />
+            <div class="text">
+              <h4>Hợp tác ví MoMo</h4>
+              <p>Thanh toán nhanh chóng bằng MoMo và nhận hoàn tiền đến 10% cho khách hàng mới.</p>
+            </div>
+          </div>
+          <div class="news-vertical-item">
+            <img src="{{ url_for('static', filename='images/vip.jpg') }}" alt="Tin 4" />
+            <div class="text">
+              <h4>Ưu đãi thẻ thành viên</h4>
+              <p>Tri ân khách hàng thân thiết, SangAir dành tặng ưu đãi đặc biệt cho hội viên hạng Gold: giảm ngay 20% giá vé cho tất cả các chặng bay nội địa và quốc tế. Chương trình kéo dài đến hết ngày 30/6. Nâng tầm trải nghiệm bay, tận hưởng đặc quyền vượt trội cùng thẻ thành viên SangAir Gold!</p>
+            </div>
+          </div>
+          <div class="news-vertical-item">
+            <img src="{{ url_for('static', filename='images/check_in.jpg') }}" alt="Tin 5" />
+            <div class="text">
+              <h4>Check-in online nhận quà</h4>
+              <p>Tiết kiệm thời gian, thêm ngàn ưu đãi! Hành khách hoàn tất thủ tục check-in trực tuyến cho chuyến bay sắp tới sẽ có cơ hội nhận ngay voucher trị giá 100.000đ, áp dụng cho lần đặt vé tiếp theo. Check-in sớm, bay thảnh thơi, rinh quà liền tay cùng SangAir!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="hot-destinations container">
+      <h2 class="section-title">Điểm đến hấp dẫn</h2>
+      <div class="destination-grid">
+        <div class="destination" data-destination="Quảng Bình">
+          <img src="{{ url_for('static', filename='images/quangbinh.jpg') }}" alt="Quảng Bình" />
+          <span>Quảng Bình</span>
+        </div>
+        <div class="destination" data-destination="Phú Quốc">
+          <img src="{{ url_for('static', filename='images/phuquoc.jpg') }}" alt="Phú Quốc" />
+          <span>Phú Quốc</span>
+        </div>
+        <div class="destination" data-destination="Huế">
+          <img src="{{ url_for('static', filename='images/hue.jpg') }}" alt="Huế" />
+          <span>Huế</span>
+        </div>
+        <div class="destination" data-destination="Nghệ An">
+          <img src="{{ url_for('static', filename='images/nghean.jpg') }}" alt="Nghệ An" />
+          <span>Nghệ An</span>
+        </div>
+        <div class="destination" data-destination="Hà Nội">
+          <img src="{{ url_for('static', filename='images/hanoi.jpg') }}" alt="Hà Nội" />
+          <span>Hà Nội</span>
+        </div>
+        <div class="destination" data-destination="TP. HCM">
+          <img src="{{ url_for('static', filename='images/tphcm.jpg') }}" alt="TP. HCM" />
+          <span>TP. HCM</span>
+        </div>
+        <div class="destination" data-destination="Đà Nẵng">
+          <img src="{{ url_for('static', filename='images/danang.jpg') }}" alt="Đà Nẵng" />
+          <span>Đà Nẵng</span>
+        </div>
+        <div class="destination" data-destination="Nha Trang">
+          <img src="{{ url_for('static', filename='images/nhatrang.jpg') }}" alt="Nha Trang" />
+          <span>Nha Trang</span>
+        </div>
+      </div>
+    </section>
   </div>
 
-  <section class="promo-section container">
-    <h2 class="section-title">ƯU ĐÃI ĐẶC BIỆT</h2>
-    <div class="promo-list">
-      <div class="promo-card">
-        <img src="{{ url_for('static', filename='images/friend.jpg') }}" alt="Bay cùng bạn – Giảm 30%" style="width: 100%; height: auto; border-radius: 8px; margin-bottom: 12px;">
-        <h3>Bay cùng bạn – Giảm 30%</h3>
-        <p>Áp dụng cho nhóm từ 2 người, mọi hành trình nội địa trong tháng 6.</p>
-      </div>
-      <div class="promo-card">
-        <img src="{{ url_for('static', filename='images/discount.jpg') }}" alt="Giá rẻ mỗi thứ Hai" style="width: 100%; height: auto; border-radius: 8px; margin-bottom: 12px;">
-        <h3>Giá rẻ mỗi thứ Hai</h3>
-        <p>Vé chỉ từ 99.000đ mỗi thứ Hai hằng tuần, số lượng có hạn.</p>
-      </div>
-      <div class="promo-card">
-        <img src="{{ url_for('static', filename='images/membership.jpg') }}" alt="Thẻ thành viên Gold" style="width: 100%; height: auto; border-radius: 8px; margin-bottom: 12px;">
-        <h3>Thẻ thành viên Gold</h3>
-        <p>Tặng 1 vé miễn phí khi nâng cấp hạng thẻ trước 30/6/2025.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="news-section container">
-    <h2 class="section-title">TIN TỨC MỚI NHẤT</h2>
-
-    <div class="news-vertical-carousel">
-      <div class="news-track">
-        <div class="news-vertical-item">
-          <img src="{{ url_for('static', filename='images/bay_mua_he.jpg') }}" alt="Tin 1" />
-          <div class="text">
-            <h4>Lịch bay mùa hè đã cập nhật</h4>
-            <p>Chào hè rộn rã! SangAir tăng tần suất bay toàn quốc từ 15/5 đến 30/8 để phục vụ mùa cao điểm hè 2025.</p>
-          </div>
-        </div>
-        <div class="news-vertical-item">
-          <img src="{{ url_for('static', filename='images/anh_1.jpg') }}" alt="Tin 2" />
-          <div class="text">
-            <h4>Khai trương tuyến Hà Nội – Côn Đảo</h4>
-            <p>Bay thẳng từ Hà Nội đến Côn Đảo chỉ từ 799.000đ, khởi hành hàng ngày với thời gian linh hoạt.</p>
-          </div>
-        </div>
-        <div class="news-vertical-item">
-          <img src="{{ url_for('static', filename='images/momo.jpg') }}" alt="Tin 3" />
-          <div class="text">
-            <h4>Hợp tác ví MoMo</h4>
-            <p>Thanh toán nhanh chóng bằng MoMo và nhận hoàn tiền đến 10% cho khách hàng mới.</p>
-          </div>
-        </div>
-        <div class="news-vertical-item">
-          <img src="{{ url_for('static', filename='images/vip.jpg') }}" alt="Tin 4" />
-          <div class="text">
-            <h4>Ưu đãi thẻ thành viên</h4>
-            <p>Tri ân khách hàng thân thiết, SangAir dành tặng ưu đãi đặc biệt cho hội viên hạng Gold: giảm ngay 20% giá vé cho tất cả các chặng bay nội địa và quốc tế. Chương trình kéo dài đến hết ngày 30/6. Nâng tầm trải nghiệm bay, tận hưởng đặc quyền vượt trội cùng thẻ thành viên SangAir Gold!</p>
-          </div>
-        </div>
-        <div class="news-vertical-item">
-          <img src="{{ url_for('static', filename='images/check_in.jpg') }}" alt="Tin 5" />
-          <div class="text">
-            <h4>Check-in online nhận quà</h4>
-            <p>Tiết kiệm thời gian, thêm ngàn ưu đãi! Hành khách hoàn tất thủ tục check-in trực tuyến cho chuyến bay sắp tới sẽ có cơ hội nhận ngay voucher trị giá 100.000đ, áp dụng cho lần đặt vé tiếp theo. Check-in sớm, bay thảnh thơi, rinh quà liền tay cùng SangAir!</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="hot-destinations container">
-    <h2 class="section-title">Điểm đến hấp dẫn</h2>
-    <div class="destination-grid">
-      <div class="destination" data-destination="Quảng Bình">
-        <img src="{{ url_for('static', filename='images/quangbinh.jpg') }}" alt="Quảng Bình" />
-        <span>Quảng Bình</span>
-      </div>
-      <div class="destination" data-destination="Phú Quốc">
-        <img src="{{ url_for('static', filename='images/phuquoc.jpg') }}" alt="Phú Quốc" />
-        <span>Phú Quốc</span>
-      </div>
-      <div class="destination" data-destination="Huế">
-        <img src="{{ url_for('static', filename='images/hue.jpg') }}" alt="Huế" />
-        <span>Huế</span>
-      </div>
-      <div class="destination" data-destination="Nghệ An">
-        <img src="{{ url_for('static', filename='images/nghean.jpg') }}" alt="Nghệ An" />
-        <span>Nghệ An</span>
-      </div>
-      <div class="destination" data-destination="Hà Nội">
-        <img src="{{ url_for('static', filename='images/hanoi.jpg') }}" alt="Hà Nội" />
-        <span>Hà Nội</span>
-      </div>
-      <div class="destination" data-destination="TP. HCM">
-        <img src="{{ url_for('static', filename='images/tphcm.jpg') }}" alt="TP. HCM" />
-        <span>TP. HCM</span>
-      </div>
-      <div class="destination" data-destination="Đà Nẵng">
-        <img src="{{ url_for('static', filename='images/danang.jpg') }}" alt="Đà Nẵng" />
-        <span>Đà Nẵng</span>
-      </div>
-      <div class="destination" data-destination="Nha Trang">
-        <img src="{{ url_for('static', filename='images/nhatrang.jpg') }}" alt="Nha Trang" />
-        <span>Nha Trang</span>
-      </div>
-    </div>
-  </section>
- 
   <footer class="footer">
     <div class="container footer-container">
       <div class="footer-column">

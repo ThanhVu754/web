@@ -52,8 +52,7 @@ CREATE TABLE airports (
 DROP TABLE IF EXISTS flights; -- Đảm bảo xóa bảng cũ trước khi tạo lại với schema mới
 CREATE TABLE flights (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    flight_number TEXT NOT NULL,
-    aircraft_type TEXT, -- <<< THÊM CỘT NÀY
+    flight_number TEXT UNIQUE NOT NULL,
     departure_airport_id INTEGER NOT NULL,
     arrival_airport_id INTEGER NOT NULL,
     departure_time DATETIME NOT NULL,
@@ -66,7 +65,6 @@ CREATE TABLE flights (
     status TEXT DEFAULT 'scheduled' CHECK(status IN ('scheduled', 'on_time', 'delayed', 'cancelled', 'departed', 'landed')),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (flight_number, departure_time),
     FOREIGN KEY (departure_airport_id) REFERENCES airports (id) ON DELETE RESTRICT,
     FOREIGN KEY (arrival_airport_id) REFERENCES airports (id) ON DELETE RESTRICT
 );
