@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     function isValidPhone(phone) { /* ... giữ nguyên ... */ 
         if (!phone) return true; 
-        const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})\b$/;
+        const phoneRegex = /^0\d{9,10}$/;
         return phoneRegex.test(phone);
     }
 
@@ -251,22 +251,36 @@ document.addEventListener('DOMContentLoaded', function() {
             // const role = document.getElementById('userRole').value; // Lấy role nếu có trường này trên form
 
             // --- Client-side validation (giữ lại hoặc cải thiện) ---
-            if (fullName === '') { /* ... validation ... */ isValid = false; displayValidationError('userFullName','...');}
-            if (email === '') { /* ... validation ... */ isValid = false; displayValidationError('userEmail','...');}
-            else if (!isValidEmail(email)) { /* ... validation ... */ isValid = false; displayValidationError('userEmail','...');}
-            // Không validate email trùng ở client nữa, để backend xử lý và trả về lỗi
+            if (fullName === '') { 
+            displayValidationError('userFullName','Họ và tên là bắt buộc.'); 
+            isValid = false; 
+            }
+            if (email === '') { 
+                displayValidationError('userEmail','Email là bắt buộc.'); 
+                isValid = false; 
+            } else if (!isValidEmail(email)) { 
+                displayValidationError('userEmail','Định dạng email không hợp lệ.'); 
+                isValid = false; 
+            }
+            
+            if (phone !== '' && !isValidPhone(phone)) { 
+                displayValidationError('userPhone','Số điện thoại không hợp lệ (VD: 09xxxxxxxx).'); 
+                isValid = false; 
+            }
 
-            if (phone !== '' && !isValidPhone(phone)) { /* ... validation ... */ isValid = false; displayValidationError('userPhone','...');}
-
-            if (!editingUserId && password === '') { // Mật khẩu bắt buộc khi thêm mới
-                displayValidationError('userPassword', 'Mật khẩu là bắt buộc khi thêm người dùng mới.');
+            // Mật khẩu là bắt buộc khi thêm mới (editingUserId là null)
+            if (!editingUserId && password === '') { 
+                displayValidationError('userPassword', 'Mật khẩu là bắt buộc khi thêm người dùng mới.'); 
                 isValid = false;
-            } else if (password !== '' && password.length < 6) { // Nếu có nhập mật khẩu (kể cả khi sửa)
-                displayValidationError('userPassword', 'Mật khẩu phải có ít nhất 6 ký tự.');
+            } else if (password !== '' && password.length < 6) { // Kiểm tra độ dài nếu có nhập mật khẩu
+                displayValidationError('userPassword', 'Mật khẩu phải có ít nhất 6 ký tự.'); 
                 isValid = false;
             }
-            if (!isValid) return; 
-            // --- Hết validation ---
+            
+            if (!isValid) {
+                console.log("Client-side validation failed."); // Thêm log để biết
+                return; 
+            }
 
             const userApiData = { // Dữ liệu gửi lên API, khớp với key trong form HTML admin
                 userFullName: fullName,
@@ -293,24 +307,36 @@ document.addEventListener('DOMContentLoaded', function() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(userApiData)
                 });
-                const result = await response.json();
+                const result = await response.json(); // Luôn cố gắng parse JSON
+
+                console.log("API Response:", response.status, result); // << THÊM LOG NÀY
 
                 if (response.ok && result.success) {
                     alert(result.message || (editingUserId ? "Cập nhật thành công!" : "Thêm người dùng thành công!"));
-                    fetchUsers(userSearchInput.value.trim(), userStatusFilter.value); // Tải lại bảng
+                    fetchUsers(userSearchInput.value.trim(), userStatusFilter.value); 
                     closeUserModal();
-                } else {
+                } 
+                else {
                     alert("Lỗi: " + (result.message || "Thao tác không thành công."));
-                    // Có thể hiển thị lỗi chi tiết hơn nếu API trả về lỗi cho từng trường
-                    if (result.errors) { // Giả sử API có thể trả về lỗi chi tiết
-                        for (const field in result.errors) {
-                            displayValidationError(`user${field.charAt(0).toUpperCase() + field.slice(1)}`, result.errors[field]);
+                    // Hiển thị lỗi chi tiết hơn nếu API trả về (ví dụ, nếu result.errors là một object)
+                    if (result.errors) { 
+                        for (const fieldKeyInError in result.errors) {
+                            // Cần map key lỗi từ backend về ID của input error span
+                            // Ví dụ, nếu backend trả về lỗi cho key 'email', và span lỗi là 'userEmail-error'
+                            let errorSpanId = '';
+                            if (fieldKeyInError.toLowerCase().includes('email')) errorSpanId = 'userEmail';
+                            else if (fieldKeyInError.toLowerCase().includes('fullname')) errorSpanId = 'userFullName';
+                            else if (fieldKeyInError.toLowerCase().includes('phone')) errorSpanId = 'userPhone';
+                            else if (fieldKeyInError.toLowerCase().includes('password')) errorSpanId = 'userPassword';
+                            // ... thêm các mapping khác nếu cần ...
+                            if (errorSpanId) displayValidationError(errorSpanId, result.errors[fieldKeyInError]);
                         }
                     }
                 }
-            } catch (error) {
-                console.error("Lỗi khi lưu người dùng:", error);
-                alert("Lỗi kết nối máy chủ khi lưu người dùng.");
+            } 
+            catch (error) {
+                console.error("Lỗi khi lưu người dùng (catch block):", error);
+                alert("Lỗi kết nối máy chủ hoặc lỗi xử lý phản hồi khi lưu người dùng.");
             }
         });
     }

@@ -1,15 +1,14 @@
 // app/static/js/script_dang_nhap.js
 document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
-    
     if (loginForm) {
         const emailInput = document.getElementById('login-email');
         const passwordInput = document.getElementById('login-password');
         const emailError = document.getElementById('login-email-error');
         const passwordError = document.getElementById('login-password-error');
-        const generalError = document.getElementById('login-general-error'); // Đảm bảo ID này đúng với HTML của bạn
+        const generalError = document.getElementById('login-general-error'); // Đây là div màu đỏ
 
-        loginForm.addEventListener('submit', async function(e) { // << Thêm async
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             let isValid = true;
 
@@ -18,16 +17,17 @@ document.addEventListener('DOMContentLoaded', function() {
             if (passwordError) passwordError.textContent = '';
             if (generalError) {
                 generalError.textContent = ''; // Xóa nội dung lỗi cũ
-                generalError.style.display = 'none';
+                generalError.style.display = 'none'; // <<< ẨN ĐI MẶC ĐỊNH KHI SUBMIT
             }
 
             const email = emailInput.value.trim();
             const password = passwordInput.value;
 
+            // --- Client-side validation (giữ nguyên) ---
             if (!email) {
                 if (emailError) emailError.textContent = 'Vui lòng nhập email.';
                 isValid = false;
-            } else if (!/\S+@\S+\.\S+/.test(email)) { // Regex đơn giản
+            } else if (!/\S+@\S+\.\S+/.test(email)) { 
                 if (emailError) emailError.textContent = 'Định dạng email không hợp lệ.';
                 isValid = false;
             }
@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (passwordError) passwordError.textContent = 'Vui lòng nhập mật khẩu.';
                 isValid = false;
             }
+            // --- Hết client-side validation ---
 
             if (isValid) {
                 const loginData = {
@@ -44,40 +45,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
 
                 try {
-                    const response = await fetch('/api/auth/login', { // Gọi API backend
+                    const response = await fetch('/api/auth/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify(loginData),
                     });
-                    const result = await response.json();
+                    const result = await response.json(); // Luôn cố gắng parse JSON
 
-                    if (response.ok && result.success && result.user) { // Kiểm tra response.ok và result.user
-                        // alert(result.message || 'Đăng nhập thành công!'); // Có thể bỏ alert nếu chuyển hướng ngay
-
-                        // Lưu trạng thái đăng nhập (ví dụ: vào localStorage hoặc để session cookie tự xử lý)
-                        // localStorage.setItem('userData', JSON.stringify(result.user)); // Ví dụ
-
-                        // Điều hướng dựa trên vai trò (role)
+                    if (response.ok && result.success && result.user) { 
+                        // Đăng nhập thành công
+                        // alert(result.message || 'Đăng nhập thành công!'); // Có thể bỏ alert
                         if (result.user.role === 'admin') {
-                            window.location.href = '/admin/dashboard'; // Hoặc URL dashboard admin của bạn
-                        } else { // Mặc định là 'client' hoặc các role khác
-                            window.location.href = '/'; // Chuyển hướng về trang chủ client
+                            window.location.href = '/admin/dashboard'; 
+                        } else { 
+                            window.location.href = '/'; 
                         }
                     } else {
+                        // Đăng nhập thất bại hoặc có lỗi từ server (ví dụ: tài khoản bị khóa)
                         if (generalError) {
-                            generalError.textContent = result.message || 'Email hoặc mật khẩu không chính xác.';
-                            generalError.style.display = 'block'; // Hoặc 'flex' tùy CSS
+                            generalError.textContent = result.message || 'Email hoặc mật khẩu không chính xác, hoặc tài khoản có vấn đề.';
+                            generalError.style.display = 'block'; // <<< HIỂN THỊ Ô LỖI MÀU ĐỎ
                         }
                     }
-                } catch (error) {
+                } catch (error) { // Lỗi mạng hoặc lỗi không parse được JSON (nếu server lỗi 500 trả về HTML)
                     console.error('Lỗi khi đăng nhập:', error);
                     if (generalError) {
                         generalError.textContent = 'Có lỗi xảy ra trong quá trình đăng nhập. Vui lòng thử lại sau.';
-                        generalError.style.display = 'block';
+                        generalError.style.display = 'block'; // <<< HIỂN THỊ Ô LỖI MÀU ĐỎ
                     }
                 }
+            } else {
+                 // Trường hợp validation phía client thất bại, có thể hiện lỗi chung nếu muốn
+                 if (generalError && !emailError.textContent && !passwordError.textContent) { // Chỉ hiện lỗi chung nếu không có lỗi cụ thể ở input
+                    generalError.textContent = 'Vui lòng kiểm tra lại thông tin đã nhập.';
+                    generalError.style.display = 'block';
+                 }
             }
         });
     }

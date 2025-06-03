@@ -23,7 +23,8 @@ CREATE TABLE users (
     password_hash TEXT NOT NULL,
     role TEXT NOT NULL DEFAULT 'client' CHECK(role IN ('client', 'admin')),
     status TEXT DEFAULT 'active' CHECK(status IN ('active', 'pending', 'locked')), -- Trạng thái tài khoản
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME
 );
 
 -- Bảng Sessions (Giữ nguyên)

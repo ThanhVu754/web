@@ -359,11 +359,9 @@ def api_admin_create_user():
     if not data:
         return jsonify({"success": False, "message": "Dữ liệu không hợp lệ."}), 400
 
-    # Các trường bắt buộc khi admin tạo user (dựa trên form quan_ly_nguoi_dung.html)
-    # Form có: userFullName, userEmail, userPhone, userStatus, userPassword
     full_name = data.get('userFullName')
     email = data.get('userEmail')
-    password = data.get('userPassword') # Mật khẩu bắt buộc khi tạo mới
+    password = data.get('userPassword')
 
     if not all([full_name, email, password]):
         return jsonify({"success": False, "message": "Họ tên, email và mật khẩu là bắt buộc."}), 400
@@ -375,24 +373,46 @@ def api_admin_create_user():
         'email': email,
         'password': password,
         'phone_number': data.get('userPhone'),
-        'role': data.get('userRole', 'client'), # Giả sử form có thể có trường userRole, nếu không mặc định client
-        'status': data.get('userStatus', 'active') # Lấy từ form
+        'role': data.get('userRole', 'client'),
+        'status': data.get('userStatus', 'active')
     }
 
     try:
-        user_id = client_model.create_user_by_admin(user_data_for_model)
-        new_user = client_model.get_user_by_id(user_id)
+        user_id = client_model.create_user_by_admin(user_data_for_model) # client_model đã được import
+        
+        # Nếu create_user_by_admin trả về None do lỗi Integrity bên trong nó mà không raise,
+        # hoặc nếu nó raise IntegrityError thì sẽ được bắt ở dưới.
+        # Để an toàn, chúng ta dựa vào việc nó có raise lỗi hay không.
+        # Nếu nó không raise lỗi và trả về user_id, thì là thành công.
+
+        new_user = client_model.get_user_by_id(user_id) # Lấy lại thông tin user vừa tạo
         if new_user:
             user_dict = dict(new_user)
-            user_dict.pop('password_hash', None)
+            user_dict.pop('password_hash', None) # Không trả về hash
             return jsonify({"success": True, "message": "Tạo người dùng thành công!", "user": user_dict}), 201
-        else: # Trường hợp create_user_by_admin trả về None mà không ném lỗi (ít khả năng nếu đã raise)
-             return jsonify({"success": False, "message": "Không thể tạo người dùng."}), 500
-    except ValueError as ve: # Bắt lỗi từ model (ví dụ: email trùng, mật khẩu không hợp lệ)
+        else:
+            # Trường hợp này ít xảy ra nếu create_user_by_admin ném lỗi hoặc trả ID
+            return jsonify({"success": False, "message": "Không thể tạo người dùng sau khi model thực thi."}), 500
+
+    except ValueError as ve: # Bắt lỗi validation từ model (ví dụ: mật khẩu quá ngắn nếu check trong model)
         return jsonify({"success": False, "message": str(ve)}), 400
-    except Exception as e:
-        current_app.logger.error(f"Admin API: Error creating user: {e}", exc_info=True)
-        return jsonify({"success": False, "message": "Lỗi máy chủ khi tạo người dùng."}), 500
+    except sqlite3.IntegrityError as ie:
+         current_app.logger.warning(f"Admin create user IntegrityError: {ie} - Attempted data: {data}")
+         error_message_lower = str(ie).lower()
+         
+         if "unique constraint failed: users.email" in error_message_lower:
+             return jsonify({"success": False, "message": f"Email '{data.get('userEmail')}' đã được sử dụng. Vui lòng chọn email khác."}), 409
+         elif "unique constraint failed: users.phone_number" in error_message_lower:
+             return jsonify({"success": False, "message": f"Số điện thoại '{data.get('userPhone')}' đã được sử dụng. Vui lòng chọn số điện thoại khác."}), 409
+         else:
+             # Cho các lỗi IntegrityError khác không lường trước
+             return jsonify({"success": False, "message": f"Lỗi ràng buộc cơ sở dữ liệu: {ie}"}), 400
+    except sqlite3.Error as dbe: # Các lỗi CSDL khác (ngoài IntegrityError)
+         current_app.logger.error(f"Admin create user DB error: {dbe} - Data: {data}")
+         return jsonify({"success": False, "message": "Lỗi cơ sở dữ liệu khi tạo người dùng."}), 500
+    except Exception as e: # Các lỗi Python không lường trước khác
+        current_app.logger.error(f"Admin API: Unknown error creating user: {e} - Data: {data}", exc_info=True)
+        return jsonify({"success": False, "message": "Lỗi máy chủ không xác định khi tạo người dùng."}), 500
 
 
 @admin_bp.route('/api/users/<int:user_id>', methods=['PUT'])

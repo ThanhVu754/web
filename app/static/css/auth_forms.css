@@ -102,6 +102,7 @@ body.auth-page-vj {
     text-align: center;
     margin-top: 15px;
     font-size: 0.875rem; 
+    display: none;
 }
 
 

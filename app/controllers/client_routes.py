@@ -15,29 +15,33 @@ client_bp = Blueprint('client_bp', __name__,
 @client_bp.route('/')
 @client_bp.route('/home')
 def home_page():
-    departure_airports_list = []
-    arrival_airports_list = []
-    current_user_name = None # Khởi tạo là None
-
-    if 'user_id' in session: # Kiểm tra nếu người dùng đã đăng nhập
-        user = client_model.get_user_by_id(session['user_id'])
+    current_user_name = None
+    if 'user_id' in session:
+        user = client_model.get_user_by_id(session['user_id']) # Giả sử client_model là tên đúng
         if user:
             current_user_name = user['full_name']
-
+    
+    airports_list = [] # Khởi tạo danh sách rỗng
     try:
-        departure_airports_list = airport_model.get_distinct_departure_airports()
-        arrival_airports_list = airport_model.get_distinct_arrival_airports()
+        # Gọi hàm lấy TẤT CẢ sân bay từ model của bạn
+        airports_list = airport_model.get_all_airports() 
+        if not airports_list: # Nếu không có sân bay nào từ CSDL
+            current_app.logger.warning("Không có dữ liệu sân bay nào được tải từ CSDL cho trang chủ.")
     except Exception as e:
         current_app.logger.error(f"Lỗi khi lấy danh sách sân bay cho trang chủ: {e}")
-
+        # airports_list vẫn sẽ là rỗng
     return render_template(
-        "client/home.html",
-        flight_id=0,
+        "client/home.html", # Đường dẫn đến template home của client
+        flight_id=0, 
         seat_class="Phổ thông",
         total_passengers=1,
-        departure_airports=departure_airports_list,
-        arrival_airports=arrival_airports_list,
-        current_user_name=current_user_name # <<< Truyền tên người dùng vào template
+        # Truyền cùng một danh sách cho cả hai dropdown hoặc hai danh sách riêng nếu bạn dùng
+        # get_distinct_departure_airports và get_distinct_arrival_airports
+        airports=airports_list, # <<< TRUYỀN BIẾN NÀY CHO TEMPLATE
+        # Hoặc nếu bạn dùng 2 list riêng:
+        # departure_airports=departure_airports_list, 
+        # arrival_airports=arrival_airports_list,
+        current_user_name=current_user_name
     )
 
 # ... (các route render_template khác như login_page, register_page, my_flights_page, e_menu_page, flight_services_page, online_checkin_page giữ nguyên) ...
@@ -120,13 +124,6 @@ def register_api():
 
 
 @client_bp.route('/api/auth/login', methods=['POST'])
-# app/controllers/client_routes.py
-# ... (các import khác) ...
-
-
-# ... (Blueprint client_bp) ...
-
-@client_bp.route('/api/auth/login', methods=['POST'])
 def login_api():
     data = request.get_json()
     if not data:
@@ -134,7 +131,7 @@ def login_api():
 
     email = data.get('email')
     password = data.get('password')
-    current_app.logger.info(f"Login attempt for email: {email}") 
+    current_app.logger.info(f"Login attempt for email: {email}")
 
     if not email or not password:
         return jsonify({"success": False, "message": "Email và mật khẩu không được để trống."}), 400
@@ -142,13 +139,28 @@ def login_api():
     user = client_model.get_user_by_email(email) # Đảm bảo client_model đã được import
 
     if user:
-        current_app.logger.info(f"User found: {user['email']}. Stored hash: {user['password_hash']}")
-        # print(f"DEBUG: User found: {user['email']}, Stored hash: {user['password_hash']}") # Dùng print nếu logger chưa cấu hình rõ
-        # print(f"DEBUG: Password provided: {password}")
+        # SỬA ĐỔI Ở DÒNG LOGGING NÀY:
+        # Kiểm tra xem 'status' có trong các keys của user (sqlite3.Row) không trước khi truy cập
+        status_info = user['status'] if 'status' in user.keys() else 'N/A (status column not found)'
+        current_app.logger.info(f"User found: {user['email']}. Stored hash: {user['password_hash']}. Status: {status_info}")
         
+        # KIỂM TRA TRẠNG THÁI TÀI KHOẢN TRƯỚC KHI KIỂM TRA MẬT KHẨU
+        # Đảm bảo cột 'status' tồn tại trong bảng users và được trả về bởi get_user_by_email
+        if 'status' in user.keys(): # Kiểm tra xem có cột status không
+            if user['status'] == 'locked':
+                current_app.logger.warning(f"Login failed: Account for email {email} is locked.")
+                return jsonify({"success": False, "message": "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên."}), 403
+            
+            if user['status'] == 'pending':
+                current_app.logger.warning(f"Login failed: Account for email {email} is pending activation.")
+                return jsonify({"success": False, "message": "Tài khoản của bạn đang chờ kích hoạt."}), 403
+        else:
+            # Xử lý trường hợp không có cột status, có thể coi là active hoặc báo lỗi tùy logic
+            current_app.logger.warning(f"User {email} status column not found, assuming active for login attempt.")
+
+
         password_matches = check_password_hash(user['password_hash'], password)
         current_app.logger.info(f"Password match result for {email}: {password_matches}")
-        # print(f"DEBUG: Password match result: {password_matches}")
 
         if password_matches:
             session.clear()
@@ -171,8 +183,6 @@ def login_api():
     else:
         current_app.logger.warning(f"Login failed: User not found for email: {email}")
         return jsonify({"success": False, "message": "Email hoặc mật khẩu không chính xác."}), 401
-
-# ... (các route khác) ...
 
 @client_bp.route('/api/auth/logout', methods=['POST'])
 def logout_api():

@@ -75,27 +75,32 @@
           <div class="input-group">
             <label for="departure">Điểm khởi hành *</label>
             <select id="departure" name="origin" required>
-              <option value="">-- Chọn nơi đi --</option>
-              {% if airports %}  {% for airport in airports %}
-                  <option value="{{ airport.iata_code }}">{{ airport.city }} ({{ airport.iata_code }}) - {{ airport.name }}</option>
-                {% endfor %}
-              {% else %}
-                <option value="" disabled>Không tải được danh sách sân bay</option>
-              {% endif %}
-              </select>
-            </div>
+                <option value="">-- Chọn nơi đi --</option>
+                {# Giả sử bạn truyền biến tên là 'airports' từ backend #}
+                {# Hoặc nếu bạn dùng departure_airports thì đổi tên biến ở đây #}
+                {% if airports and airports|length > 0 %} 
+                    {% for airport in airports %}
+                        <option value="{{ airport.iata_code }}">{{ airport.city }} ({{ airport.iata_code }}) - {{ airport.name }}</option>
+                    {% endfor %}
+                {% else %}
+                    <option value="" disabled>Không tải được danh sách sân bay</option>
+                {% endif %}
+            </select>
+          </div>
 
           <div class="input-group">
               <label for="destination">Điểm đến *</label>
               <select id="destination" name="destination" required>
-                <option value="">-- Chọn nơi đến --</option>
-                {% if airports %}
-                  {% for airport in airports %}
-                    <option value="{{ airport.iata_code }}">{{ airport.city }} ({{ airport.iata_code }}) - {{ airport.name }}</option>
-                  {% endfor %}
-                {% else %}
-                  <option value="" disabled>Không tải được danh sách sân bay</option>
-                {% endif %}
+                  <option value="">-- Chọn nơi đến --</option>
+                  {# Giả sử bạn truyền biến tên là 'airports' từ backend #}
+                  {# Hoặc nếu bạn dùng arrival_airports thì đổi tên biến ở đây #}
+                  {% if airports and airports|length > 0 %}
+                      {% for airport in airports %}
+                          <option value="{{ airport.iata_code }}">{{ airport.city }} ({{ airport.iata_code }}) - {{ airport.name }}</option>
+                      {% endfor %}
+                  {% else %}
+                      <option value="" disabled>Không tải được danh sách sân bay</option>
+                  {% endif %}
               </select>
           </div>
 
@@ -128,9 +133,9 @@
           <div class="input-group">
             <label for="seat-class">Hạng ghế *</label>
             <select id="seat-class" name="seat_class">
-              <option>Phổ thông</option>
-              <option>Thương gia</option>
-              <option>Hạng nhất</option>
+                <option value="Phổ thông">Phổ thông</option> 
+                <option value="Thương gia">Thương gia</option>
+                <option value="Hạng nhất">Hạng nhất</option>
             </select>
           </div>
 
