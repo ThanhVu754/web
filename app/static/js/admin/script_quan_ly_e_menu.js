@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
      // --- CẬP NHẬT HÀM XEM TRƯỚC ẢNH KHI CHỌN TỆP ---
+     // --- CẬP NHẬT HÀM XEM TRƯỚC ẢNH KHI CHỌN TỆP ---
     if (menuItemImageFileInput && imagePreview) {
         menuItemImageFileInput.addEventListener('change', function(event) {
             const file = event.target.files[0];
@@ -82,9 +83,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- FETCH MENU ITEMS FROM API ---
-    async function fetchMenuItems(searchTerm = '', categoryTerm = '') {
-        console.log(`Fetching menu items with searchTerm: '${searchTerm}', category: '${categoryTerm}'`);
-        let apiUrl = '/admin/api/menu-items?'; // API của admin
+     async function fetchMenuItems(searchTerm = '', categoryTerm = '') {
+        console.log(`Bắt đầu fetchMenuItems với: search='${searchTerm}', category='${categoryTerm}'`); // DEBUG
+        let apiUrl = '/admin/api/menu-items?';
         const params = new URLSearchParams();
         if (searchTerm) params.append('search', searchTerm);
         if (categoryTerm) params.append('category', categoryTerm);
@@ -92,25 +93,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             const response = await fetch(apiUrl);
+            console.log("Fetch response status:", response.status); // DEBUG
+
             const data = await response.json();
-            console.log("Response from fetchMenuItems API:", data);
+            console.log("Dữ liệu nhận được từ API E-Menu:", data); // DEBUG
+
             if (data.success && Array.isArray(data.menu_items)) {
-                allMenuItems = data.menu_items;
-                renderEMenuTable(allMenuItems);
+                allMenuItems = data.menu_items; // Lưu dữ liệu
+                renderEMenuTable(allMenuItems); // Gọi hàm render
             } else {
+                console.error("API không trả về dữ liệu thành công:", data.message);
                 if(eMenuTableBody) eMenuTableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">${data.message || 'Không tải được dữ liệu E-Menu.'}</td></tr>`;
-                console.error("Failed to fetch menu items:", data.message);
             }
         } catch (error) {
+            console.error("Lỗi trong khối catch của fetchMenuItems:", error);
             if(eMenuTableBody) eMenuTableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Lỗi kết nối máy chủ khi tải E-Menu.</td></tr>`;
-            console.error("Error fetching menu items (catch):", error);
         }
     }
 
     // --- RENDER E-MENU TABLE ---
     function renderEMenuTable(itemsToRender) {
-        if (!eMenuTableBody) return;
+        if (!eMenuTableBody) {
+            console.error("Không tìm thấy eMenuTableBody để render!");
+            return;
+        }
+        
         eMenuTableBody.innerHTML = ''; 
+        console.log(`Bắt đầu render bảng với ${itemsToRender ? itemsToRender.length : 0} món.`); // DEBUG
+
         if (!itemsToRender || itemsToRender.length === 0) {
             eMenuTableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Không có món ăn/đồ uống nào.</td></tr>';
             return;
@@ -118,14 +128,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         itemsToRender.forEach(item => {
             const row = eMenuTableBody.insertRow();
+            // Backend trả về image_url_full đã được xử lý bởi url_for
+            const imageUrl = item.image_url_full || '/static/images/placeholder-food.png';
             const descriptionShort = item.description ? (item.description.length > 50 ? item.description.substring(0, 50) + '...' : item.description) : 'N/A';
-            const imageUrl = item.image_url || '/static/images/placeholder-food.png'; // Dùng ảnh placeholder nếu không có
             
+            // Log dữ liệu của từng item để kiểm tra tên key
+            // console.log("Rendering item:", item); 
+
             row.innerHTML = `
                 <td>${item.id}</td>
                 <td><img src="${imageUrl}" alt="${item.name}" class="item-image-thumbnail" onerror="this.onerror=null;this.src='/static/images/placeholder-food.png';"></td>
-                <td>${item.name}</td>
-                <td>${categoryNames[item.category] || item.category}</td>
+                <td>${item.name || 'N/A'}</td>
+                <td>${categoryNames[item.category] || item.category || 'N/A'}</td>
                 <td>${(item.price_vnd || 0).toLocaleString('vi-VN')}</td>
                 <td>${item.price_usd ? item.price_usd.toFixed(2) : 'N/A'}</td>
                 <td class="item-description-short" title="${item.description || ''}">${descriptionShort}</td>
@@ -136,6 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         });
         attachActionListenersToEMenuTable();
+        console.log("Render bảng hoàn tất."); // DEBUG
     }
 
     // --- ATTACH ACTION LISTENERS TO E-MENU TABLE ---
@@ -190,47 +205,61 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- MODAL HANDLING (E-MENU ITEM FORM) ---
-    async function openMenuItemModal(title = "Thêm món mới", itemIdToEdit = null) {
-        if (!menuItemFormModal || !menuItemModalTitle || !menuItemForm) return;
+     async function openMenuItemModal(title = "Thêm món mới", itemIdToEdit = null) {
+        if (!menuItemFormModal || !menuItemModalTitle || !menuItemForm) {
+            console.error("Các element của Modal không tìm thấy!");
+            return;
+        }
+        
         menuItemModalTitle.textContent = title;
         menuItemForm.reset(); 
         clearValidationErrors(menuItemForm); 
-        if(imagePreview) imagePreview.style.display = 'none'; 
-        if(hiddenMenuItemId) hiddenMenuItemId.value = ''; 
-        if(menuItemImageFileInput) menuItemImageFileInput.value = '';
         if(imagePreview) {
             imagePreview.style.display = 'none';
             imagePreview.src = '#';
         }
+        if(hiddenMenuItemId) hiddenMenuItemId.value = ''; 
         
-        if (itemIdToEdit) { 
-            // Khi sửa, chúng ta sẽ tải thông tin món ăn,
-            // và hiển thị ảnh hiện tại trong imagePreview từ URL đã lưu
+        editingMenuItemId = itemIdToEdit; // QUAN TRỌNG: Đặt giá trị cho biến editingMenuItemId
+
+        if (editingMenuItemId) { 
+            // --- CHẾ ĐỘ SỬA ---
+            console.log(`Chế độ Sửa. Đang tải dữ liệu cho item ID: ${editingMenuItemId}`);
+            // Gán ID vào hidden input để form có thể truy cập
+            if(hiddenMenuItemId) hiddenMenuItemId.value = editingMenuItemId;
+
             try {
-                const response = await fetch(`/admin/api/menu-items/${itemIdToEdit}`);
+                const response = await fetch(`/admin/api/menu-items/${editingMenuItemId}`);
                 const data = await response.json();
-                if (data.success && data.menu_item) {
+
+                if (response.ok && data.success && data.menu_item) {
                     const itemData = data.menu_item;
-                    if(hiddenMenuItemId) hiddenMenuItemId.value = itemData.id;
+                    console.log("Dữ liệu nhận được để sửa:", itemData);
+                    
+                    // Điền dữ liệu vào form
                     document.getElementById('menuItemName').value = itemData.name;
                     document.getElementById('menuItemCategory').value = itemData.category;
-                    document.getElementById('menuItemImageURL').value = itemData.image_url || '';
+                    // document.getElementById('menuItemImageURL').value = itemData.image_url || ''; // Bỏ nếu dùng input file
                     document.getElementById('menuItemPriceVND').value = itemData.price_vnd;
                     document.getElementById('menuItemPriceUSD').value = itemData.price_usd || '';
                     document.getElementById('menuItemDescription').value = itemData.description || '';
-                    // Thêm is_available, display_order nếu form có
-                    // document.getElementById('menuItemIsAvailable').checked = itemData.is_available == 1;
-                    // document.getElementById('menuItemDisplayOrder').value = itemData.display_order;
                     
-                    if (itemData.image_url && imagePreview && isValidURL(itemData.image_url)) {
-                        imagePreview.src = data.menu_item.image_url;
+                    // Hiển thị ảnh hiện tại
+                    if (itemData.image_url_full && imagePreview) {
+                        imagePreview.src = itemData.image_url_full;
                         imagePreview.style.display = 'block';
                     }
                 } else {
                     alert("Lỗi tải thông tin món: " + (data.message || "Không tìm thấy."));
-                    closeMenuItemModal(); return;
+                    closeMenuItemModal(); // Đóng modal nếu không tải được dữ liệu
+                    return; 
                 }
-            } catch (error) { /* ... */ closeMenuItemModal(); return;}
+            } catch (error) { 
+                console.error("Lỗi khi lấy chi tiết món ăn:", error);
+                alert("Lỗi kết nối khi lấy chi tiết món ăn.");
+                closeMenuItemModal();
+                return;
+            }
         }
         menuItemFormModal.style.display = 'flex';
     }
@@ -244,65 +273,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // --- FORM SUBMISSION (CREATE/UPDATE MENU ITEM) ---
-    if (menuItemForm) {
+    // --- THAY THẾ TOÀN BỘ LOGIC SUBMIT FORM CŨ BẰNG LOGIC NÀY ---
+     if (menuItemForm) {
         menuItemForm.addEventListener('submit', async function(event) {
             event.preventDefault();
             clearValidationErrors(menuItemForm); 
             let isValid = true;
 
-            // 1. Lấy và Validate dữ liệu text (tương tự như cũ)
             const name = document.getElementById('menuItemName').value.trim();
             const category = document.getElementById('menuItemCategory').value;
+            const imageFileInput = document.getElementById('menuItemImageFile'); // Đổi từ URL sang file
             const priceVND = document.getElementById('menuItemPriceVND').value;
-            const priceUSD = document.getElementById('menuItemPriceUSD').value;
+            const priceUSD = document.getElementById('menuItemPriceUSD').value; // Lấy giá trị priceUSD
             const description = document.getElementById('menuItemDescription').value.trim();
             
-            // Input file
-            const imageFileInput = document.getElementById('menuItemImageFile'); 
-            const imageFile = imageFileInput ? imageFileInput.files[0] : null;
-
-            if (name === '') {
-                displayValidationError('menuItemName', 'Tên món là bắt buộc.');
-                isValid = false;
-            }
-            if (category === '') {
-                displayValidationError('menuItemCategory', 'Vui lòng chọn danh mục.');
-                isValid = false;
-            }
-            if (priceVND === '' || parseFloat(priceVND) < 0) {
-                displayValidationError('menuItemPriceVND', 'Giá VND là bắt buộc và không được âm.');
-                isValid = false;
-            }
-            if (priceUSD !== '' && parseFloat(priceUSD) < 0) {
-                displayValidationError('menuItemPriceUSD', 'Giá USD không được âm (nếu có nhập).');
-                isValid = false;
-            }
-            // Thêm validation cho file ảnh nếu cần (ví dụ: kích thước)
-            if (imageFile && imageFile.size > 2 * 1024 * 1024) { // Giới hạn 2MB
-                displayValidationError('menuItemImageFile', 'Kích thước ảnh không được vượt quá 2MB.');
-                isValid = false;
-            }
-
-            if (!isValid) {
-                console.error("Validation failed. Form submission stopped.");
-                return;
-            }
-
-            // 2. Tạo đối tượng FormData để gửi đi
-            // FormData sẽ tự động lấy các trường có thuộc tính 'name' trong form
-            const formData = new FormData(menuItemForm); 
-            // JavaScript sẽ tự động thêm các trường:
-            // menuItemId, menuItemName, menuItemCategory, menuItemPriceVND, 
-            // menuItemPriceUSD, menuItemDescription, và menuItemImageFile (nếu có file được chọn)
-            // Dựa trên thuộc tính 'name' của các input trong form HTML của bạn.
-            // Hãy đảm bảo các input trong quan_ly_e_menu.html có các 'name' tương ứng.
+            if (name === '') { displayValidationError('menuItemName', 'Tên món là bắt buộc.'); isValid = false; }
+            if (category === '') { displayValidationError('menuItemCategory', 'Vui lòng chọn danh mục.'); isValid = false; }
+            if (priceVND === '' || parseFloat(priceVND) < 0) { displayValidationError('menuItemPriceVND', 'Giá VND là bắt buộc và không được âm.'); isValid = false; }
             
-            console.log("FormData created. Editing ID:", editingMenuItemId);
-            // Bạn có thể xem nội dung FormData bằng cách lặp qua nó:
-            // for (let [key, value] of formData.entries()) { 
-            //   console.log(key, value);
-            // }
+            // THÊM VALIDATION CHO PRICE_USD
+            if (priceUSD === '' || parseFloat(priceUSD) < 0) {
+                displayValidationError('menuItemPriceUSD', 'Giá USD là bắt buộc và không được âm.');
+                isValid = false;
+            }
+            
+            if (!isValid) return;
 
+            const formData = new FormData(menuItemForm);
+            
+            // Không cần tạo itemApiData nữa vì đã dùng FormData
 
             let url = '/admin/api/menu-items';
             let method = 'POST';
@@ -310,28 +309,18 @@ document.addEventListener('DOMContentLoaded', function() {
             if (editingMenuItemId) { 
                 url = `/admin/api/menu-items/${editingMenuItemId}`;
                 method = 'PUT';
-                // Khi sửa, nếu người dùng không chọn file mới, 'menuItemImageFile' sẽ không có trong FormData.
-                // Backend API (api_admin_update_menu_item) đã được thiết kế để chỉ cập nhật ảnh nếu có file mới được gửi lên.
             }
 
             try {
-                // Khi dùng FormData với fetch, không cần đặt header 'Content-Type'.
-                // Trình duyệt sẽ tự động đặt header đúng (multipart/form-data) cùng với boundary.
                 const response = await fetch(url, {
                     method: method,
-                    body: formData // Gửi FormData trực tiếp
+                    body: formData 
                 });
-
                 const result = await response.json();
-                console.log("API Response:", response.status, result);
-
+                
                 if (response.ok && result.success) {
-                    alert(result.message || (editingMenuItemId ? "Cập nhật món thành công!" : "Thêm món mới thành công!"));
-                    // Gọi hàm tải lại danh sách món ăn từ server
-                    fetchMenuItems(
-                        menuItemSearchInput ? menuItemSearchInput.value.trim() : '', 
-                        menuCategoryFilter ? menuCategoryFilter.value : ''
-                    ); 
+                    alert(result.message || (editingMenuItemId ? "Cập nhật thành công!" : "Thêm món mới thành công!"));
+                    fetchMenuItems(); 
                     closeMenuItemModal();
                 } else {
                     alert("Lỗi: " + (result.message || "Thao tác không thành công."));
@@ -342,6 +331,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
 
      function closeMenuItemModal() {
         if (menuItemFormModal) {

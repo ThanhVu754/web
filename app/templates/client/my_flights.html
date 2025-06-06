@@ -23,7 +23,13 @@
         </ul>
       </nav>
       <div class="auth-links">
-        <a href="{{ url_for('client_bp.register_page') }}">Đăng ký</a><a href="{{ url_for('client_bp.login_page') }}">Đăng nhập</a>
+          {% if current_user_name %}
+              <span class="welcome-message">Chào, {{ current_user_name }}!</span>
+              <a href="{{ url_for('client_bp.logout_user') }}">Đăng xuất</a>
+          {% else %}
+              <a href="{{ url_for('client_bp.register_page') }}">Đăng ký</a>
+              <a href="{{ url_for('client_bp.login_page') }}">Đăng nhập</a>
+          {% endif %}
       </div>
       <div class="language-select">
         <select>

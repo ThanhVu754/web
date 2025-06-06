@@ -138,13 +138,19 @@ CREATE TABLE notifications (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
-    image_url TEXT,
     link_url TEXT,
     display_order INTEGER DEFAULT 0,
     is_active INTEGER DEFAULT 1,
     start_date DATETIME,
     end_date DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Bảng lưu các cài đặt chung của trang web
+CREATE TABLE settings (
+    setting_key TEXT PRIMARY KEY NOT NULL,
+    setting_value TEXT,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -259,3 +265,27 @@ INSERT INTO flights (flight_number, departure_airport_id, arrival_airport_id, de
 ('SA17', (SELECT id FROM airports WHERE iata_code = 'SGN'), (SELECT id FROM airports WHERE iata_code = 'CXR'), datetime('now', '+4 days', '06:00:00'), datetime('now', '+4 days', '07:20:00'), 1000000, 1950000, 3100000, 120, 120, 'scheduled'),
 ('SA18', (SELECT id FROM airports WHERE iata_code = 'DAD'), (SELECT id FROM airports WHERE iata_code = 'SGN'), datetime('now', '+5 days', '13:00:00'), datetime('now', '+5 days', '14:20:00'), 1350000, 2500000, 3700000, 150, 145, 'scheduled'),
 ('SA19', (SELECT id FROM airports WHERE iata_code = 'HPH'), (SELECT id FROM airports WHERE iata_code = 'PQC'), datetime('now', '+6 days', '11:00:00'), datetime('now', '+6 days', '13:10:00'), 1600000, 3000000, 5000000, 140, 139, 'scheduled');
+
+
+-- Dữ liệu mẫu cho bảng 'menu_items'
+
+-- Xóa dữ liệu cũ trong bảng nếu bạn muốn chèn lại từ đầu (tùy chọn)
+-- DELETE FROM menu_items;
+
+INSERT INTO menu_items (name, description, category, price_vnd, image_url, is_available) VALUES
+('Combo Cơm Gà Xối Mỡ', 'Cơm gà xối mỡ giòn rụm, kèm nước ngọt và canh.', 'combo', 120000, 'static/uploads/menu_images/sample_combo.jpg', 1),
+('Mì Ý Sốt Bò Bằm', 'Mì Ý chuẩn vị, sốt bò bằm đậm đà từ thịt bò Úc.', 'do_an_nong', 150000, 'static/uploads/menu_images/sample_mi_y.jpg', 1),
+('Phở Bò Đặc Biệt', 'Phở bò truyền thống với nước dùng thanh ngọt, đầy đủ thịt.', 'do_an_nong', 90000, NULL, 1),
+('Trà Đào Cam Sả', 'Trà đào thơm lừng kết hợp vị cam sả tươi mát, giải nhiệt.', 'do_uong', 50000, NULL, 1),
+('Snack Khoai Tây Vị Tảo Biển', 'Gói khoai tây chiên giòn tan, đậm vị tảo biển.', 'mon_an_vat', 25000, 0);
+
+
+INSERT INTO notifications (title, content, is_active, display_order) VALUES
+('Lịch bay mùa hè', '<strong>Cập nhật lịch bay mùa hè:</strong> SangAir tăng tần suất các chuyến bay đến Đà Nẵng, Quy Nhơn, Phú Quốc từ 01/06 đến 30/08.', 1, 0),
+('Ưu đãi thanh toán MoMo', 'Nhận ngay voucher giảm giá 50.000 VNĐ khi thanh toán vé máy bay qua ví điện tử MoMo.', 1, 1),
+('Check-in Online tiện lợi', 'Làm thủ tục trực tuyến nhanh chóng, tiết kiệm thời gian tại sân bay. Mở trước 24 giờ so với giờ khởi hành.', 1, 2),
+('Thông báo cũ (không hoạt động)', 'Chương trình khuyến mãi tháng 5 đã kết thúc.', 0, 3);
+
+
+
+

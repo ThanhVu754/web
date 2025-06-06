@@ -1,79 +1,51 @@
+// app/static/js/admin/script_quan_ly_thong_bao_trang_chu.js
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("Quản lý Thông báo Trang chủ Script Loaded!");
+    console.log("Homepage Notification Management Script Loaded - API Integrated!");
 
+    // DOM Elements
     const noticeSectionTitleInput = document.getElementById('noticeSectionTitle');
-    const noticePlaneImageURLInput = document.getElementById('noticePlaneImageURL');
-    const noticePlaneImagePreview = document.getElementById('noticePlaneImagePreview');
     const saveNoticeSettingsBtn = document.getElementById('saveNoticeSettingsBtn');
     
     const addNoticeItemBtn = document.getElementById('addNoticeItemBtn');
     const noticeItemsContainer = document.getElementById('noticeItemsContainer');
+    
+    // Nút "Lưu tất cả" không còn cần thiết với logic CRUD riêng lẻ
     const saveAllNoticeItemsBtn = document.getElementById('saveAllNoticeItemsBtn');
+    if (saveAllNoticeItemsBtn) {
+        saveAllNoticeItemsBtn.style.display = 'none'; 
+    }
 
-    const LOCAL_STORAGE_KEY_NOTICES = 'sangAirHomepageNotices';
+    let allNoticesData = []; // Để lưu trữ dữ liệu từ API
 
-    // Dữ liệu mặc định nếu không có gì trong localStorage
-    let defaultSiteNotices = {
-        title: "THÔNG BÁO",
-        planeImageURL: "https://cdn-icons-png.flaticon.com/512/2972/2972185.png",
-        items: [
-            { id: 1, content: "<strong>Quý hành khách lưu ý:</strong> Nội dung ví dụ cho thông báo đầu tiên." },
-            { id: 2, content: "Cập nhật chính sách hành lý mới, vui lòng xem chi tiết." },
-            { id: 3, content: "Mọi thông tin chi tiết, vui lòng liên hệ tổng đài 1900 1100." }
-        ]
-    };
-
-    let siteNotices;
-
-    // Load dữ liệu ban đầu từ localStorage hoặc dùng dữ liệu mặc định
-    function loadInitialData() {
-        const storedData = localStorage.getItem(LOCAL_STORAGE_KEY_NOTICES);
-        if (storedData) {
-            siteNotices = JSON.parse(storedData);
-            console.log("Đã tải dữ liệu thông báo từ localStorage (Admin)");
-        } else {
-            siteNotices = JSON.parse(JSON.stringify(defaultSiteNotices)); // Deep copy
-            console.log("Sử dụng dữ liệu thông báo mặc định (Admin)");
+    // --- FETCH NOTICES FROM API ---
+    async function fetchNotices() {
+        console.log("Fetching notifications from API...");
+        try {
+            const response = await fetch('/admin/api/notifications');
+            const data = await response.json();
+            if (data.success && Array.isArray(data.notifications)) {
+                allNoticesData = data.notifications;
+                renderNoticeItems();
+            } else {
+                console.error("Failed to fetch notices:", data.message);
+                if (noticeItemsContainer) noticeItemsContainer.innerHTML = `<p class="error-message">Không thể tải danh sách thông báo.</p>`;
+            }
+        } catch (error) {
+            console.error("Error fetching notices (catch):", error);
+            if (noticeItemsContainer) noticeItemsContainer.innerHTML = `<p class="error-message">Lỗi kết nối máy chủ.</p>`;
         }
-        
-        if (noticeSectionTitleInput) noticeSectionTitleInput.value = siteNotices.title;
-        if (noticePlaneImageURLInput) noticePlaneImageURLInput.value = siteNotices.planeImageURL;
-        if (noticePlaneImagePreview) {
-             noticePlaneImagePreview.src = siteNotices.planeImageURL || defaultSiteNotices.planeImageURL;
-             noticePlaneImagePreview.onerror = function() { this.src = defaultSiteNotices.planeImageURL; }
-        }
-        renderNoticeItems();
     }
 
-    // Lưu toàn bộ đối tượng siteNotices vào localStorage
-    function saveNoticesToLocalStorage() {
-        localStorage.setItem(LOCAL_STORAGE_KEY_NOTICES, JSON.stringify(siteNotices));
-        console.log("Đã lưu dữ liệu thông báo vào localStorage (Admin)");
-    }
-
-    // Xem trước ảnh khi thay đổi URL
-    if (noticePlaneImageURLInput && noticePlaneImagePreview) {
-        noticePlaneImageURLInput.addEventListener('input', function() {
-            noticePlaneImagePreview.src = this.value || defaultSiteNotices.planeImageURL;
-            noticePlaneImagePreview.onerror = function() { this.src = defaultSiteNotices.planeImageURL; }
-        });
-    }
-
-    // Lưu cài đặt chung
-    if (saveNoticeSettingsBtn) {
-        saveNoticeSettingsBtn.addEventListener('click', function() {
-            siteNotices.title = noticeSectionTitleInput.value;
-            siteNotices.planeImageURL = noticePlaneImageURLInput.value;
-            saveNoticesToLocalStorage();
-            alert("Đã lưu cài đặt chung cho khu vực thông báo!");
-        });
-    }
-
-    // Hiển thị các mục thông báo
+    // --- RENDER NOTICE ITEMS ---
     function renderNoticeItems() {
         if (!noticeItemsContainer) return;
         noticeItemsContainer.innerHTML = '';
-        siteNotices.items.forEach(item => {
+        if (!allNoticesData || allNoticesData.length === 0) {
+            noticeItemsContainer.innerHTML = '<p>Chưa có mục thông báo nào. Nhấn "Thêm mục thông báo" để bắt đầu.</p>';
+            return;
+        }
+
+        allNoticesData.forEach(item => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'notice-item-admin';
             itemDiv.dataset.id = item.id;
@@ -81,9 +53,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const textarea = document.createElement('textarea');
             textarea.rows = 3;
             textarea.value = item.content;
-            // Tự động điều chỉnh chiều cao của textarea
-            textarea.style.height = 'auto';
-            textarea.style.height = (textarea.scrollHeight) + 'px';
             textarea.addEventListener('input', function() {
                 this.style.height = 'auto';
                 this.style.height = (this.scrollHeight) + 'px';
@@ -92,11 +61,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const actionsDiv = document.createElement('div');
             actionsDiv.className = 'notice-item-actions';
             
-            const saveItemBtn = document.createElement('button'); // Đổi thành "Lưu"
-            saveItemBtn.className = 'btn btn-sm btn-save-notice-item'; // Class mới
+            const saveItemBtn = document.createElement('button');
+            saveItemBtn.className = 'btn btn-sm btn-save-notice-item';
             saveItemBtn.innerHTML = '<i class="fas fa-save"></i> Lưu'; 
             saveItemBtn.addEventListener('click', function() {
-                saveNoticeItem(item.id, textarea.value);
+                updateNoticeItem(item.id, textarea.value);
             });
 
             const deleteBtn = document.createElement('button');
@@ -106,83 +75,116 @@ document.addEventListener('DOMContentLoaded', function() {
                 deleteNoticeItem(item.id);
             });
             
-            actionsDiv.appendChild(saveItemBtn); // Nút Lưu
+            actionsDiv.appendChild(saveItemBtn);
             actionsDiv.appendChild(deleteBtn);
             
             itemDiv.appendChild(textarea);
             itemDiv.appendChild(actionsDiv);
             noticeItemsContainer.appendChild(itemDiv);
+
+            // Trigger input event để textarea tự điều chỉnh chiều cao ban đầu
+            textarea.dispatchEvent(new Event('input'));
         });
     }
 
-    // Thêm mục thông báo mới
-    if (addNoticeItemBtn) {
-        addNoticeItemBtn.addEventListener('click', function() {
-            const newId = siteNotices.items.length > 0 ? Math.max(...siteNotices.items.map(i => i.id)) + 1 : 1;
-            siteNotices.items.push({ id: newId, content: "Nội dung thông báo mới..." });
-            saveNoticesToLocalStorage(); // Lưu ngay khi thêm
-            renderNoticeItems(); // Vẽ lại
-        });
-    }
-
-    // Lưu một mục thông báo (sửa trực tiếp)
-    function saveNoticeItem(id, newContent) {
-        const itemIndex = siteNotices.items.findIndex(i => i.id === id);
-        if (itemIndex > -1) {
-            siteNotices.items[itemIndex].content = newContent;
-            saveNoticesToLocalStorage();
-            alert(`Đã cập nhật mục thông báo ID: ${id}`);
-        }
-    }
-    
-    // Xóa mục thông báo
-    function deleteNoticeItem(id) {
-        if (confirm(`Bạn có chắc muốn xóa mục thông báo này (ID: ${id})?`)) {
-            siteNotices.items = siteNotices.items.filter(i => i.id !== id);
-            saveNoticesToLocalStorage();
-            alert(`Đã xóa mục thông báo ID: ${id}`);
-            renderNoticeItems();
-        }
-    }
-    
-    // Lưu tất cả các mục thông báo
-    if (saveAllNoticeItemsBtn) {
-        saveAllNoticeItemsBtn.addEventListener('click', function() {
-            const itemDivs = noticeItemsContainer.querySelectorAll('.notice-item-admin');
-            let changed = false;
-            itemDivs.forEach((div) => {
-                const itemId = parseInt(div.dataset.id);
-                const textarea = div.querySelector('textarea');
-                const itemIndex = siteNotices.items.findIndex(i => i.id === itemId);
-                if (itemIndex > -1 && textarea && siteNotices.items[itemIndex].content !== textarea.value) {
-                    siteNotices.items[itemIndex].content = textarea.value;
-                    changed = true;
+    // --- ADD, UPDATE, DELETE NOTICE ITEMS VIA API ---
+    async function addNoticeItem() {
+        const newContent = prompt("Nhập nội dung cho thông báo mới:", "");
+        if (newContent && newContent.trim() !== '') {
+            try {
+                const response = await fetch('/admin/api/notifications', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: newContent.trim() }) // API cần 'content'
+                });
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    alert(result.message || "Thêm thông báo thành công!");
+                    fetchNotices(); // Tải lại danh sách
+                } else {
+                    alert("Lỗi khi thêm: " + (result.message || "Thao tác thất bại."));
                 }
+            } catch (error) {
+                console.error("Lỗi khi thêm thông báo:", error);
+                alert("Lỗi kết nối khi thêm thông báo.");
+            }
+        }
+    }
+
+    async function updateNoticeItem(id, newContent) {
+        if (!newContent || newContent.trim() === '') {
+            alert("Nội dung không được để trống.");
+            return;
+        }
+        console.log(`Updating notice ID ${id} with content: ${newContent}`);
+        try {
+            const response = await fetch(`/admin/api/notifications/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: newContent.trim() }) // API cần 'content'
             });
-            if (changed) {
-                saveNoticesToLocalStorage();
-                alert("Đã lưu tất cả thay đổi cho các mục thông báo!");
+            const result = await response.json();
+            if (response.ok && result.success) {
+                alert(result.message || `Đã cập nhật thông báo ID ${id}.`);
+                // Không cần gọi fetchNotices() ở đây vì chỉ cập nhật nội dung, không thay đổi thứ tự hay số lượng
             } else {
-                alert("Không có thay đổi nào để lưu.");
+                alert("Lỗi khi cập nhật: " + (result.message || "Thao tác thất bại."));
+                fetchNotices(); // Tải lại nếu có lỗi để đồng bộ
+            }
+        } catch (error) {
+            console.error(`Lỗi khi cập nhật thông báo ID ${id}:`, error);
+            alert(`Lỗi kết nối khi cập nhật thông báo ID ${id}.`);
+        }
+    }
+    
+    async function deleteNoticeItem(id) {
+        if (confirm(`Bạn có chắc muốn xóa mục thông báo này (ID: ${id})?`)) {
+            try {
+                const response = await fetch(`/admin/api/notifications/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    alert(result.message || `Đã xóa thông báo ID ${id}.`);
+                    fetchNotices(); // Tải lại danh sách
+                } else {
+                    alert("Lỗi khi xóa: " + (result.message || "Không thể xóa thông báo."));
+                }
+            } catch (error) {
+                console.error(`Lỗi khi xóa thông báo ID ${id}:`, error);
+                alert(`Lỗi kết nối khi xóa thông báo ID ${id}.`);
+            }
+        }
+    }
+    
+    // --- EVENT LISTENERS ---
+    if (addNoticeItemBtn) {
+        addNoticeItemBtn.addEventListener('click', addNoticeItem);
+    }
+    
+    // Xử lý nút "Lưu Cài đặt chung" (Tiêu đề chính)
+    if (saveNoticeSettingsBtn && noticeSectionTitleInput) {
+        saveNoticeSettingsBtn.addEventListener('click', async function() {
+            const title = noticeSectionTitleInput.value;
+            console.log("Saving notice settings with title:", title);
+
+            try {
+                const response = await fetch('/admin/api/settings/homepage-notice', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: title })
+                });
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    alert(result.message || "Đã lưu cài đặt chung!");
+                } else {
+                    alert("Lỗi: " + (result.message || "Không thể lưu cài đặt."));
+                }
+            } catch (error) {
+                console.error("Lỗi khi lưu cài đặt chung:", error);
+                alert("Lỗi kết nối khi lưu cài đặt.");
             }
         });
     }
 
-    // Khởi tạo
-    loadInitialData();
-    
-    // Submenu trong sidebar (đã có trong script_admin_layout.js)
-    const sidebarNav = document.querySelector('.sidebar-nav');
-    if (sidebarNav) {
-        const hasSubmenuItems = sidebarNav.querySelectorAll('li.has-submenu > a');
-        hasSubmenuItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                if (this.getAttribute('href') === '#') {
-                    e.preventDefault();
-                }
-                const parentLi = this.parentElement;
-                parentLi.classList.toggle('open');
-            });
-        });
-    }
+    // --- KHỞI TẠO BAN ĐẦU ---
+    fetchNotices(); // Tải danh sách thông báo từ API khi trang được load
 });

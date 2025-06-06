@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // === DOM Elements ===
     const noticeMainTitleElement = document.getElementById('notice-main-title');
-    const noticePlaneImageElement = document.getElementById('notice-plane-image');
     const dynamicNoticeContainer = document.getElementById('dynamic-notice-items-container');
     const LOCAL_STORAGE_KEY_NOTICES = 'sangAirHomepageNotices';
 
@@ -28,13 +27,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const returnDateInput = document.getElementById("return-date"); // Cho ngày về
     const seatClassSelect = document.getElementById("seat-class");
 
-    // Elements từ modal đặt vé
-    const passengerNameInput = document.getElementById("passenger-name");
-    const passengerEmailInput = document.getElementById("passenger-email");
-    const passengerPhoneInput = document.getElementById("passenger-phone");
-    const paymentMethodSelect = document.getElementById("payment-method");
-    const hiddenSeatClassInput = document.getElementById("hidden-seat-class");
-    const hiddenTotalPassengersInput = document.getElementById("hidden-total-passengers");
 
     // Elements cho tab hành lý (nếu bạn giữ lại logic này)
     const baggageOption = document.getElementById("baggage-option");
@@ -79,6 +71,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+        // --- CẬP NHẬT HÀM HIỂN THỊ THÔNG BÁO ---
+    async function loadHomepageNotices() {
+        if (!dynamicNoticeContainer || !noticeMainTitleElement) {
+            console.warn("Không tìm thấy element 'dynamic-notice-items-container' hoặc 'notice-main-title'.");
+            return;
+        }
+
+        dynamicNoticeContainer.innerHTML = '<p>Đang tải thông báo...</p>'; // Thông báo tạm thời
+
+        try {
+            const response = await fetch('/api/homepage-content'); // Gọi API của client
+            const data = await response.json();
+            console.log("Homepage content from API:", data);
+
+            if (response.ok && data.success) {
+                // Cập nhật tiêu đề chính
+                noticeMainTitleElement.textContent = data.notice_title || "THÔNG BÁO";
+                
+                // Cập nhật danh sách các mục thông báo
+                if (data.notice_items && data.notice_items.length > 0) {
+                    // Mỗi item trong data.notice_items là một object có 'title' và 'content'
+                    dynamicNoticeContainer.innerHTML = data.notice_items.map(item => `<p>${item.content}</p>`).join('');
+                } else {
+                    dynamicNoticeContainer.innerHTML = "<p>Hiện chưa có thông báo nào.</p>";
+                }
+            } else {
+                console.error("API không trả về dữ liệu thành công:", data.message);
+                dynamicNoticeContainer.innerHTML = "<p>Không thể tải thông báo lúc này.</p>";
+            }
+        } catch (error) {
+            console.error("Lỗi khi gọi API tải thông báo:", error);
+            dynamicNoticeContainer.innerHTML = "<p>Lỗi kết nối khi tải thông báo.</p>";
+        }
+    }
+    
+    // Gọi hàm để tải thông báo khi trang tải xong
+    loadHomepageNotices(); 
+
     // Xử lý min cho ngày về ban đầu (nếu ngày đi đã có giá trị khi tải trang, ít khả năng xảy ra)
     if (returnDateInput) {
         if (departureDateInput && departureDateInput.value) {
@@ -88,32 +118,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- LOGIC HIỂN THỊ THÔNG BÁO TỪ LOCALSTORAGE (Giữ nguyên) ---
-    function loadHomepageNotices() {
-        if (!dynamicNoticeContainer) {
-            console.warn("Không tìm thấy 'dynamic-notice-items-container' trên trang chủ.");
-            return;
-        }
-        const storedNoticesData = localStorage.getItem(LOCAL_STORAGE_KEY_NOTICES);
-        if (storedNoticesData) {
-            try {
-                const noticesData = JSON.parse(storedNoticesData);
-                if (noticeMainTitleElement && noticesData.title) noticeMainTitleElement.textContent = noticesData.title;
-                if (noticePlaneImageElement && noticesData.planeImageURL) {
-                    noticePlaneImageElement.src = noticesData.planeImageURL;
-                    noticePlaneImageElement.onerror = function() { this.src = 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png'; } // Ảnh mặc định
-                }
-                dynamicNoticeContainer.innerHTML = noticesData.items && noticesData.items.length > 0 ? 
-                                                 noticesData.items.map(item => `<p>${item.content}</p>`).join('') : 
-                                                 "<p>Hiện chưa có thông báo nào.</p>";
-            } catch (e) {
-                dynamicNoticeContainer.innerHTML = "<p>Có lỗi khi tải thông báo.</p>";
-            }
-        } else {
-             dynamicNoticeContainer.innerHTML = "<p>Chào mừng bạn đến với SangAir! Kiểm tra các ưu đãi mới nhất.</p>";
-        }
-    }
-    loadHomepageNotices();
 
     // --- LOGIC CHUYỂN TAB (Giữ nguyên) ---
     if (tabs.length > 0 && tabContents.length > 0) {

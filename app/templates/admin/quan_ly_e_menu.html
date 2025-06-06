@@ -90,7 +90,7 @@
         <div class="modal-content large">
             <span class="modal-close-btn" id="closeMenuItemModalBtn">×</span>
             <h3 id="menuItemModalTitle">Thêm món mới vào E-Menu</h3>
-            <form id="menuItemForm" novalidate>
+            <form id="menuItemForm" novalidate enctype="multipart/form-data">
                 <input type="hidden" id="menuItemId" name="menuItemId">
                 
                 <div class="form-group">
@@ -112,7 +112,7 @@
                         <div class="validation-error-message" id="menuItemCategory-error"></div>
                     </div>
                     <div class="form-group">
-                        <label for="menuItemImageFile">Tệp hình ảnh</label>
+                        <label for="menuItemImageFile">Tệp hình ảnh (để trống nếu không đổi khi sửa)</label>
                         <input type="file" id="menuItemImageFile" name="menuItemImageFile" accept="image/png, image/jpeg, image/webp">
                         <div class="validation-error-message" id="menuItemImageFile-error"></div>
                         <img id="imagePreview" src="#" alt="Xem trước ảnh" style="max-width: 100px; max-height: 100px; margin-top: 10px; display: none;"/>

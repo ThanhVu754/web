@@ -1,7 +1,8 @@
 # app/controllers/client_routes.py
 from flask import Blueprint, request, jsonify, session, current_app, render_template, redirect, url_for
 # Cập nhật import để bao gồm airport_model và flight_model
-from app.models import client_model, airport_model, flight_model # <<< THÊM airport_model, flight_model
+from app.models import client_model, airport_model, flight_model, menu_item_model, notification_model, settings_model 
+from app.models.menu_item_model import serialize_menu_item 
 from werkzeug.security import check_password_hash
 import re
 import sqlite3
@@ -520,3 +521,38 @@ def payment_page_render():
     # Trang payment.html sẽ tự lấy dữ liệu từ localStorage bằng JavaScript
     return render_template('client/payment.html', current_user_name=current_user_name)
 
+#------ API LẤY DANH SÁCH MÓN ĂN CLIENT----------
+@client_bp.route('/api/menu-items', methods=['GET'])
+def get_e_menu_api():
+    """API công khai cho client lấy danh sách món ăn khả dụng."""
+    try:
+        # Lấy tham số lọc category từ URL nếu có (ví dụ: /api/menu-items?category=combo)
+        category_filter = request.args.get('category', None)
+        
+        items_raw = menu_item_model.get_available_menu_items(category_filter)
+        
+        # Thêm URL ảnh đầy đủ cho mỗi món ăn
+        items_serialized = [serialize_menu_item(item) for item in items_raw]
+        
+        return jsonify({"success": True, "menu_items": items_serialized}), 200
+    except Exception as e:
+        current_app.logger.error(f"Client API: Error fetching E-Menu: {e}", exc_info=True)
+        return jsonify({"success": False, "message": "Lỗi máy chủ khi tải E-Menu."}), 500
+    
+    
+# --- API LẤY NỘI DUNG ĐỘNG CHO TRANG CHỦ (Bao gồm thông báo) ---
+@client_bp.route('/api/homepage-content', methods=['GET'])
+def get_homepage_content_api():
+    """API công khai cho client lấy nội dung động cho trang chủ."""
+    try:
+        notifications = notification_model.get_active_notifications_client()
+        notice_title = settings_model.get_setting('homepage_notice_title', 'THÔNG BÁO')
+
+        return jsonify({
+            "success": True, 
+            "notice_title": notice_title,
+            "notice_items": notifications
+        }), 200
+    except Exception as e:
+        current_app.logger.error(f"Client API: Error fetching homepage content: {e}", exc_info=True)
+        return jsonify({"success": False, "message": "Lỗi máy chủ khi tải nội dung trang chủ."}), 500
