@@ -151,15 +151,20 @@
   border-radius: 4px;
 }
 
-.status-vj {
+.status-vj { /* Style chung cho tag status */
   font-size: 0.9rem;
   padding: 6px 12px;
   border-radius: 20px;
   font-weight: 500;
   text-transform: uppercase;
+  color: white;
+  
 }
-.status-confirmed-vj { background-color: #4CAF50; color: white; }
-.status-cancelled-vj { background-color: #f44336; color: white; }
+.status-confirmed-vj { background-color: #4CAF50; } /* Xanh lá */
+.status-cancelled-vj { background-color: #7d1a13; } /* Đỏ cho tất cả các loại hủy */
+.status-pending-vj { background-color: #ff9800; }  /* Cam cho các trạng thái chờ */
+.status-completed-vj { background-color: #607d8b; } /* Xám cho hoàn thành */
+.status-paid-vj { color: #4CAF50; font-weight: bold; } /* Riêng cho trạng thái thanh toán */
 
 .flight-segment-vj {
   padding: 20px 25px;

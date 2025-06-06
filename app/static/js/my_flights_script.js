@@ -21,6 +21,16 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentBookingDataForCard = null; 
     let allUserBookings = []; // Lưu trữ tất cả booking của người dùng đã đăng nhập
 
+    const statusMapping = {
+        "confirmed": { text: "Đã xác nhận", class: "status-confirmed-vj" },
+        "pending_payment": { text: "Chờ thanh toán", class: "status-pending-vj" },
+        "payment_received": { text: "Đã thanh toán", class: "status-paid-vj" },
+        "cancelled_by_user": { text: "Đã hủy bởi bạn", class: "status-cancelled-vj" },
+        "cancelled_by_airline": { text: "Chuyến bay bị hủy", class: "status-cancelled-vj" }, // <<< VĂN BẢN THÂN THIỆN HƠN
+        "completed": { text: "Đã hoàn thành", class: "status-completed-vj" },
+        "no_show": { text: "Không có mặt", class: "status-no-show-vj" }
+    };
+
     function formatCurrency(amount) {
         return (amount || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
     }
@@ -53,12 +63,15 @@ document.addEventListener('DOMContentLoaded', function() {
         // }
 
         // Cập nhật các key cho phù hợp với dữ liệu trả về từ API get_bookings_by_user_id / get_booking_by_pnr_and_lastname
+         // Sử dụng statusMapping để lấy text và class
+        const statusInfo = statusMapping[booking.booking_status] || { text: booking.booking_status || 'N/A', class: 'status-pending-vj' };
+        const paymentStatusClass = booking.payment_status === 'paid' ? 'status-paid-vj' : '';
+
         const cardHTML = `
         <div class="flight-card-vj" data-pnr="${booking.pnr}">
             <div class="card-header-vj">
                 <h2>Mã đặt chỗ: <span>${booking.pnr}</span></h2>
-                <span class="status-vj ${booking.statusClass || (booking.booking_status === 'confirmed' ? 'status-confirmed-vj' : (booking.booking_status === 'cancelled_by_user' || booking.booking_status === 'cancelled_by_airline' ? 'status-cancelled-vj' : 'status-pending-vj'))}">${booking.booking_status || 'N/A'}</span>
-            </div>
+                <span class="status-vj ${statusInfo.class}">${statusInfo.text}</span> </div>
             <div class="flight-segment-vj">
                 <div class="segment-header-vj"><h4>Chuyến bay</h4><div class="flight-number-vj">Số hiệu: <span>${booking.flight_number || 'N/A'}</span></div></div>
                 <div class="flight-route-vj">
@@ -66,31 +79,42 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="flight-icon-container-vj"><span class="flight-icon-vj">✈</span><span class="flight-duration-vj">${booking.duration_formatted || 'N/A'}</span></div>
                     <div class="city-point-vj"><span class="city-name-vj">${booking.arrival_city || 'N/A'}</span><span class="city-code-vj">${booking.arrival_iata || ''}</span></div>
                 </div>
-                <div class="flight-timings-vj"><p>Khởi hành: <strong>${booking.departure_datetime_formatted || booking.departure_time}</strong></p><p>Đến nơi: <strong>${booking.arrival_datetime_formatted || booking.arrival_time}</strong></p></div>
+                <div class="flight-timings-vj"><p>Khởi hành: <strong>${booking.departure_datetime_formatted || 'N/A'}</strong></p><p>Đến nơi: <strong>${booking.arrival_datetime_formatted || 'N/A'}</strong></p></div>
                 <p>Hạng ghế: <span>${booking.seat_class_booked || 'N/A'}</span></p>
             </div>
             <div class="passengers-info-vj"><h4>Thông tin hành khách</h4><ul>${passengerHTML}</ul></div>
-            <div class="services-info-vj"><h4>Dịch vụ đã đặt</h4><ul>${servicesHTML}</ul></div>
             <div class="fare-details-vj">
                 <h4>Chi tiết giá vé</h4>
-                <div class="fare-row-vj"><span class="fare-label-vj">Giá vé cơ bản:</span> <span class="fare-value-vj">${formatCurrency(booking.base_fare)}</span></div>
-                <div class="fare-row-vj"><span class="fare-label-vj">Dịch vụ cộng thêm:</span> <span class="fare-value-vj">${formatCurrency(ancillaryFare)}</span></div>
-                <div class="fare-row-vj"><span class="fare-label-vj">Giảm giá:</span> <span class="fare-value-vj">-${formatCurrency(booking.discount_applied)}</span></div>
+                <div class="fare-row-vj">
+                    <span class="fare-label-vj">Giá vé cơ bản:</span> 
+                    <span class="fare-value-vj">${formatCurrency(booking.base_fare)}</span>
+                </div>
+                <div class="fare-row-vj">
+                    <span class="fare-label-vj">Dịch vụ cộng thêm:</span> 
+                    <span class="fare-value-vj">${formatCurrency(booking.ancillary_services_total)}</span>
+                </div>
+                <div class="fare-row-vj">
+                    <span class="fare-label-vj">Giảm giá:</span> 
+                    <span class="fare-value-vj">-${formatCurrency(booking.discount_applied)}</span>
+                </div>
                 <hr class="fare-divider-vj">
-                <div class="fare-row-vj total-fare-vj"><strong>Tổng cộng:</strong> <strong>${formatCurrency(booking.total_amount)}</strong></div>
-                <p class="payment-status-info-vj">Trạng thái thanh toán: <span class="${booking.paymentStatusClass || (booking.payment_status === 'paid' ? 'status-paid-vj' : '')}">${booking.payment_status || 'N/A'}</span></p>
+                <div class="fare-row-vj total-fare-vj">
+                    <strong>Tổng cộng:</strong> 
+                    <strong>${formatCurrency(booking.total_amount)}</strong>
+                </div>
+                <p class="payment-status-info-vj">
+                    Trạng thái thanh toán: <span class="${booking.payment_status === 'paid' ? 'status-paid-vj' : ''}">${booking.payment_status || 'N/A'}</span>
+                </p>
             </div>
             <div class="flight-actions-vj">
-                <button class="action-btn-vj primary-btn-vj online-checkin-btn-vj" ${booking.booking_status !== 'confirmed' || booking.checkin_status === 'checked_in' ? 'disabled' : ''}><i class="fas fa-check-circle"></i> Làm thủ tục</button>
-                <button class="action-btn-vj change-flight-btn-show-vj" ${booking.booking_status !== 'confirmed' ? 'disabled' : ''}><i class="fas fa-exchange-alt"></i> Đổi chuyến bay</button>
-                <button class="action-btn-vj add-service-btn-show-vj" ${booking.booking_status !== 'confirmed' ? 'disabled' : ''}><i class="fas fa-plus-circle"></i> Thêm dịch vụ</button>
-                <button class="action-btn-vj view-ticket-btn-vj"><i class="fas fa-print"></i> Xem vé</button>
                 </div>
-        </div>`;
+        </div>
+        <button id="back-to-list-btn" class="action-btn-vj secondary-btn-vj" style="margin-top: 15px;"><i class="fas fa-arrow-left"></i> Quay lại danh sách</button>
+        `;
         flightDetailsSection.innerHTML = cardHTML;
         flightDetailsSection.style.display = "block";
-        if (myBookingsListContainer) myBookingsListContainer.style.display = "none"; 
-        attachActionListenersToCard(booking.pnr); 
+        if (myBookingsListContainer) myBookingsListContainer.style.display = "none";
+        attachActionListenersToCard(booking.pnr);
     }
     
     function renderMyBookingsList(bookings) {
@@ -102,22 +126,23 @@ document.addEventListener('DOMContentLoaded', function() {
             myBookingsListContainer.innerHTML = "<p>Bạn chưa có đặt chỗ nào.</p>";
         } else {
             const listTitle = document.createElement('h2');
-            listTitle.textContent = "Danh sách đặt chỗ của bạn:";
-            listTitle.className = "my-bookings-list-title-vj"; // Thêm class để style
+            listTitle.textContent = "Lịch sử đặt chỗ của bạn";
+            listTitle.className = "my-bookings-list-title-vj";
             myBookingsListContainer.appendChild(listTitle);
 
             bookings.forEach(booking => {
                 const bookingSummaryDiv = document.createElement('div');
                 bookingSummaryDiv.className = 'booking-summary-item-vj';
-                // Sử dụng departure_date_form nếu API get_bookings_by_user_id trả về
-                const displayDate = booking.departure_datetime_formatted ? booking.departure_datetime_formatted.split(', ')[2] : 
-                                    (booking.departure_time ? booking.departure_time.substring(0,10) : 'N/A');
+                
+                // Sử dụng statusMapping để lấy text
+                const statusInfo = statusMapping[booking.booking_status] || { text: booking.booking_status || 'N/A' };
+                const displayDate = booking.departure_datetime_formatted ? booking.departure_datetime_formatted.split(', ')[2] : (booking.departure_time ? booking.departure_time.substring(0,10) : 'N/A');
+                
                 bookingSummaryDiv.innerHTML = `
                     <h4>Mã đặt chỗ: ${booking.pnr}</h4>
-                    <p>Hành trình: ${booking.departure_city || booking.departure_iata} → ${booking.arrival_city || booking.arrival_iata}</p>
+                    <p>Hành trình: ${booking.departure_city} → ${booking.arrival_city}</p>
                     <p>Ngày bay: ${displayDate}</p>
-                    <p>Trạng thái: ${booking.booking_status}</p>
-                    <button class="btn btn-sm btn-view-booking-detail" data-booking-pnr="${booking.pnr}">Xem chi tiết</button>
+                    <p>Trạng thái: ${statusInfo.text}</p> <button class="btn btn-sm btn-view-booking-detail" data-booking-pnr="${booking.pnr}">Xem chi tiết</button>
                 `;
                 bookingSummaryDiv.querySelector('.btn-view-booking-detail').addEventListener('click', function(){
                     const pnrToView = this.dataset.bookingPnr;
@@ -269,6 +294,16 @@ document.addEventListener('DOMContentLoaded', function() {
         card.querySelector('.view-ticket-btn-vj')?.addEventListener('click', () => {
             alert(`Chức năng Xem vé cho mã đặt chỗ ${pnr} đang được phát triển.`);
         });
+        // --- THÊM LOGIC CHO NÚT "QUAY LẠI DANH SÁCH" ---
+        const backToListBtn = card.querySelector('#back-to-list-btn');
+        if (backToListBtn) {
+            backToListBtn.addEventListener('click', () => {
+                console.log("Nút 'Quay lại danh sách' được nhấn.");
+                // Gọi lại hàm render danh sách với dữ liệu đã tải trước đó
+                // và ẩn đi phần chi tiết
+                renderMyBookingsList(allUserBookings); 
+            });
+        }
         // Bỏ nút xóa user ở đây vì đây là trang của client
         // card.querySelector('.cancel-flight-btn-vj')?.addEventListener('click', () => { ... });
     }

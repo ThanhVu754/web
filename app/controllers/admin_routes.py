@@ -505,33 +505,30 @@ def api_admin_delete_user(user_id):
     
 # --- BOOKING MANAGEMENT APIs FOR ADMIN ---
 
+# --- BOOKING MANAGEMENT APIs FOR ADMIN ---
+
 @admin_bp.route('/api/bookings', methods=['GET'])
 @admin_required
-def api_admin_get_all_bookings(): # Đổi tên hàm để rõ là API của admin
+def api_admin_get_all_bookings():
     try:
-        # Lấy các tham số query cho tìm kiếm và lọc từ request.args
-        search_term = request.args.get('search', None)
-        status_filter = request.args.get('status', None)
-        flight_date_filter = request.args.get('flightDate', None) # Khớp với flightDateFilter trong JS
-        # page = int(request.args.get('page', 1)) # Cho phân trang
-        # per_page = int(request.args.get('per_page', 10)) # Cho phân trang
+        search_term = request.args.get('search')
+        status_filter = request.args.get('status')
+        flight_date_filter = request.args.get('flightDate')
 
         bookings = booking_model.get_all_bookings_admin(
             search_term=search_term,
             status_filter=status_filter,
             flight_date_filter=flight_date_filter
-            # page=page, per_page=per_page
         )
         return jsonify({"success": True, "bookings": bookings}), 200
     except Exception as e:
         current_app.logger.error(f"Admin API: Error fetching all bookings: {e}", exc_info=True)
         return jsonify({"success": False, "message": "Lỗi máy chủ khi lấy danh sách đặt chỗ."}), 500
 
-@admin_bp.route('/api/bookings/<int:booking_id>', methods=['GET']) # Sử dụng booking_id cho đơn giản
+@admin_bp.route('/api/bookings/<int:booking_id>', methods=['GET'])
 @admin_required
-def api_admin_get_booking_details(booking_id): # Đổi tên hàm
+def api_admin_get_booking_details(booking_id):
     try:
-        # Hàm model get_booking_details_admin có thể nhận ID
         booking_details = booking_model.get_booking_details_admin(booking_id)
         if booking_details:
             return jsonify({"success": True, "booking": booking_details}), 200
@@ -539,38 +536,38 @@ def api_admin_get_booking_details(booking_id): # Đổi tên hàm
             return jsonify({"success": False, "message": "Không tìm thấy đặt chỗ."}), 404
     except Exception as e:
         current_app.logger.error(f"Admin API: Error fetching booking details for ID {booking_id}: {e}", exc_info=True)
-        return jsonify({"success": False, "message": "Lỗi máy chủ khi lấy chi tiết đặt chỗ."}), 500
-
+        return jsonify({"success": False, "message": "Lỗi máy chủ."}), 500
 
 @admin_bp.route('/api/bookings/<int:booking_id>/status', methods=['PUT'])
 @admin_required
-def api_admin_update_booking_status(booking_id): # Đổi tên hàm
+def api_admin_update_booking_status(booking_id):
     data = request.get_json()
-    if not data or 'newStatus' not in data: # JS gửi 'newBookingStatus'
-        return jsonify({"success": False, "message": "Thiếu trạng thái mới."}), 400
+    if not data or 'newStatus' not in data:
+        return jsonify({"success": False, "message": "Thiếu trạng thái mới (newStatus)."}), 400
     
-    new_status = data.get('newStatus') # Key này nên là 'newStatus' để khớp với JS
-    admin_notes = data.get('adminNotes', None) # Ghi chú từ admin, tùy chọn
+    new_status = data.get('newStatus')
+    admin_notes = data.get('adminNotes', None)
 
-    # Các trạng thái hợp lệ từ schema bảng bookings
-    valid_statuses = ['pending_payment', 'confirmed', 'cancelled_by_user', 
-                      'cancelled_by_airline', 'completed', 'payment_received', 'no_show'] 
+    # Danh sách trạng thái hợp lệ để kiểm tra
+    valid_statuses = [
+        'pending_payment', 'confirmed', 'payment_received',
+        'cancelled_by_user', 'cancelled_by_airline', 'completed', 'no_show'
+    ]
     if new_status not in valid_statuses:
         return jsonify({"success": False, "message": f"Trạng thái '{new_status}' không hợp lệ."}), 400
 
     try:
         success = booking_model.update_booking_status_admin(booking_id, new_status, admin_notes)
         if success:
-            updated_booking = booking_model.get_booking_details_admin(booking_id) # Lấy lại để trả về
+            updated_booking = booking_model.get_booking_details_admin(booking_id)
             return jsonify({"success": True, "message": "Cập nhật trạng thái đặt chỗ thành công.", "booking": updated_booking}), 200
         else:
-            # Có thể do booking_id không tồn tại
             return jsonify({"success": False, "message": "Không thể cập nhật trạng thái. Đặt chỗ có thể không tồn tại."}), 404
-    except ValueError as ve: # Bắt lỗi từ model nếu new_status không hợp lệ (dù đã check)
+    except ValueError as ve:
         return jsonify({"success": False, "message": str(ve)}), 400
     except Exception as e:
         current_app.logger.error(f"Admin API: Error updating booking status for ID {booking_id}: {e}", exc_info=True)
-        return jsonify({"success": False, "message": "Lỗi máy chủ khi cập nhật trạng thái đặt chỗ."}), 500
+        return jsonify({"success": False, "message": "Lỗi máy chủ khi cập nhật trạng thái."}), 500
     
     
 # ------ API quản lý E-menu-----------
