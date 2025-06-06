@@ -53,7 +53,7 @@
             <input type="text" id="lookup-first-name" name="first_name" placeholder="VD: Văn A" required />
           </div>
           <button type="submit" class="action-btn-vj primary-btn-vj lookup-submit-btn-vj">Tìm kiếm chuyến bay</button>
-          <div id="lookup-error-msg-vj" class="error-message-vj">
+          <div id="lookup-error-msg-vj" class="error-message-vj" style='display: none'>
             {% with messages = get_flashed_messages() %}
               {% if messages %}
                 {% for message in messages %}
@@ -64,6 +64,9 @@
           </div>
         </form>
       </div>
+    </div>
+
+    <div id="my-bookings-list-container-vj" class="my-bookings-list-container-vj" style="margin-top: 30px; display: none;">
     </div>
 
     <div id="flight-details-section-vj" class="flight-details-section-vj" style="display: none;">

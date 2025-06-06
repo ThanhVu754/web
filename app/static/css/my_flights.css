@@ -508,6 +508,60 @@
     margin-bottom: 0;
 }
 
+/* Thêm vào app/static/css/my_flights.css */
+.my-bookings-list-container-vj {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.my-bookings-list-container-vj h2.my-bookings-list-title-vj { /* Style cho tiêu đề danh sách */
+    font-size: 1.5rem;
+    color: #DA251D;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.booking-summary-item-vj {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+}
+
+.booking-summary-item-vj h4 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #333; /* Hoặc màu chủ đạo của bạn */
+    font-size: 1.1rem;
+}
+
+.booking-summary-item-vj p {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.booking-summary-item-vj .btn-view-booking-detail {
+    /* Kế thừa style từ .action-btn-vj hoặc .btn-sm, hoặc định nghĩa riêng */
+    /* Ví dụ: */
+    background-color: #d32f2f; /* Màu xanh dương cho nút xem chi tiết */
+    color: white;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.booking-summary-item-vj .btn-view-booking-detail:hover {
+    background-color: #d00a0a;
+}
+
 
 /* Responsive specific to My Flights */
 @media (max-width: 768px) {

@@ -53,7 +53,7 @@ CREATE TABLE airports (
 DROP TABLE IF EXISTS flights; -- Đảm bảo xóa bảng cũ trước khi tạo lại với schema mới
 CREATE TABLE flights (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    flight_number TEXT UNIQUE NOT NULL,
+    flight_number TEXT NOT NULL,
     departure_airport_id INTEGER NOT NULL,
     arrival_airport_id INTEGER NOT NULL,
     departure_time DATETIME NOT NULL,
@@ -105,7 +105,7 @@ CREATE TABLE bookings (
     total_amount REAL NOT NULL, -- Tổng tiền cuối cùng phải trả (base_fare + ancillary_services_total - discount_applied)
     payment_method TEXT,
     payment_status TEXT NOT NULL DEFAULT 'pending' CHECK(payment_status IN ('pending', 'paid', 'failed', 'refunded')),
-    status TEXT NOT NULL DEFAULT 'pending_payment' CHECK(status IN ('pending_payment', 'confirmed', 'cancelled_by_user', 'cancelled_by_airline', 'changed', 'completed')),
+    status TEXT NOT NULL DEFAULT 'pending_payment' CHECK(status IN ('pending_payment', 'confirmed', 'cancelled_by_user', 'cancelled_by_airline', 'changed', 'completed','payment_received','no_show')),
     checkin_status TEXT DEFAULT 'not_checked_in' CHECK(checkin_status IN ('not_checked_in', 'checked_in', 'boarding_pass_issued')),
     notes TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -233,5 +233,29 @@ INSERT INTO airports (name, city, country, iata_code) VALUES
 ('Sân bay Quốc tế Cát Bi', 'Hải Phòng', 'Việt Nam', 'HPH'),
 ('Sân bay Liên Khương', 'Đà Lạt', 'Việt Nam', 'DLI'),
 ('Sân bay Phú Bài', 'Huế', 'Việt Nam', 'HUI'),
-('Sân bay Vinh', 'Vinh', 'Việt Nam', 'VII');
+('Sân bay Vinh', 'Vinh', 'Việt Nam', 'VII'),
+('Sân bay Côn Đảo', 'Côn Đảo', 'Việt Nam', 'VCS'),
+('Sân bay Pleiku', 'Pleiku', 'Việt Nam', 'PXU'),
+('Sân bay Phù Cát', 'Quy Nhơn', 'Việt Nam', 'UIH'),
+('Sân bay Cần Thơ', 'Cần Thơ', 'Việt Nam', 'VCA');
 
+INSERT INTO flights (flight_number, departure_airport_id, arrival_airport_id, departure_time, arrival_time, economy_price, business_price, first_class_price, total_seats, available_seats, status) VALUES
+('SA1', (SELECT id FROM airports WHERE iata_code = 'SGN'), (SELECT id FROM airports WHERE iata_code = 'HAN'), datetime('now', '+3 days', '10:00:00'), datetime('now', '+3 days', '12:05:00'), 1500000, 3000000, 5000000, 150, 145, 'scheduled'),
+('SA2', (SELECT id FROM airports WHERE iata_code = 'SGN'), (SELECT id FROM airports WHERE iata_code = 'HAN'), datetime('now', '+3 days', '15:30:00'), datetime('now', '+3 days', '17:35:00'), 1600000, 3200000, 5200000, 160, 160, 'scheduled'),
+('SA3', (SELECT id FROM airports WHERE iata_code = 'HAN'), (SELECT id FROM airports WHERE iata_code = 'DAD'), datetime('now', '+4 days', '09:00:00'), datetime('now', '+4 days', '10:20:00'), 1100000, 2200000, 3800000, 180, 170, 'scheduled'),
+('SA4', (SELECT id FROM airports WHERE iata_code = 'SGN'), (SELECT id FROM airports WHERE iata_code = 'PQC'), datetime('now', '+5 days', '13:00:00'), datetime('now', '+5 days', '14:00:00'), 950000, 1900000, 3800000, 70, 65, 'scheduled'),
+('SA5', (SELECT id FROM airports WHERE iata_code = 'PQC'), (SELECT id FROM airports WHERE iata_code = 'SGN'), datetime('now', '+5 days', '16:00:00'), datetime('now', '+5 days', '17:00:00'), 980000, 1950000, 7000000, 150, 150, 'scheduled'),
+('SA6', (SELECT id FROM airports WHERE iata_code = 'HAN'), (SELECT id FROM airports WHERE iata_code = 'CXR'), datetime('now', '+6 days', '07:00:00'), datetime('now', '+6 days', '08:50:00'), 2200000, 4500000, 3800000, 250, 240, 'scheduled'),
+('SA7', (SELECT id FROM airports WHERE iata_code = 'DAD'), (SELECT id FROM airports WHERE iata_code = 'SGN'), datetime('now', '+4 days', '17:00:00'), datetime('now', '+4 days', '18:20:00'), 1250000, 2550000, 4050000, 150, 150, 'scheduled'),
+('SA8', (SELECT id FROM airports WHERE iata_code = 'CXR'), (SELECT id FROM airports WHERE iata_code = 'HAN'), datetime('now', '+7 days', '11:00:00'), datetime('now', '+7 days', '12:50:00'), 2100000, 4300000, 6800000, 180, 180, 'scheduled'),
+('SA9', (SELECT id FROM airports WHERE iata_code = 'HPH'), (SELECT id FROM airports WHERE iata_code = 'HUI'), datetime('now', '+3 days', '14:00:00'), datetime('now', '+3 days', '15:10:00'), 800000, 1000000, 2000000, 70, 70, 'scheduled'),
+('SA10', (SELECT id FROM airports WHERE iata_code = 'DLI'), (SELECT id FROM airports WHERE iata_code = 'SGN'), datetime('now', '+5 days', '18:00:00'), datetime('now', '+5 days', '18:50:00'), 1300000, 2600000, 3000000, 150, 140, 'scheduled'),
+('SA11', (SELECT id FROM airports WHERE iata_code = 'HAN'), (SELECT id FROM airports WHERE iata_code = 'SGN'), datetime('now', '+2 days', '06:00:00'), datetime('now', '+2 days', '08:05:00'), 1450000, 2900000, 4800000, 160, 150, 'scheduled'),
+('SA12', (SELECT id FROM airports WHERE iata_code = 'HAN'), (SELECT id FROM airports WHERE iata_code = 'SGN'), datetime('now', '+2 days', '19:00:00'), datetime('now', '+2 days', '21:05:00'), 1480000, 2950000, 4900000, 160, 160, 'scheduled'),
+('SA13', (SELECT id FROM airports WHERE iata_code = 'HAN'), (SELECT id FROM airports WHERE iata_code = 'VII'), datetime('now', '+5 days', '16:30:00'), datetime('now', '+5 days', '17:40:00'), 890000, 1750000, 2000000, 120, 115, 'scheduled'),
+('SA14', (SELECT id FROM airports WHERE iata_code = 'SGN'), (SELECT id FROM airports WHERE iata_code = 'CXR'), datetime('now', '+3 days', '13:00:00'), datetime('now', '+3 days', '14:20:00'), 920000, 1900000, 3000000, 150, 150, 'scheduled'),
+('SA15', (SELECT id FROM airports WHERE iata_code = 'HAN'), (SELECT id FROM airports WHERE iata_code = 'PQC'), datetime('now', '+6 days', '06:00:00'), datetime('now', '+6 days', '08:20:00'), 1750000, 3400000, 5200000, 180, 175, 'scheduled'),
+('SA16', (SELECT id FROM airports WHERE iata_code = 'HAN'), (SELECT id FROM airports WHERE iata_code = 'DAD'), datetime('now', '+3 days', '09:30:00'), datetime('now', '+3 days', '10:45:00'), 900000, 1800000, 2900000, 150, 148, 'scheduled'),
+('SA17', (SELECT id FROM airports WHERE iata_code = 'SGN'), (SELECT id FROM airports WHERE iata_code = 'CXR'), datetime('now', '+4 days', '06:00:00'), datetime('now', '+4 days', '07:20:00'), 1000000, 1950000, 3100000, 120, 120, 'scheduled'),
+('SA18', (SELECT id FROM airports WHERE iata_code = 'DAD'), (SELECT id FROM airports WHERE iata_code = 'SGN'), datetime('now', '+5 days', '13:00:00'), datetime('now', '+5 days', '14:20:00'), 1350000, 2500000, 3700000, 150, 145, 'scheduled'),
+('SA19', (SELECT id FROM airports WHERE iata_code = 'HPH'), (SELECT id FROM airports WHERE iata_code = 'PQC'), datetime('now', '+6 days', '11:00:00'), datetime('now', '+6 days', '13:10:00'), 1600000, 3000000, 5000000, 140, 139, 'scheduled');

@@ -98,7 +98,7 @@
 .status-pending_payment { background-color: #ffc107; color: #333; } /* Vàng */
 .status-payment_received{ background-color: #17a2b8; } /* Xanh dương nhạt */
 .status-cancelled_by_user { background-color: #dc3545; } /* Đỏ */
-.status-cancelled_by_admin{ background-color: #6c757d; } /* Xám */
+.status-cancelled_by_airline{ background-color: #6c757d; } /* Xám */
 .status-completed       { background-color: #007bff; } /* Xanh dương */
 .status-no_show         { background-color: #343a40; } /* Đen/Xám đậm */
 

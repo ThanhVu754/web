@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-
+    
     // --- Sidebar Active Link ---
     const currentLocation = window.location.pathname; 
     const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
@@ -57,13 +57,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // --- Xử lý Logout ---
-    const logoutButton = document.querySelector('.logout-btn');
+    const logoutButton = document.querySelector('.logout-btn'); // Lấy nút đăng xuất
     if (logoutButton) {
-        logoutButton.addEventListener('click', function(e) {
-            e.preventDefault();
+        logoutButton.addEventListener('click', async function(e) { // Thêm async
+            e.preventDefault(); // Ngăn hành vi mặc định của thẻ <a> nếu href="#"
             if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
-                alert("Đã đăng xuất! (Đây là demo)");
-                // window.location.href = '/login-admin.html'; // Ví dụ chuyển hướng
+                try {
+                    const response = await fetch('/api/auth/logout', { // Gọi API logout (trong client_routes.py)
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // Nếu API logout của bạn yêu cầu CSRF token hoặc các header khác, thêm vào đây
+                        }
+                    });
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        alert(result.message || "Đăng xuất thành công!");
+                        // Chuyển hướng về trang đăng nhập chung (client/dang_nhap.html)
+                        // Vì admin cũng dùng trang đăng nhập này
+                        window.location.href = '/dang-nhap'; // Hoặc url_for('client_bp.login_page') nếu bạn có cách lấy URL đó ở JS
+                    } else {
+                        alert("Lỗi đăng xuất: " + (result.message || "Không thể đăng xuất."));
+                    }
+                } catch (error) {
+                    console.error("Lỗi khi thực hiện đăng xuất:", error);
+                    alert("Có lỗi kết nối xảy ra khi đăng xuất. Vui lòng thử lại.");
+                }
             }
         });
     }

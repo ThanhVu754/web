@@ -4,12 +4,29 @@ from functools import wraps
 import sqlite3
 from datetime import datetime
 # Import các model cần thiết
-from app.models import flight_model, airport_model, client_model
+from app.models import flight_model, airport_model, client_model, booking_model, menu_item_model
 from app.models.flight_model import combine_datetime_str
+import os
+from werkzeug.utils import secure_filename
 
 admin_bp = Blueprint('admin_bp', __name__,
                      template_folder='../templates/admin',
                      url_prefix='/admin')
+
+def allowed_file(filename):
+    """Kiểm tra xem đuôi file có được phép không."""
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
+
+
+def serialize_menu_item(item_dict):
+    """Hàm helper để chuyển đổi và thêm URL ảnh đầy đủ."""
+    if item_dict and item_dict.get('image_url'):
+        # Tạo URL đầy đủ cho ảnh, sử dụng endpoint 'static' của app chính
+        item_dict['image_url_full'] = url_for('static', filename=item_dict['image_url'], _external=False)
+    else:
+        item_dict['image_url_full'] = url_for('static', filename='images/placeholder-food.png') # URL cho ảnh mặc định
+    return item_dict
 
 # --- Decorator @admin_required giữ nguyên như trước ---
 def admin_required(f):
@@ -56,7 +73,7 @@ def quan_ly_nguoi_dung(): # <<< ĐỔI TÊN TỪ users_management_page
 def quan_ly_thong_bao_trang_chu(): # <<< ĐỔI TÊN TỪ homepage_notifications_management_page
     return render_template('admin/quan_ly_thong_bao_trang_chu.html')
 
-@admin_bp.route('/emenu') # Đường dẫn /admin/emenu
+@admin_bp.route('/emenu-management') # Đường dẫn /admin/emenu
 @admin_required
 def quan_ly_e_menu(): # <<< ĐỔI TÊN TỪ emenu_management_page
     return render_template('admin/quan_ly_e_menu.html')
@@ -480,3 +497,247 @@ def api_admin_delete_user(user_id):
     except Exception as e:
         current_app.logger.error(f"Admin API: Error deleting user {user_id}: {e}", exc_info=True)
         return jsonify({"success": False, "message": "Lỗi máy chủ khi xóa người dùng."}), 500
+    
+    
+# --- BOOKING MANAGEMENT APIs FOR ADMIN ---
+
+@admin_bp.route('/api/bookings', methods=['GET'])
+@admin_required
+def api_admin_get_all_bookings(): # Đổi tên hàm để rõ là API của admin
+    try:
+        # Lấy các tham số query cho tìm kiếm và lọc từ request.args
+        search_term = request.args.get('search', None)
+        status_filter = request.args.get('status', None)
+        flight_date_filter = request.args.get('flightDate', None) # Khớp với flightDateFilter trong JS
+        # page = int(request.args.get('page', 1)) # Cho phân trang
+        # per_page = int(request.args.get('per_page', 10)) # Cho phân trang
+
+        bookings = booking_model.get_all_bookings_admin(
+            search_term=search_term,
+            status_filter=status_filter,
+            flight_date_filter=flight_date_filter
+            # page=page, per_page=per_page
+        )
+        return jsonify({"success": True, "bookings": bookings}), 200
+    except Exception as e:
+        current_app.logger.error(f"Admin API: Error fetching all bookings: {e}", exc_info=True)
+        return jsonify({"success": False, "message": "Lỗi máy chủ khi lấy danh sách đặt chỗ."}), 500
+
+@admin_bp.route('/api/bookings/<int:booking_id>', methods=['GET']) # Sử dụng booking_id cho đơn giản
+@admin_required
+def api_admin_get_booking_details(booking_id): # Đổi tên hàm
+    try:
+        # Hàm model get_booking_details_admin có thể nhận ID
+        booking_details = booking_model.get_booking_details_admin(booking_id)
+        if booking_details:
+            return jsonify({"success": True, "booking": booking_details}), 200
+        else:
+            return jsonify({"success": False, "message": "Không tìm thấy đặt chỗ."}), 404
+    except Exception as e:
+        current_app.logger.error(f"Admin API: Error fetching booking details for ID {booking_id}: {e}", exc_info=True)
+        return jsonify({"success": False, "message": "Lỗi máy chủ khi lấy chi tiết đặt chỗ."}), 500
+
+
+@admin_bp.route('/api/bookings/<int:booking_id>/status', methods=['PUT'])
+@admin_required
+def api_admin_update_booking_status(booking_id): # Đổi tên hàm
+    data = request.get_json()
+    if not data or 'newStatus' not in data: # JS gửi 'newBookingStatus'
+        return jsonify({"success": False, "message": "Thiếu trạng thái mới."}), 400
+    
+    new_status = data.get('newStatus') # Key này nên là 'newStatus' để khớp với JS
+    admin_notes = data.get('adminNotes', None) # Ghi chú từ admin, tùy chọn
+
+    # Các trạng thái hợp lệ từ schema bảng bookings
+    valid_statuses = ['pending_payment', 'confirmed', 'cancelled_by_user', 
+                      'cancelled_by_airline', 'completed', 'payment_received', 'no_show'] 
+    if new_status not in valid_statuses:
+        return jsonify({"success": False, "message": f"Trạng thái '{new_status}' không hợp lệ."}), 400
+
+    try:
+        success = booking_model.update_booking_status_admin(booking_id, new_status, admin_notes)
+        if success:
+            updated_booking = booking_model.get_booking_details_admin(booking_id) # Lấy lại để trả về
+            return jsonify({"success": True, "message": "Cập nhật trạng thái đặt chỗ thành công.", "booking": updated_booking}), 200
+        else:
+            # Có thể do booking_id không tồn tại
+            return jsonify({"success": False, "message": "Không thể cập nhật trạng thái. Đặt chỗ có thể không tồn tại."}), 404
+    except ValueError as ve: # Bắt lỗi từ model nếu new_status không hợp lệ (dù đã check)
+        return jsonify({"success": False, "message": str(ve)}), 400
+    except Exception as e:
+        current_app.logger.error(f"Admin API: Error updating booking status for ID {booking_id}: {e}", exc_info=True)
+        return jsonify({"success": False, "message": "Lỗi máy chủ khi cập nhật trạng thái đặt chỗ."}), 500
+    
+    
+@admin_bp.route('/api/menu-items', methods=['GET'])
+@admin_required
+def api_admin_get_all_menu_items(): # Đặt tên endpoint rõ ràng
+    try:
+        search_term = request.args.get('search', None)
+        category_filter = request.args.get('category', None) # Khớp với menuCategoryFilter từ JS
+        menu_items_raw = menu_item_model.get_all_menu_items_admin(...)
+        menu_items = menu_item_model.get_all_menu_items_admin(
+            search_term=search_term,
+            category_filter=category_filter
+        )
+        menu_items = [serialize_menu_item(item) for item in menu_items_raw]
+
+        return jsonify({"success": True, "menu_items": menu_items}), 200
+    except Exception as e:
+        current_app.logger.error(f"Admin API: Error fetching all menu items: {e}", exc_info=True)
+        return jsonify({"success": False, "message": "Lỗi máy chủ khi lấy danh sách E-Menu."}), 500
+
+@admin_bp.route('/api/menu-items/<int:item_id>', methods=['GET'])
+@admin_required
+def api_admin_get_menu_item(item_id): # Đặt tên endpoint rõ ràng
+    try:
+        item = menu_item_model.get_menu_item_by_id(item_id)
+        if item:
+            return jsonify({"success": True, "menu_item": item}), 200
+        else:
+            return jsonify({"success": False, "message": "Không tìm thấy món trong E-Menu."}), 404
+    except Exception as e:
+        current_app.logger.error(f"Admin API: Error fetching menu item {item_id}: {e}", exc_info=True)
+        return jsonify({"success": False, "message": "Lỗi máy chủ."}), 500
+
+@admin_bp.route('/api/menu-items', methods=['POST'])
+@admin_required
+def api_admin_create_menu_item():
+    # Khi dùng multipart/form-data, dữ liệu text nằm trong request.form
+    # và dữ liệu file nằm trong request.files
+    
+    if 'menuItemName' not in request.form:
+        return jsonify({"success": False, "message": "Thiếu tên món."}), 400
+    
+    # Tạo dict dữ liệu từ form
+    item_data_for_model = {
+        'name': request.form.get('menuItemName'),
+        'category': request.form.get('menuItemCategory'),
+        'price_vnd': request.form.get('menuItemPriceVND'),
+        'price_usd': request.form.get('menuItemPriceUSD'),
+        'description': request.form.get('menuItemDescription')
+        # is_available và display_order có thể lấy tương tự nếu có trong form
+    }
+    
+    # Xử lý file upload
+    image_url = None
+    if 'menuItemImageFile' in request.files:
+        file = request.files['menuItemImageFile']
+        if file and file.filename != '' and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            # Tạo một tên file duy nhất để tránh ghi đè
+            unique_filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
+            save_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+            file.save(save_path)
+            # Lưu đường dẫn tương đối vào CSDL để có thể dùng với url_for
+            image_url = f"uploads/menu_images/{unique_filename}"
+    
+    item_data_for_model['image_url'] = image_url
+
+    try:
+        item_id = menu_item_model.create_menu_item(item_data_for_model)
+        new_item = menu_item_model.get_menu_item_by_id(item_id)
+        return jsonify({"success": True, "message": "Thêm món thành công!", "menu_item": new_item}), 201
+    except ValueError as ve:
+        # Nếu có lỗi validation, có thể cần xóa file đã upload (nếu có)
+        if image_url: os.remove(os.path.join(current_app.static_folder, image_url))
+        return jsonify({"success": False, "message": str(ve)}), 400
+    except Exception as e:
+        if image_url: os.remove(os.path.join(current_app.static_folder, image_url))
+        current_app.logger.error(f"Lỗi khi admin tạo món ăn: {e}", exc_info=True)
+        return jsonify({"success": False, "message": "Lỗi máy chủ."}), 500
+
+@admin_bp.route('/api/menu-items/<int:item_id>', methods=['PUT'])
+@admin_required
+def api_admin_update_menu_item(item_id):
+    # Dữ liệu text sẽ nằm trong request.form khi gửi từ FormData
+    # Không dùng request.get_json() nữa
+    
+    item_to_update = menu_item_model.get_menu_item_by_id(item_id)
+    if not item_to_update:
+        return jsonify({"success": False, "message": "Không tìm thấy món để cập nhật."}), 404
+
+    # Tạo một dictionary để chứa các dữ liệu sẽ được cập nhật
+    item_data_for_model = {}
+    
+    # Map các trường từ form sang key của model/DB
+    field_map = {
+        'menuItemName': 'name',
+        'menuItemCategory': 'category',
+        'menuItemPriceVND': 'price_vnd',
+        'menuItemPriceUSD': 'price_usd',
+        'menuItemDescription': 'description',
+        'isAvailable': 'is_available',   # Giả sử form có thể có trường này
+        'displayOrder': 'display_order'  # Giả sử form có thể có trường này
+    }
+
+    # Lấy dữ liệu text từ request.form
+    for js_key, model_key in field_map.items():
+        if js_key in request.form: # <<< SỬA: Dùng request.form thay vì data
+            item_data_for_model[model_key] = request.form[js_key]
+
+    # Xử lý file ảnh được upload (nếu có)
+    if 'menuItemImageFile' in request.files:
+        file = request.files['menuItemImageFile']
+        
+        # Chỉ xử lý nếu người dùng thực sự chọn một file mới
+        if file and file.filename != '':
+            if not allowed_file(file.filename):
+                return jsonify({"success": False, "message": "Định dạng file ảnh không được phép."}), 400
+
+            # 1. Xóa file ảnh cũ nếu có
+            if item_to_update.get('image_url'): # Lấy URL ảnh cũ từ CSDL
+                try:
+                    old_path = os.path.join(current_app.static_folder, item_to_update['image_url'])
+                    if os.path.exists(old_path):
+                        os.remove(old_path)
+                        current_app.logger.info(f"Đã xóa ảnh cũ: {old_path}")
+                except Exception as e:
+                    current_app.logger.error(f"Không thể xóa ảnh cũ {item_to_update.get('image_url')}: {e}")
+            
+            # 2. Lưu file mới và cập nhật đường dẫn
+            filename = secure_filename(file.filename)
+            unique_filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
+            save_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+            file.save(save_path)
+            
+            # Lưu đường dẫn tương đối (từ thư mục static) vào CSDL
+            item_data_for_model['image_url'] = f"uploads/menu_images/{unique_filename}"
+    
+    # Kiểm tra xem có gì để cập nhật không
+    if not item_data_for_model:
+        return jsonify({"success": True, "message": "Không có thông tin nào được cung cấp để cập nhật.", "menu_item": item_to_update}), 200
+
+    try:
+        success = menu_item_model.update_menu_item(item_id, item_data_for_model)
+        if success:
+            updated_item = menu_item_model.get_menu_item_by_id(item_id)
+            return jsonify({"success": True, "message": "Cập nhật món thành công.", "menu_item": updated_item}), 200
+        else:
+            return jsonify({"success": False, "message": "Không có thay đổi nào được thực hiện hoặc không thể cập nhật."}), 400
+    except ValueError as ve:
+        # Nếu có upload file mới, cần xóa nó đi nếu DB update thất bại
+        if 'image_url' in item_data_for_model:
+            newly_uploaded_path = os.path.join(current_app.static_folder, item_data_for_model['image_url'])
+            if os.path.exists(newly_uploaded_path):
+                os.remove(newly_uploaded_path)
+        return jsonify({"success": False, "message": str(ve)}), 400
+    except Exception as e:
+        current_app.logger.error(f"Admin API: Error updating menu item {item_id}: {e}", exc_info=True)
+        return jsonify({"success": False, "message": "Lỗi máy chủ khi cập nhật món."}), 500
+
+@admin_bp.route('/api/menu-items/<int:item_id>', methods=['DELETE'])
+@admin_required
+def api_admin_delete_menu_item(item_id): # Đặt tên endpoint rõ ràng
+    try:
+        success = menu_item_model.delete_menu_item(item_id)
+        if success:
+            return jsonify({"success": True, "message": "Xóa món thành công."}), 200
+        else:
+            # Có thể do item_id không tồn tại
+            return jsonify({"success": False, "message": "Không thể xóa món. Món có thể không tồn tại."}), 404
+    except ValueError as ve: # Bắt lỗi từ model nếu không xóa được do ràng buộc
+        return jsonify({"success": False, "message": str(ve)}), 400
+    except Exception as e:
+        current_app.logger.error(f"Admin API: Error deleting menu item {item_id}: {e}", exc_info=True)
+        return jsonify({"success": False, "message": "Lỗi máy chủ khi xóa món."}), 500

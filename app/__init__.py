@@ -67,6 +67,12 @@ def create_app(test_config=None):
     from .controllers import admin_routes # Import admin_routes từ package controllers cùng cấp
     app.register_blueprint(admin_routes.admin_bp) # Đăng ký admin_bp (đã có url_prefix='/admin' trong định nghĩa)
 
+    # Đảm bảo thư mục upload tồn tại
+    try:
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    except OSError:
+        pass
+    
     # (Tùy chọn) Route kiểm tra đơn giản
     @app.route('/hello')
     def hello():
