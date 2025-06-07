@@ -253,11 +253,21 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        card.querySelector('.online-checkin-btn-vj')?.addEventListener('click', () => {
-            // Lấy họ từ currentBookingDataForCard (nếu đã có) hoặc yêu cầu người dùng nhập lại
-            const lastNameForCheckin = currentBookingDataForCard?.passengers?.[0]?.full_name.split(' ').pop() || prompt("Vui lòng nhập HỌ của hành khách để làm thủ tục:");
-            if(lastNameForCheckin) {
+         card.querySelector('.online-checkin-btn-vj')?.addEventListener('click', () => {
+            let lastNameForCheckin = '';
+            if (currentBookingDataForCard && currentBookingDataForCard.passengers && currentBookingDataForCard.passengers.length > 0) {
+                const fullName = currentBookingDataForCard.passengers[0].full_name;
+                const nameParts = fullName.split(' ');
+                lastNameForCheckin = nameParts[0]; // Giả định họ là từ đầu tiên
+            } else {
+                lastNameForCheckin = prompt("Vui lòng nhập HỌ của một hành khách trong đặt chỗ để làm thủ tục:");
+            }
+            if (lastNameForCheckin) {
                 window.location.href = `/check-in-online?pnr=${pnr}&lastName=${encodeURIComponent(lastNameForCheckin)}`;
+            } else if (lastNameForCheckin === null) {
+                // Người dùng nhấn cancel
+            } else {
+                alert("Cần có thông tin Họ để tiếp tục làm thủ tục.");
             }
         });
         card.querySelector('.change-flight-btn-show-vj')?.addEventListener('click', () => {

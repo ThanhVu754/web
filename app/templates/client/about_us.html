@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Về chúng tôi - SangAir</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/about_us.css') }}" />
+</head>
+<body>
+  <header>
+    <div class="container header-container">
+        <div class="logo">
+            <a href="{{ url_for('client_bp.home_page') }}"><h2>SangAir</h2></a>
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a href="{{ url_for('client_bp.my_flights_page') }}">CHUYẾN BAY CỦA TÔI</a></li>
+                <li><a href="{{ url_for('client_bp.online_checkin_page') }}">ONLINE CHECK-IN</a></li>
+                <li><a href="{{ url_for('client_bp.e_menu_page') }}">E-MENU</a></li>
+                <li><a href="{{ url_for('client_bp.flight_services_page') }}">DỊCH VỤ CHUYẾN BAY</a></li>
+            </ul>
+        </nav>
+        <div class="auth-links">
+            {% if current_user_name %}
+                <span class="welcome-message">Chào, {{ current_user_name }}!</span>
+                <a href="{{ url_for('client_bp.logout_user') }}">Đăng xuất</a>
+            {% else %}
+                <a href="{{ url_for('client_bp.register_page') }}">Đăng ký</a>
+                <a href="{{ url_for('client_bp.login_page') }}">Đăng nhập</a>
+            {% endif %}
+        </div>
+        <div class="language-select">
+            <select>
+                <option>Tiếng Việt</option>
+                <option>English</option>
+            </select>
+        </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="about-us-container">
+        <h1>Về SangAir</h1>
+        <p class="lead">Kết nối những hành trình, chắp cánh những ước mơ.</p>
+
+        <div class="about-section">
+            <h2>Sứ mệnh của chúng tôi</h2>
+            <p>Tại SangAir, sứ mệnh của chúng tôi là cung cấp dịch vụ vận tải hàng không an toàn, tiện lợi và chi phí hợp lý, trở thành người bạn đồng hành tin cậy trên mọi nẻo đường của quý khách. Chúng tôi không ngừng nỗ lực để mang đến những trải nghiệm bay tuyệt vời, kết nối con người và các nền văn hóa.</p>
+        </div>
+
+        <div class="about-section">
+            <h2>Tầm nhìn</h2>
+            <p>Trở thành hãng hàng không được yêu thích và lựa chọn hàng đầu tại Việt Nam và khu vực, tiên phong trong việc ứng dụng công nghệ để nâng cao trải nghiệm khách hàng và tối ưu hóa hoạt động.</p>
+        </div>
+
+        <div class="about-section">
+            <h2>Lịch sử hình thành</h2>
+            <p>Được thành lập vào năm 2024 với khát vọng chinh phục bầu trời, SangAir đã nhanh chóng phát triển và trở thành một trong những hãng hàng không được yêu thích tại Việt Nam. Từ những chuyến bay nội địa đầu tiên, chúng tôi đã và đang mở rộng mạng lưới bay ra khắp châu Á và thế giới.</p>
+        </div>
+        
+        <div class="about-section">
+            <h2>Đội ngũ của chúng tôi</h2>
+            <p>Thành công của SangAir được xây dựng bởi một đội ngũ chuyên nghiệp, tận tâm và giàu kinh nghiệm. Từ phi hành đoàn, tiếp viên đến nhân viên mặt đất, tất cả chúng tôi đều chung một mục tiêu là đảm bảo sự an toàn và hài lòng tuyệt đối cho hành khách.</p>
+        </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-column">
+        <h4>Về SangAir</h4>
+        <ul>
+          <li><a href="{{ url_for('client_bp.about_us_page') }}">Giới thiệu công ty</a></li>
+          <li><a href="{{ url_for('client_bp.terms_of_use_page') }}">Điều khoản sử dụng</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h4>Hỗ trợ khách hàng</h4>
+        <ul>
+          <li><a href="{{ url_for('client_bp.booking_guide_page') }}">Hướng dẫn đặt vé</a></li>
+        </ul>
+      </div>
+      <div class="footer-column contact-info">
+        <h4>Liên hệ</h4>
+        <p>Hotline: 1900 1234</p>
+        <p>Email: support@sangair.vn</p>
+        <p>Địa chỉ: 123 Đường Bay, Q. Hàng Không, TP.HCM</p>
+      </div>
+    </div>
+    <div class="footer-social">
+        <h4>Kết nối với chúng tôi</h4>
+        <div class="social-icons">
+          <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png" alt="Facebook"></a>
+          <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram"></a>
+          <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube"></a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 SangAir. Bản quyền đã được bảo hộ.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

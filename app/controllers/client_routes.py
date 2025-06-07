@@ -45,6 +45,7 @@ def home_page():
         current_user_name=current_user_name
     )
 
+
 # ... (các route render_template khác như login_page, register_page, my_flights_page, e_menu_page, flight_services_page, online_checkin_page giữ nguyên) ...
 @client_bp.route('/dang-nhap') # URL này sẽ được cả client và admin dùng để đến trang đăng nhập
 def login_page():
