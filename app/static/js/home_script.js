@@ -118,7 +118,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function updateCartIconVisibility() {
+        const cartIcon = document.getElementById('cart-icon');
+        if (!cartIcon) {
+            return; // Nếu trang không có icon này, không làm gì cả
+        }
 
+        const pendingBookingData = localStorage.getItem('currentBookingAttempt');
+
+        if (pendingBookingData) {
+            console.log("Phát hiện đặt chỗ đang chờ thanh toán, hiển thị icon.");
+            cartIcon.style.display = 'inline-block'; // Hiện icon lên
+        } else {
+            console.log("Không có đặt chỗ chờ thanh toán, ẩn icon.");
+            cartIcon.style.display = 'none'; // Ẩn icon đi
+        }
+    }
+
+    // --- GỌI HÀM NÀY KHI TRANG TẢI XONG ---
+    updateCartIconVisibility();
     // --- LOGIC CHUYỂN TAB (Giữ nguyên) ---
     if (tabs.length > 0 && tabContents.length > 0) {
         tabs.forEach(tab => {

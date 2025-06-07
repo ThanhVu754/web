@@ -35,10 +35,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return (amount || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
     }
 
-    function renderFlightCard(booking) {
+     function renderFlightCard(booking) {
         if (!flightDetailsSection || !booking) {
-            console.error("flightDetailsSection not found or booking data is missing for renderFlightCard");
-            if (flightDetailsSection) flightDetailsSection.innerHTML = '<p class="error-message-vj">Không thể hiển thị chi tiết đặt chỗ.</p>';
+            console.error("renderFlightCard: flightDetailsSection không tìm thấy hoặc thiếu dữ liệu booking.");
             return;
         }
         currentBookingDataForCard = booking; 
@@ -66,7 +65,12 @@ document.addEventListener('DOMContentLoaded', function() {
          // Sử dụng statusMapping để lấy text và class
         const statusInfo = statusMapping[booking.booking_status] || { text: booking.booking_status || 'N/A', class: 'status-pending-vj' };
         const paymentStatusClass = booking.payment_status === 'paid' ? 'status-paid-vj' : '';
+        const cancellableStatuses = ['pending_payment', 'confirmed', 'payment_received'];
+           
+        const isActionable = ['pending_payment', 'confirmed', 'payment_received'].includes(booking.booking_status);
 
+        const isCancellable = cancellableStatuses.includes(booking.booking_status);
+        const isCheckinEligible = booking.booking_status === 'confirmed' && booking.checkin_status !== 'checked_in';
         const cardHTML = `
         <div class="flight-card-vj" data-pnr="${booking.pnr}">
             <div class="card-header-vj">
@@ -107,14 +111,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 </p>
             </div>
             <div class="flight-actions-vj">
-                </div>
+                <button class="action-btn-vj primary-btn-vj online-checkin-btn-vj" 
+                        ${!isCheckinEligible ? 'disabled' : ''}>
+                    <i class="fas fa-check-circle"></i> Làm thủ tục
+                </button>
+                
+                <button class="action-btn-vj cancel-booking-btn-vj secondary-btn-vj" 
+                        data-booking-id="${booking.booking_id}" 
+                        data-pnr="${booking.pnr}" 
+                        ${!isActionable ? 'disabled' : ''}>
+                    <i class="fas fa-times-circle"></i> Hủy chuyến bay
+                </button>
+
+                <button class="action-btn-vj add-service-btn-show-vj" 
+                        ${!isActionable ? 'disabled' : ''}>
+                    <i class="fas fa-plus-circle"></i> Thêm dịch vụ
+                </button>
+                
+                <button class="action-btn-vj view-ticket-btn-vj"><i class="fas fa-print"></i> Xem vé</button>
+            </div>
         </div>
         <button id="back-to-list-btn" class="action-btn-vj secondary-btn-vj" style="margin-top: 15px;"><i class="fas fa-arrow-left"></i> Quay lại danh sách</button>
         `;
         flightDetailsSection.innerHTML = cardHTML;
         flightDetailsSection.style.display = "block";
         if (myBookingsListContainer) myBookingsListContainer.style.display = "none";
-        attachActionListenersToCard(booking.pnr);
+        attachActionListenersToCard(booking);
     }
     
     function renderMyBookingsList(bookings) {
@@ -246,41 +268,78 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- CÁC HÀM VÀ EVENT LISTENER CHO CÁC NÚT TRONG CARD (Đổi vé, Thêm DV, Hủy) ---
     // (Giữ nguyên logic alert mô phỏng của bạn, hoặc chúng ta sẽ kết nối API cho chúng sau)
-    function attachActionListenersToCard(pnr) { // pnr để đảm bảo đúng card
-        const card = flightDetailsSection.querySelector(`.flight-card-vj[data-pnr="${pnr}"]`);
-        if (!card) {
-            console.warn(`Không tìm thấy card với PNR ${pnr} để gắn listener.`);
+    // --- CẬP NHẬT HÀM GẮN EVENT LISTENER CHO CÁC NÚT TRONG CARD ---
+    function attachActionListenersToCard(booking) { // <<< Sửa tham số: nhận cả object booking
+        const pnr = booking.pnr;
+        const bookingId = booking.booking_id; // Lấy booking_id từ object
+        const currentStatus = booking.booking_status;
+
+        const cardContainer = document.getElementById('flight-details-section-vj');
+        if (!cardContainer) {
+            console.error("Không tìm thấy khu vực #flight-details-section-vj");
             return;
         }
 
-         card.querySelector('.online-checkin-btn-vj')?.addEventListener('click', () => {
-            let lastNameForCheckin = '';
-            if (currentBookingDataForCard && currentBookingDataForCard.passengers && currentBookingDataForCard.passengers.length > 0) {
-                const fullName = currentBookingDataForCard.passengers[0].full_name;
-                const nameParts = fullName.split(' ');
-                lastNameForCheckin = nameParts[0]; // Giả định họ là từ đầu tiên
-            } else {
-                lastNameForCheckin = prompt("Vui lòng nhập HỌ của một hành khách trong đặt chỗ để làm thủ tục:");
-            }
-            if (lastNameForCheckin) {
-                window.location.href = `/check-in-online?pnr=${pnr}&lastName=${encodeURIComponent(lastNameForCheckin)}`;
-            } else if (lastNameForCheckin === null) {
-                // Người dùng nhấn cancel
-            } else {
-                alert("Cần có thông tin Họ để tiếp tục làm thủ tục.");
-            }
-        });
-        card.querySelector('.change-flight-btn-show-vj')?.addEventListener('click', () => {
-            if (changeFlightFormContainer && currentBookingDataForCard) {
-                const depInfo = `${currentBookingDataForCard.departure_iata} → ${currentBookingDataForCard.arrival_iata}`;
-                const depDateTime = currentBookingDataForCard.departure_datetime_formatted || currentBookingDataForCard.departure_time;
-                document.getElementById('current-flight-info-for-change-vj').textContent = 
-                    `${depInfo}, ${depDateTime.split(', ')[0]} ${depDateTime.split(', ')[2]}`; // Lấy phần giờ và ngày
-                document.getElementById('change-flight-booking-pnr').value = currentBookingDataForCard.pnr; // Sửa ID này nếu cần
-                if(changeFlightFormContainer) changeFlightFormContainer.style.display = 'block';
-                changeFlightFormContainer.scrollIntoView({behavior: 'smooth'});
-            } else { console.warn("changeFlightFormContainer or currentBookingDataForCard not found");}
-        });
+        const card = cardContainer.querySelector(`.flight-card-vj[data-pnr="${pnr}"]`);
+        // Log cảnh báo nếu không tìm thấy card, nhưng không return để vẫn gắn được listener cho nút "Quay lại"
+        if (!card) {
+            console.warn(`Không tìm thấy card với PNR ${pnr}. Các nút action bên trong card sẽ không hoạt động.`);
+        }
+
+        // Listener cho nút "Quay lại danh sách" (đã hoạt động)
+        const backToListBtn = cardContainer.querySelector('#back-to-list-btn');
+        if (backToListBtn) {
+            backToListBtn.removeEventListener('click', handleBackToListClick);
+            backToListBtn.addEventListener('click', handleBackToListClick);
+        }
+        
+        if (!card) return; // Nếu không có card, dừng ở đây
+
+         // Cập nhật listener cho nút Hủy chuyến bay
+        const cancelBtn = card.querySelector('.cancel-booking-btn-vj');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', async function() {
+                // Kiểm tra trạng thái trước khi làm bất cứ điều gì
+                if (currentStatus === 'cancelled_by_airline') {
+                    alert("Chuyến bay đã bị hủy bởi hãng hàng không.");
+                    return;
+                }
+                if (currentStatus === 'cancelled_by_user') {
+                    alert("Bạn đã hủy đặt chỗ này rồi.");
+                    return;
+                }
+                if (this.disabled) { // Kiểm tra nếu nút bị disabled
+                    alert("Không thể hủy đặt chỗ ở trạng thái hiện tại.");
+                    return;
+                }
+
+                if (confirm(`Bạn có chắc chắn muốn hủy đặt chỗ ${pnr} không? Thao tác này không thể hoàn tác.`)) {
+                    try {
+                        const response = await fetch(`/api/my-bookings/${bookingId}/cancel`, { method: 'POST' });
+                        const result = await response.json();
+                        
+                        if (response.ok && result.success) {
+                            alert(result.message || "Đã hủy đặt chỗ thành công!");
+                            
+                            // Cập nhật lại danh sách booking chung
+                            const index = allUserBookings.findIndex(b => b.booking_id == bookingId);
+                            if (index > -1) {
+                                allUserBookings.splice(index, 1); // Xóa booking đã hủy khỏi danh sách hiển thị
+                            }
+                            
+                            // Quay về trang danh sách đã được cập nhật
+                            renderMyBookingsList(allUserBookings);
+                        } else {
+                            alert("Lỗi khi hủy đặt chỗ: " + (result.message || "Không thể thực hiện."));
+                        }
+                    } catch (error) { 
+                        console.error("Lỗi khi hủy đặt chỗ:", error);
+                        alert("Lỗi kết nối khi cố gắng hủy đặt chỗ.");
+                    }
+                }
+            });
+        }
+
         card.querySelector('.add-service-btn-show-vj')?.addEventListener('click', () => {
              if (serviceModal && currentBookingDataForCard) {
                 document.getElementById('modal-service-pnr-display-vj').textContent = currentBookingDataForCard.pnr;
@@ -304,20 +363,18 @@ document.addEventListener('DOMContentLoaded', function() {
         card.querySelector('.view-ticket-btn-vj')?.addEventListener('click', () => {
             alert(`Chức năng Xem vé cho mã đặt chỗ ${pnr} đang được phát triển.`);
         });
-        // --- THÊM LOGIC CHO NÚT "QUAY LẠI DANH SÁCH" ---
-        const backToListBtn = card.querySelector('#back-to-list-btn');
-        if (backToListBtn) {
-            backToListBtn.addEventListener('click', () => {
-                console.log("Nút 'Quay lại danh sách' được nhấn.");
-                // Gọi lại hàm render danh sách với dữ liệu đã tải trước đó
-                // và ẩn đi phần chi tiết
-                renderMyBookingsList(allUserBookings); 
-            });
-        }
+        
         // Bỏ nút xóa user ở đây vì đây là trang của client
         // card.querySelector('.cancel-flight-btn-vj')?.addEventListener('click', () => { ... });
     }
     
+    function handleBackToListClick() {
+        console.log("Nút 'Quay lại danh sách' được nhấn.");
+        // Gọi lại hàm render danh sách với dữ liệu đã tải trước đó
+        // (biến allUserBookings đã lưu danh sách này)
+        renderMyBookingsList(allUserBookings); 
+    }
+
     // Xử lý modal thêm dịch vụ (giữ lại các phần DOM và logic cơ bản từ file gốc của bạn)
     if (closeServiceModalBtn && serviceModal) {
         closeServiceModalBtn.addEventListener('click', () => { serviceModal.style.display = 'none'; });

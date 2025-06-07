@@ -73,18 +73,13 @@ def logout_user():
 
 @client_bp.route('/chuyen-bay-cua-toi')
 def my_flights_page():
-    if 'user_id' not in session: # Kiểm tra trực tiếp user_id trong session
-        # flash("Vui lòng đăng nhập để xem chuyến bay của bạn.", "warning") # Tùy chọn
-        return redirect(url_for('client_bp.login_page', next=request.url)) # Chuyển hướng đến trang đăng nhập
-
-    # Nếu đã đăng nhập, tiếp tục xử lý bình thường
-    current_user_name = "Khách" 
-    user = client_model.get_user_by_id(session['user_id']) # client_model cần được import
-    if user:
-        current_user_name = user['full_name']
+    # Kiểm tra đăng nhập và lấy tên người dùng
+    current_user_name = None
+    if 'user_id' in session:
+        user = client_model.get_user_by_id(session['user_id'])
+        if user:
+            current_user_name = user['full_name']
     
-    # Logic để lấy và hiển thị các chuyến bay của tôi sẽ được thêm vào đây sau
-    # (ví dụ: gọi API /api/my-bookings từ JavaScript trên trang my_flights.html)
     return render_template("client/my_flights.html", current_user_name=current_user_name)
 
 @client_bp.route('/change-flight-action-placeholder', methods=['POST', 'GET']) # Đặt một URL tạm thời
@@ -115,15 +110,36 @@ def add_service():
 
 @client_bp.route('/e-menu')
 def e_menu_page():
-    return render_template("client/e_menu.html")
+    # Kiểm tra đăng nhập và lấy tên người dùng
+    current_user_name = None
+    if 'user_id' in session:
+        user = client_model.get_user_by_id(session['user_id'])
+        if user:
+            current_user_name = user['full_name']
+    
+    return render_template("client/e_menu.html", current_user_name=current_user_name)
 
 @client_bp.route('/dich-vu-chuyen-bay')
 def flight_services_page():
-    return render_template("client/flight_services.html")
+    # Kiểm tra đăng nhập và lấy tên người dùng
+    current_user_name = None
+    if 'user_id' in session:
+        user = client_model.get_user_by_id(session['user_id'])
+        if user:
+            current_user_name = user['full_name']
+    
+    return render_template("client/flight_services.html", current_user_name=current_user_name)
 
 @client_bp.route('/check-in-online')
 def online_checkin_page():
-    return render_template("client/online_checkin.html")
+    # Kiểm tra đăng nhập và lấy tên người dùng
+    current_user_name = None
+    if 'user_id' in session:
+        user = client_model.get_user_by_id(session['user_id'])
+        if user:
+            current_user_name = user['full_name']
+    
+    return render_template("client/online_checkin.html", current_user_name=current_user_name)
 
 
 # --- API AUTHENTICATION ROUTES (Giữ nguyên tiền tố /api/auth) ---
@@ -432,12 +448,12 @@ def create_booking_api():
             discount_applied=discount_applied
         )
         if booking_result:
-            return jsonify({"success": True, "message": "Đặt vé thành công!", "booking": booking_result}), 201
+            # API giờ sẽ trả về trạng thái 'confirmed' và 'paid' từ model
+            return jsonify({"success": True, "message": "Đặt vé và thanh toán thành công!", "booking": booking_result}), 201
         else:
-            # Trường hợp model trả về None mà không ném lỗi (ít khả năng với logic model hiện tại)
-            return jsonify({"success": False, "message": "Không thể tạo đặt chỗ do lỗi không xác định từ model."}), 500
-            
-    except ValueError as ve: 
+            return jsonify({"success": False, "message": "Không thể tạo đặt chỗ."}), 500
+                
+    except ValueError as ve:
         return jsonify({"success": False, "message": str(ve)}), 400
     except sqlite3.Error as db_err: 
         current_app.logger.error(f"Lỗi CSDL khi tạo booking: {db_err} - Data: {data}", exc_info=True)
@@ -522,6 +538,27 @@ def payment_page_render():
     # Trang payment.html sẽ tự lấy dữ liệu từ localStorage bằng JavaScript
     return render_template('client/payment.html', current_user_name=current_user_name)
 
+@client_bp.route('/api/bookings/<int:booking_id>/pay', methods=['POST'])
+def api_process_payment(booking_id):
+    user_id = session['user_id']
+    try:
+        # Logic thực tế có thể cần kiểm tra data thanh toán (số thẻ, v.v.)
+        # Ở đây chúng ta mô phỏng là thanh toán luôn thành công
+        success = booking_model.process_booking_payment(booking_id, user_id)
+        if success:
+            final_booking_details = booking_model.get_booking_details_admin(booking_id) # Tái sử dụng hàm lấy chi tiết
+            return jsonify({
+                "success": True, 
+                "message": "Thanh toán thành công! Đặt chỗ của bạn đã được xác nhận.",
+                "booking": final_booking_details
+            }), 200
+        else:
+            return jsonify({"success": False, "message": "Không thể xử lý thanh toán."}), 400
+    except ValueError as ve:
+        return jsonify({"success": False, "message": str(ve)}), 403 # Lỗi quyền hoặc trạng thái
+    except Exception as e:
+        return jsonify({"success": False, "message": "Lỗi máy chủ khi xử lý thanh toán."}), 500
+
 #------ API LẤY DANH SÁCH MÓN ĂN CLIENT----------
 @client_bp.route('/api/menu-items', methods=['GET'])
 def get_e_menu_api():
@@ -557,3 +594,92 @@ def get_homepage_content_api():
     except Exception as e:
         current_app.logger.error(f"Client API: Error fetching homepage content: {e}", exc_info=True)
         return jsonify({"success": False, "message": "Lỗi máy chủ khi tải nội dung trang chủ."}), 500
+    
+
+@client_bp.route('/api/my-bookings/<int:booking_id>/cancel', methods=['POST'])
+def api_cancel_my_booking(booking_id):
+    user_id = session['user_id']
+    try:
+        success = booking_model.cancel_booking_by_user(booking_id, user_id)
+        if success:
+            updated_booking = booking_model.get_booking_details_admin(booking_id) # Tái sử dụng hàm lấy chi tiết
+            return jsonify({"success": True, "message": "Đặt chỗ của bạn đã được hủy thành công.", "booking": updated_booking}), 200
+        else:
+            # Trường hợp này ít xảy ra vì hàm model sẽ ném lỗi nếu thất bại
+            return jsonify({"success": False, "message": "Không thể hủy đặt chỗ."}), 400
+    except ValueError as ve:
+        # Bắt lỗi từ model (ví dụ: không có quyền, trạng thái không cho phép hủy)
+        return jsonify({"success": False, "message": str(ve)}), 403 # 403 Forbidden
+    except Exception as e:
+        current_app.logger.error(f"Client API: Error cancelling booking {booking_id} for user {user_id}: {e}", exc_info=True)
+        return jsonify({"success": False, "message": "Lỗi máy chủ khi hủy đặt chỗ."}), 500
+    
+    
+# --- CHECK-IN APIs FOR CLIENT ---
+
+@client_bp.route('/api/checkin/lookup', methods=['POST'])
+def api_checkin_lookup():
+    data = request.get_json()
+    if not data or not data.get('pnr') or not data.get('lastName'):
+        return jsonify({"success": False, "message": "Vui lòng nhập Mã đặt chỗ và Họ."}), 400
+
+    pnr = data.get('pnr')
+    last_name = data.get('lastName')
+
+    try:
+        # Gọi hàm model, hàm này có thể ném ra ValueError với các thông báo cụ thể
+        booking_details = booking_model.get_booking_for_checkin(pnr, last_name)
+        return jsonify({"success": True, "booking": booking_details}), 200
+    
+    except ValueError as ve:
+        # Bắt các lỗi nghiệp vụ từ model (ví dụ: chưa thanh toán, đã hủy, hết giờ check-in)
+        # và trả về thông báo lỗi đó cho frontend.
+        current_app.logger.warning(f"Check-in validation failed for PNR {pnr}: {ve}")
+        return jsonify({"success": False, "message": str(ve)}), 400 # 400 Bad Request
+    
+    except Exception as e:
+        # Bắt các lỗi không mong muốn khác
+        current_app.logger.error(f"API Checkin Lookup - Unknown error for PNR {pnr}: {e}", exc_info=True)
+        return jsonify({"success": False, "message": "Lỗi máy chủ không xác định khi tra cứu đặt chỗ."}), 500
+    
+@client_bp.route('/api/checkin/complete', methods=['POST'])
+def api_checkin_complete():
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Bạn chưa đăng nhập.'}), 403
+
+    user_id = session['user_id']
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "message": "Dữ liệu không hợp lệ."}), 400
+
+    booking_id = data.get('booking_id')
+    # JS sẽ gửi một mảng ID của các hành khách được chọn
+    passenger_ids = data.get('passenger_ids', []) 
+
+    if not booking_id or not passenger_ids:
+        return jsonify({"success": False, "message": "Thiếu thông tin đặt chỗ hoặc danh sách hành khách."}), 400
+
+    try:
+        # Kiểm tra xem booking_id có thuộc về user đang đăng nhập không để tăng bảo mật
+        #user_id = session['user_id']
+        #booking_to_check = booking_model.get_booking_details_admin(booking_id) # Tái sử dụng hàm
+        #if not booking_to_check or booking_to_check.get('user_id') != user_id:
+        #    return jsonify({"success": False, "message": "Bạn không có quyền check-in cho đặt chỗ này."}), 403
+
+        # Gọi hàm model để hoàn tất check-in
+        success = booking_model.complete_checkin_for_passengers(booking_id, passenger_ids)
+        if success:
+            # Lấy lại thông tin cuối cùng để hiển thị trên thẻ lên tàu
+            final_booking_details = booking_model.get_booking_details_admin(booking_id)
+            return jsonify({
+                "success": True, 
+                "message": "Làm thủ tục thành công!",
+                "booking": final_booking_details
+            }), 200
+        else:
+            return jsonify({"success": False, "message": "Không thể hoàn tất thủ tục."}), 500
+    except ValueError as ve:
+        return jsonify({"success": False, "message": str(ve)}), 400
+    except Exception as e:
+        current_app.logger.error(f"API Error completing check-in for booking {booking_id}: {e}", exc_info=True)
+        return jsonify({"success": False, "message": "Lỗi máy chủ khi hoàn tất thủ tục."}), 500

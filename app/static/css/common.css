@@ -390,3 +390,33 @@ header {
     background-image: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=1000&auto=format&fit=crop');
   }
 }
+
+
+/* Thêm vào cuối file app/static/css/common.css */
+
+/* Style cho biểu tượng Giỏ hàng/Thanh toán trong header */
+.cart-icon {
+    position: relative;
+    display: none; /* Mặc định sẽ ẩn đi, JS sẽ làm nó hiện ra */
+    color: #DA251D; /* Màu đỏ chủ đạo */
+    font-size: 1.4rem; /* Kích thước icon */
+    margin-right: 15px; /* Khoảng cách với các link khác */
+    text-decoration: none;
+}
+
+.cart-icon .cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background-color: #ffbc38; /* Màu vàng */
+    color: #DA251D; /* Màu đỏ */
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1; /* Căn giữa số */
+}

@@ -120,10 +120,7 @@
 
 .styled-form-vj .input-group-vj { margin-bottom: 15px; } /* Giảm margin */
 .styled-form-vj .input-group-vj label { font-size: 0.85rem; margin-bottom: 5px; }
-.styled-form-vj .input-group-vj input[type="text"],
-.styled-form-vj .input-group-vj input[type="checkbox"] {
-    /* ... */
-}
+
 .styled-form-vj .input-group-vj.checkbox-group-vj label {
     font-weight: normal;
     font-size: 0.9rem; /* Giảm nhẹ */

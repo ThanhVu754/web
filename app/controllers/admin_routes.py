@@ -2,9 +2,9 @@
 from flask import Blueprint, render_template, session, redirect, url_for, current_app, request, jsonify # Đảm bảo request, jsonify đã được import
 from functools import wraps
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 # Import các model cần thiết
-from app.models import flight_model, airport_model, client_model, booking_model, menu_item_model, notification_model, settings_model
+from app.models import flight_model, airport_model, client_model, booking_model, menu_item_model, notification_model, settings_model, stats_model
 from app.models.flight_model import combine_datetime_str
 import os
 from werkzeug.utils import secure_filename
@@ -791,3 +791,47 @@ def api_admin_update_homepage_notice_settings():
     except Exception as e:
         current_app.logger.error(f"Admin API: Error updating homepage notice settings: {e}", exc_info=True)
         return jsonify({"success": False, "message": "Lỗi máy chủ khi lưu cài đặt."}), 500
+    
+
+# --- STATISTICS API FOR ADMIN ---
+
+@admin_bp.route('/api/stats', methods=['GET'])
+@admin_required
+def api_admin_get_stats():
+    # Lấy khoảng thời gian từ query params, ví dụ: /api/stats?range=last7days
+    date_range_key = request.args.get('range', 'last30days') # Mặc định là 30 ngày qua
+
+    # Tính toán ngày bắt đầu và kết thúc dựa trên key
+    end_date = datetime.now()
+    if date_range_key == 'today':
+        start_date = end_date
+    elif date_range_key == 'last7days':
+        start_date = end_date - timedelta(days=6)
+    elif date_range_key == 'this_month':
+        start_date = end_date.replace(day=1)
+    elif date_range_key == 'last_month':
+        first_day_of_current_month = end_date.replace(day=1)
+        end_date = first_day_of_current_month - timedelta(days=1)
+        start_date = end_date.replace(day=1)
+    else: # Mặc định là last30days
+        start_date = end_date - timedelta(days=29)
+
+    start_date_str = start_date.strftime('%Y-%m-%d')
+    end_date_str = end_date.strftime('%Y-%m-%d')
+    
+    current_app.logger.info(f"Fetching stats for range: {start_date_str} to {end_date_str}")
+
+    try:
+        overview_stats = stats_model.get_overview_stats(start_date_str, end_date_str)
+        booking_status_chart_data = stats_model.get_booking_status_chart_data(start_date_str, end_date_str)
+        top_routes_data = stats_model.get_top_routes_data(start_date_str, end_date_str)
+
+        return jsonify({
+            "success": True,
+            "overview": overview_stats,
+            "bookingStatusChart": booking_status_chart_data,
+            "topRoutes": top_routes_data
+        }), 200
+    except Exception as e:
+        current_app.logger.error(f"Admin API: Error fetching statistics: {e}", exc_info=True)
+        return jsonify({"success": False, "message": "Lỗi máy chủ khi lấy dữ liệu thống kê."}), 500
